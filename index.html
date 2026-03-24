@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Planner & Time management Tool</title>
 
-<style>html { overflow-x: hidden; }</style>
+<style>html { overflow-x: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
@@ -246,6 +246,26 @@
 })();
 </script>
   <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;display:none;"></canvas>
+<div id="assignmentEndOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:20001; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+  <div style="background:white; padding:32px; border-radius:20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.5); max-width:420px; width:90%;">
+    <h2 id="assignmentEndTitle" style="margin-top:0; color:#1e293b; font-size:1.3rem;"></h2>
+    <p style="color:#64748b; margin-bottom:24px; font-size:14px;">What would you like to do?</p>
+    <div style="display:flex; gap:20px; justify-content:center; align-items:flex-start; flex-wrap:wrap;">
+      <button id="markDoneBtn" style="background: #059669; color:white; border: none; padding: 10px 22px; border-radius: 7px; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; letter-spacing: 0.1px; cursor: pointer; box-shadow: 0 3px 0 #064e3b; transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;">✓ Done with it</button>
+      <div style="display:flex; flex-direction:column; align-items:stretch; gap:8px;">
+        <button id="needMoreTimeBtn" style="background: #6d28d9; color:white; border: none; padding: 10px 22px; border-radius: 7px; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; letter-spacing: 0.1px; cursor: pointer; box-shadow: 0 3px 0 #3b0764; transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;">⏱ Need more time</button>
+        <select id="extraTimeSelect" style="padding:8px 10px; border-radius:5px; border:2px solid #4a2c0a; font-size:13px; cursor:pointer; background:#fdf6ee; color:#4a2c0a; font-family:inherit;">
+          <option value="10">10 minutes</option>
+          <option value="20">20 minutes</option>
+          <option value="30">30 minutes</option>
+          <option value="45">45 minutes</option>
+          <option value="60">1 hour</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="controls" style="position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 4px 30px rgba(99,102,241,0.13), 0 1px 0 rgba(99,102,241,0.08); padding-bottom: 8px;">
    
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 15px;">
@@ -962,7 +982,7 @@ body.assignmentsdark .assign-summary-time {
   border: 2px solid rgba(0, 139, 139, 0);
   transition: border-color 0.5s ease;
 }
-.dayMarker { position:absolute; height:50px; width:2px; background:black; z-index:2; }
+.dayMarker { position:absolute; height:54px; width:2px; background:black; z-index:2; }
 .dayLabel { position:absolute; top:-20px; font-size:12px; font-weight:bold; transform:translateX(-50%); }
 
 
@@ -1404,25 +1424,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
 "></div>
 <div id="timelineBar"></div>
 
-<div id="assignmentEndOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:20001; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
-  <div style="background:white; padding:32px; border-radius:20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.5); max-width:420px; width:90%;">
-    <h2 id="assignmentEndTitle" style="margin-top:0; color:#1e293b; font-size:1.3rem;"></h2>
-    <p style="color:#64748b; margin-bottom:24px; font-size:14px;">What would you like to do?</p>
-    <div style="display:flex; gap:20px; justify-content:center; align-items:flex-start; flex-wrap:wrap;">
-      <button id="markDoneBtn" style="background: #059669; color:white; border: none; padding: 10px 22px; border-radius: 7px; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; letter-spacing: 0.1px; cursor: pointer; box-shadow: 0 3px 0 #064e3b; transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;">✓ Done with it</button>
-      <div style="display:flex; flex-direction:column; align-items:stretch; gap:8px;">
-        <button id="needMoreTimeBtn" style="background: #6d28d9; color:white; border: none; padding: 10px 22px; border-radius: 7px; font-weight: 600; font-size: 14px; font-family: 'Inter', sans-serif; letter-spacing: 0.1px; cursor: pointer; box-shadow: 0 3px 0 #3b0764; transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;">⏱ Need more time</button>
-        <select id="extraTimeSelect" style="padding:8px 10px; border-radius:5px; border:2px solid #4a2c0a; font-size:13px; cursor:pointer; background:#fdf6ee; color:#4a2c0a; font-family:inherit;">
-          <option value="10">10 minutes</option>
-          <option value="20">20 minutes</option>
-          <option value="30">30 minutes</option>
-          <option value="45">45 minutes</option>
-          <option value="60">1 hour</option>
-        </select>
-      </div>
-    </div>
-  </div>
-</div>
+
   <div style="display:flex; justify-content:center; gap:15px; font-size:13px; margin-bottom:8px; margin-top: 20px;">
     <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#800080; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Priority</div>
     <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#d9534f; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Hard</div>
@@ -1588,12 +1590,13 @@ const MILESTONES = {
 };
 
 function formatStudyTime(seconds) {
-  if (seconds < 60) return seconds > 0 ? "1m" : "0m";
+  const u = (label) => `<span style="font-size:0.6em; font-weight:400;">${label}</span>`;
+  if (seconds < 60) return seconds > 0 ? "1" + u("min") : "0" + u("min");
   const h = Math.floor(seconds / 3600);
   const m = Math.round((seconds % 3600) / 60);
-  if (h === 0) return m + "m";
-  if (m === 0) return h + "h";
-  return h + "h " + m + "m";
+  if (h === 0) return m + u("min");
+  if (m === 0) return h + u("hrs");
+  return h + u("hrs") + " " + m + u("min");
 }
 
 function getWeekStartStr() {
@@ -1635,9 +1638,9 @@ function renderStudyStats() {
   const todayEl = document.getElementById("statToday");
   const weekEl = document.getElementById("statWeek");
   const totalEl = document.getElementById("statTotal");
-  if (todayEl) todayEl.textContent = formatStudyTime(todaySec);
-  if (weekEl) weekEl.textContent = formatStudyTime(weekSec);
-  if (totalEl) totalEl.textContent = formatStudyTime(totalSec);
+  if (todayEl) todayEl.innerHTML = formatStudyTime(todaySec);
+  if (weekEl) weekEl.innerHTML = formatStudyTime(weekSec);
+  if (totalEl) totalEl.innerHTML = formatStudyTime(totalSec);
 }
 
 function commitStudiedTime() {
@@ -3962,7 +3965,9 @@ if (playhead && playhead.style.display !== "none") {
 const seg = segmentMap[segIndex];
 if (seg) {
   const deb = document.getElementById("doneEarlyBtn");
+  const doneEarlyLabelEl = document.getElementById("doneEarlyLabel");
   if (deb) deb.style.display = (!seg.isBreak) ? "block" : "none";
+  if (doneEarlyLabelEl) doneEarlyLabelEl.style.display = (!seg.isBreak) ? "block" : "none";
   const remainingPct = seg.end - progressPercent;
   const totalPct = seg.end - seg.start;
   const remainingMins = Math.ceil((remainingPct / totalPct) * seg.durationMinutes);
@@ -4097,6 +4102,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   if (dl) dl.remove();
 });
 function skipCurrentAssignment() {
+  if (!confirm("Are you sure you want to skip this assignment? This will move it to the 'Completed Assignments' list and the next assignment will begin.")) return;
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph) return;
 
@@ -4290,6 +4296,7 @@ function handleMarkAsDone() {
   const remainingSegs = segmentMap.slice(nextIdx);
   const newTotalMins = remainingSegs.reduce((s, seg) => s + seg.durationMinutes, 0);
 
+  
   addDoneMarker(window._completedAssignmentName);
   document.getElementById("assignmentEndOverlay").style.display = "none";
 
@@ -4298,7 +4305,6 @@ function handleMarkAsDone() {
     finalizeSession();
     renderStudyStats();
     launchFinalFireworks();
-    addDoneMarker(window._completedAssignmentName);
     document.getElementById("assignmentEndOverlay").style.display = "none";
     document.getElementById("currentAssignmentDisplay").textContent = "All assignments complete! 🎉";
     document.getElementById("PauseTimerBtn").style.display = "none";
@@ -4801,17 +4807,5 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
