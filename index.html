@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W52FVQK90Q"></script>
-<script>
+  <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  gtag('consent', 'default', {
+    analytics_storage: 'denied'
+  });
 
-  gtag('config', 'G-W52FVQK90Q');
+  function loadGoogleAnalytics() {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-W52FVQK90Q';
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    gtag('config', 'G-W52FVQK90Q');
+  }
+
+  function grantAnalyticsConsent() {
+    gtag('consent', 'update', { analytics_storage: 'granted' });
+    loadGoogleAnalytics();
+  }
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +32,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <meta name="description" content="Overwhelmed by homework?Use this free study planner to prioritize tasks with the MIT method. Visualize your schedule, plan breaks, and finish work faster!">
+<meta name="robots" content="index, follow">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -4848,6 +4862,89 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
   </script>
+
+<!-- ───── Cookie Consent Banner ───── -->
+<div id="cookieBanner" style="
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 999998;
+  background: rgba(15,15,30,0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(99,102,241,0.3);
+  padding: 18px 24px;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+">
+  <div style="max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+    <p style="margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.65; flex: 1; min-width: 220px;">
+      🍪 We use <strong style="color:#c4b5fd;">Google Analytics</strong> to understand how visitors use this site (pages visited, time on site, browser type). No personal data is sold. You can decline and the site works fully either way.
+      <a href="#" id="cookiePrivacyLink" style="color: #6366f1; text-decoration: none; font-weight: 600;">Privacy Policy</a>
+    </p>
+    <div style="display: flex; gap: 10px; flex-shrink: 0;">
+      <button id="cookieDeclineBtn" style="
+        padding: 9px 20px; border-radius: 50px;
+        background: transparent; border: 1.5px solid rgba(148,163,184,0.35);
+        color: #94a3b8; font-family: 'Inter', sans-serif;
+        font-weight: 600; font-size: 13px; cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+      ">Decline</button>
+      <button id="cookieAcceptBtn" style="
+        padding: 9px 22px; border-radius: 50px;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border: none; color: white;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700; font-size: 13px; cursor: pointer;
+        box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+        transition: box-shadow 0.2s, transform 0.2s;
+      ">Accept Cookies</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var COOKIE_KEY = "cookieConsent_v1";
+  var banner = document.getElementById("cookieBanner");
+  var stored = localStorage.getItem(COOKIE_KEY);
+
+  if (stored === "granted") {
+    grantAnalyticsConsent();
+  } else {
+    // Show banner only after age gate is resolved
+    function tryShowBanner() {
+      var ageOverlay = document.getElementById("ageGateOverlay");
+      if (!ageOverlay || ageOverlay.style.display === "none") {
+        setTimeout(function() { banner.style.display = "block"; }, 800);
+      } else {
+        setTimeout(tryShowBanner, 500);
+      }
+    }
+    tryShowBanner();
+  }
+
+  document.getElementById("cookieAcceptBtn").addEventListener("click", function() {
+    localStorage.setItem(COOKIE_KEY, "granted");
+    banner.style.opacity = "0";
+    banner.style.transition = "opacity 0.3s ease";
+    setTimeout(function() { banner.style.display = "none"; }, 300);
+    grantAnalyticsConsent();
+  });
+
+  document.getElementById("cookieDeclineBtn").addEventListener("click", function() {
+    banner.style.opacity = "0";
+    banner.style.transition = "opacity 0.3s ease";
+    setTimeout(function() { banner.style.display = "none"; }, 300);
+  });
+
+  document.getElementById("cookiePrivacyLink").addEventListener("click", function(e) {
+    e.preventDefault();
+    document.getElementById("privacyLink").click();
+  });
+})();
+</script>
+
   </body>
 </html>
 
