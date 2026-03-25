@@ -30,6 +30,7 @@
   }
 }
 </script>
+<meta name="google-site-verification" content="8XpqNJQhUGS9UqzaGoyPKsbkXMVazWfb7lT4Km6veR4" />
 </head>
  <body id="body" style="margin: 0; min-height: 100vh; background-color: #f0f0ff; background-image: radial-gradient(ellipse at 20% 0%, #ddd6ff 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, #c4d9ff 0%, transparent 50%); background-attachment: fixed; font-family: 'Inter', sans-serif; overflow-x: hidden;">
 <div id="ageGateOverlay" style="
@@ -190,7 +191,7 @@
     <p style="font-size: 13px; color: #475569; line-height: 1.6;">
       If you are a parent or guardian and believe this is a mistake,<br>
       please contact us at
-      <a href="mailto:aryanv0310@gmail.com" style="color:#7c83fd; text-decoration:none;">aryanv0310@gmail.com</a>
+      <a href="mailto:StudyLikeAryan@gmail.com" style="color:#7c83fd; text-decoration:none;">StudyLikeAryan@gmail.com</a>
     </p>
   </div>
 </div>
@@ -216,13 +217,13 @@
   var card    = document.getElementById("ageGateCard");
   var blocked = document.getElementById("ageGateBlocked");
  
-  // If user already confirmed, dismiss immediately
+  
   if (localStorage.getItem("ageVerified") === "true") {
     overlay.style.display = "none";
     return;
   }
  
-  // Prevent scrolling while gate is visible
+  
   document.body.style.overflow = "hidden";
  
   document.getElementById("ageGateYes").addEventListener("click", function() {
@@ -1655,6 +1656,7 @@ function finalizeSession() {
   if (total >= 1) saveStudiedTime(total);
   window._sessionStudiedSeconds = 0;
   window._timerActualStart = null;
+  localStorage.removeItem("studyTime_session_pending");
 }
 
 function renderStreakMessage(count) {
@@ -1808,7 +1810,7 @@ document.getElementById("addAssignmentBtn").onclick = () => {
   div.querySelector('.assignment-body').addEventListener('change', () => updateAssignmentSummary(div));
   div.querySelector('.assignment-body').addEventListener('input', () => updateAssignmentSummary(div));
 
-  // Clicking anywhere on collapsed card expands it; clicking non-interactive area of expanded card collapses it
+  
   div.addEventListener('click', (e) => {
     if (e.target.closest('input, select, button, .custom-select-wrapper')) return;
     const wasCollapsed = div.classList.contains('collapsed');
@@ -2174,6 +2176,7 @@ playhead.style.width = Math.min(progress, 100) + "%";
     if (startBtn) startBtn.onclick = startTimer;
   
 startBtn.addEventListener("click", function() {
+  window._sessionStudiedSeconds = 0;
   startBtn.classList.remove('pulse-start');
   document.getElementById("resetTimerBtn").style.display = 'block';
   currentAssignmentDisplay.style.display = 'block';
@@ -2612,11 +2615,30 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 
 
 function loadAndRestore() {
+ 
+  const pendingSession = localStorage.getItem("studyTime_session_pending");
+  if (pendingSession) {
+    try {
+      const p = JSON.parse(pendingSession);
+      if (p.seconds >= 1) saveStudiedTime(p.seconds);
+    } catch(e) {}
+    localStorage.removeItem("studyTime_session_pending");
+  }
+
   const savedTimer = localStorage.getItem("studyPlanner_timerState");
   loadFromLocalStorage();
   if (savedTimer) {
     localStorage.setItem("studyPlanner_timerState", savedTimer);
     restoreTimerState();
+  } else {
+    const pageState = localStorage.getItem("studyPlanner_pageState");
+    if (pageState === "tools") {
+      c.style.transition = 'none';
+      c.style.transform = 'translateX(0%)';
+      a.style.transition = 'none';
+      a.style.transform = 'translateX(-110%)';
+      document.getElementById("controls").classList.add("show");
+    }
   }
 }
 if (document.readyState === "complete" || document.readyState === "interactive") {
@@ -3295,6 +3317,7 @@ Dark.addEventListener("click", function() {
     }
   }
   markOutdated();
+      localStorage.setItem("studyPlanner_pageState", "tools");
       c.style.transition = 'none';
       c.style.transform = 'translateX(110%)';
       c.offsetHeight;
@@ -3321,6 +3344,7 @@ Dark.addEventListener("click", function() {
 
    
      d.addEventListener("click", function() {
+  localStorage.removeItem("studyPlanner_pageState");
   c.style.transition = 'transform 0.5s ease-in-out';
   c.style.transform = 'translateX(110%)';
   a.style.transition = 'transform 0.5s ease-in-out';
@@ -3545,7 +3569,7 @@ document.getElementById('termsLink').addEventListener('click', function(e) {
 
 <div class="section" id="contact">
     <h2>10. Contact</h2>
-    <p>If you have questions regarding these Terms, please contact the developer via email: aryanv0310@gmail.com</p>
+    <p>If you have questions regarding these Terms, please contact the developer via email: StudyLikeAryan@gmail.com</p>
 </div>
 
 <footer>
@@ -3698,7 +3722,7 @@ Google Search Console: We use Google Search Console to monitor our site's presen
 
 <div class="section" id="contact">
     <h2>9. Contact Us</h2>
-    <p>This Service is operated by an individual developer and is not a registered business entity. If you have questions about this Privacy Policy, please reach out via email: aryanv0310@gmail.com</p>
+    <p>This Service is operated by an individual developer and is not a registered business entity. If you have questions about this Privacy Policy, please reach out via email: StudyLikeAryan@gmail.com</p>
 </div>
 
 <footer>
@@ -3868,8 +3892,23 @@ document.getElementById("startTimerBtn").addEventListener("click", () => {
   updateStreak();
 });
 
+function savePartialSessionTime() {
+  const resetBtn = document.getElementById("resetTimerBtn");
+  if (!resetBtn || resetBtn.style.display === "none") return;
+  let totalSoFar = window._sessionStudiedSeconds || 0;
+  if (window._timerActualStart) {
+    totalSoFar += (performance.now() - window._timerActualStart) / 1000;
+  }
+  if (totalSoFar >= 1) {
+    localStorage.setItem("studyTime_session_pending", JSON.stringify({
+      seconds: Math.round(totalSoFar)
+    }));
+  }
+}
+
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "hidden") return;
+  savePartialSessionTime();
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph || ph.style.display === "none") return;
   const cd = document.getElementById("countdownDisplay").textContent.split(":");
@@ -3878,6 +3917,7 @@ document.addEventListener("visibilitychange", () => {
   if (rem > 0) saveTimerState(rem, false);
 });
 window.addEventListener("pagehide", () => {
+  savePartialSessionTime();
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph || ph.style.display === "none") return;
   const cd = document.getElementById("countdownDisplay").textContent.split(":");
@@ -4802,5 +4842,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
   </body>
 </html>
+
+
 
 
