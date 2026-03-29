@@ -1643,8 +1643,8 @@ function restoreTimerState() {
 let sessionDayCumOffset = 0;
 let assignmentEndShownSet = new Set();
 const MILESTONES = {
-  7:    "🔥 One week streak! You're building a habit!",
-  14:   "🔥 Two weeks strong! Keep it up!",
+  7:    "One week streak! You're building a habit!",
+  14:   "Two weeks strong! Keep it up!",
   30:   "🏆 One month streak! You're unstoppable!",
   182:  "🌟 Half a year! You're a studying legend!",
   365:  "👑 One full year! Incredible dedication!",
@@ -1994,8 +1994,10 @@ stopTimer();
     err.style.display = "block";
     return;
   }
-
-
+  const _calcBtn = document.getElementById("calculateBtn");
+  _calcBtn.textContent = "Calculating...";
+  _calcBtn.disabled = true;
+  setTimeout(() => { _calcBtn.textContent = "Calculate"; _calcBtn.disabled = false;
 
   output.classList.add('show');
 
@@ -2122,6 +2124,7 @@ document.getElementById("timerControls").style.display = "flex";
   const outputFade = document.getElementById("outputFade");
   if (outputFade) outputFade.style.display = "block";
   output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}, 600);
 };
 
 
@@ -2669,8 +2672,7 @@ window.loadFromLocalStorage = function() {
             });
            
            
-            document.getElementById("calculateBtn").click();
-        }
+            }
     }
 };
 
@@ -2824,7 +2826,6 @@ document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("showLessContainer").style.display = "block";
   document.getElementById("outdatedBanner").style.display = "none";
   controls.style.display = "none";
-  document.getElementById("z").style.display = "none";
   const outputFadeMore = document.getElementById("outputFade");
   if (outputFadeMore) outputFadeMore.style.display = "none";
   output.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -4151,7 +4152,7 @@ document.getElementById("resetTimerBtn").onclick = () => {
   renderStudyStats();
   stopTimer();
   TOTAL_STUDY_SECONDS = 0;
-  document.getElementById("calculateBtn").click();
+  doReset();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
@@ -5199,6 +5200,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   </body>
 </html>
+
+
 
 
 
