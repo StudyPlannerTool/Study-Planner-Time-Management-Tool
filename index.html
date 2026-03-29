@@ -1444,10 +1444,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   </div>
 </div>
 
-<div style="display: flex; justify-content: center; margin-top: 16px; margin-bottom: 8px;">
-  <span id="percentCompletedText" style="display: none; text-align: center; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #6366f1; background: rgba(99,102,241,0.09); padding: 5px 16px; border-radius: 50px; letter-spacing: 0.3px;">0% of session completed!</span>
-</div>
-<div id="currentAssignmentDisplay" style="text-align: center; font-size: 13.5px; margin-top: 6px; color: #475569; margin-bottom: 6px; font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: 0.1px;"></div>
+<div id="currentAssignmentDisplay" style="text-align: center; font-size: 15px; margin-top: 6px; color: #1e293b; margin-bottom: 6px; font-family: 'Franchise', sans-serif; font-weight: 700; letter-spacing: 0.2px; min-height: 22px; line-height: 1.4;"></div>
 <div id="breakMessage" style="display:none; text-align:center; font-size:14px; font-weight:700; color:#059669; margin-bottom:20px; font-family:'Inter',sans-serif; letter-spacing:0.1px;">☕ Time to stretch! Drink some water.</div>
   <div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin-bottom:28px; padding:0 4px; letter-spacing:0.3px;">
     <span id="sessionStartTimeLabel">Started: --</span>
@@ -1629,11 +1626,9 @@ function restoreTimerState() {
     document.getElementById("controls").style.display = "none";
     document.getElementById("timerControls").style.display = "flex";
     document.getElementById("resetTimerBtn").style.display = "block";
-    document.getElementById("percentCompletedText").style.display = "block";
     document.getElementById("currentAssignmentDisplay").style.display = "block";
     document.getElementById("doneEarlyLabel").style.display = "block";
     document.getElementById("doneEarlyBtn").style.display = "block";
-    document.getElementById("z").style.display = "none";
     document.getElementById("topContainer").style.display = "none";
     document.getElementById("showMoreContainer").style.display = "none";
     document.getElementById("showLessContainer").style.display = "none";
@@ -1990,7 +1985,6 @@ document.getElementById("calculateBtn").onclick = () => {
   output.style.overflow = "hidden";
   timelineContainer.style.position = "relative";
   timelineContainer.style.overflow = "hidden";
-  collapseAllAssignments();
 stopTimer();
 
   const raw = [...container.querySelectorAll(".assignment")];
@@ -2278,7 +2272,6 @@ playhead.style.width = Math.min(progress, 100) + "%";
     const resetBtn = document.getElementById("resetTimerBtn");
     const ResumeBtn = document.getElementById("ResumeTimerBtn");
     const currentAssignmentDisplay = document.getElementById("currentAssignmentDisplay");
-    const percentCompletedText = document.getElementById("percentCompletedText");
     if (startBtn) startBtn.onclick = startTimer;
   
 startBtn.addEventListener("click", function() {
@@ -2296,7 +2289,6 @@ startBtn.addEventListener("click", function() {
   })();
   document.getElementById("resetTimerBtn").style.display = 'block';
   currentAssignmentDisplay.style.display = 'block';
-  percentCompletedText.style.display = 'block';
   document.getElementById("doneEarlyLabel").style.display = 'block';
   document.getElementById("topContainer").style.display = 'none';
   controls.style.display = 'none';
@@ -2328,7 +2320,6 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   document.getElementById("resetTimerBtn").style.display = 'none';
-  document.getElementById("percentCompletedText").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
   document.getElementById("z").style.display = 'block';
   document.getElementById("topContainer").style.display = 'block';
@@ -3204,9 +3195,6 @@ function showCustomConfirm(msg, onYes, onNo) {
   const countdownDisp = document.getElementById("countdownDisplay");
   if (countdownDisp) countdownDisp.style.color = '#1e293b';
 
-  const percentText = document.getElementById("percentCompletedText");
-  if (percentText) percentText.style.color = 'black';
-
   const currentAssign = document.getElementById("currentAssignmentDisplay");
   if (currentAssign) currentAssign.style.color = '#1e293b';
 
@@ -3381,9 +3369,6 @@ Dark.addEventListener("click", function() {
 
   const countdownDisp = document.getElementById("countdownDisplay");
   if (countdownDisp) countdownDisp.style.color = '#e2e8f0';
-
-  const percentText = document.getElementById("percentCompletedText");
-  if (percentText) percentText.style.color = '#94a3b8';
 
   const currentAssign = document.getElementById("currentAssignmentDisplay");
   if (currentAssign) currentAssign.style.color = '#cbd5e1';
@@ -3920,6 +3905,9 @@ document.addEventListener("click", function(e) {
   if (!e.target.closest('.custom-select-wrapper')) {
     closeAllCustomDropdowns();
   }
+  if (!e.target.closest('.assignment') && !e.target.closest('#controls')) {
+    collapseAllAssignments();
+  }
 });
 document.addEventListener('scroll', function(e) {
   if (!e.target.closest || !e.target.closest('.custom-select-dropdown')) {
@@ -4167,7 +4155,6 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
-  document.getElementById("percentCompletedText").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
   document.getElementById("z").style.display = 'block';
   document.getElementById("topContainer").style.display = 'block';
@@ -4216,7 +4203,7 @@ if (playhead && playhead.style.display !== "none") {
 } else {
   tri.style.display = "none";
 }
-      document.getElementById('percentCompletedText').textContent = progressPercent.toFixed(1) + "% of session completed!";
+  
       const segIndex = segmentMap.findIndex(s => progressPercent >= s.start && progressPercent < s.end);
 
       const prevIdx = (typeof window._prevUpdateSegIndex !== 'undefined') ? window._prevUpdateSegIndex : -1;
@@ -4288,7 +4275,7 @@ if (seg) {
 }
 
     } else {
-      document.getElementById('percentCompletedText').textContent = "0% of session completed!";
+      
       const tri = document.getElementById("playhead-triangle");
       if (tri) tri.style.display = "none";
       const _bmOff = document.getElementById("breakMessage");
@@ -4464,7 +4451,6 @@ let dayCumAtSkip = sessionDayCumOffset;
     document.getElementById("ResumeTimerBtn").style.display = "none";
     document.getElementById("doneEarlyBtn").style.display = "none";
     document.getElementById("doneEarlyLabel").style.display = "none";
-    document.getElementById("percentCompletedText").textContent = "100.0% of session completed!";
     document.getElementById("resetTimerBtn").classList.add("pulse-end");
     return;
   }
@@ -4620,7 +4606,6 @@ function handleMarkAsDone() {
     document.getElementById("ResumeTimerBtn").style.display = "none";
     document.getElementById("doneEarlyBtn").style.display = "none";
     document.getElementById("doneEarlyLabel").style.display = "none";
-    document.getElementById("percentCompletedText").textContent = "100.0% of session completed!";
     document.getElementById("resetTimerBtn").classList.add("pulse-end");
     return;
   }
