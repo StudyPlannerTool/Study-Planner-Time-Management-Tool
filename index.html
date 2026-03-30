@@ -322,7 +322,7 @@
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
  
-    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);">⋮</button>
+    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black;">⋮</button>
 
   <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 150px; overflow: hidden;">
     <button id="Light" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Light Mode</button>
@@ -826,7 +826,7 @@ body.removelight .removeBtn {
 }
 .icon {
   font-size: 20px;
-  color: #6366f1;
+  color: black;
   transition: transform 0.3s ease;
   font-weight: 300;
 }
@@ -1431,7 +1431,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
     Reset Session
   </button>
   </div>
-  <div id="countdownDisplay"
+ <div id="countdownDisplay"
        style="
          font-size: 20px;
          font-weight: 700;
@@ -1439,8 +1439,8 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
          min-width: 120px;
          text-align: center;
          margin-top: 4px;
+         display: none;
        ">
-    00:00:00
   </div>
 </div>
 
@@ -1636,6 +1636,7 @@ function restoreTimerState() {
     document.getElementById("startTimerBtn").style.display = "none";
     document.getElementById("PauseTimerBtn").style.display = "none";
     document.getElementById("ResumeTimerBtn").style.display = "block";
+    document.getElementById("countdownDisplay").style.display = "block";
     document.getElementById("currentAssignmentDisplay").textContent = "Session restored — tap Resume to continue!";
     setTimeout(() => tc.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
   } catch(e) { console.error("Restore failed:", e); clearTimerState(); }
@@ -2301,6 +2302,7 @@ startBtn.addEventListener("click", function() {
   output.style.overflow = "visible";
   const outputFadeSession = document.getElementById("outputFade");
   if (outputFadeSession) outputFadeSession.style.display = "none";
+  document.getElementById("countdownDisplay").style.display = 'block';
   document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'block';
@@ -2323,6 +2325,7 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   document.getElementById("resetTimerBtn").style.display = 'none';
+  document.getElementById("countdownDisplay").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
   document.getElementById("z").style.display = 'block';
   document.getElementById("topContainer").style.display = 'block';
@@ -3217,11 +3220,11 @@ function showCustomConfirm(msg, onYes, onNo) {
 
   const doneList = document.getElementById("doneAssignmentsList");
   if (doneList) {
-    doneList.style.backgroundColor = '#f0fdf4';
-    doneList.style.borderLeftColor = '#10b981';
+    doneList.style.background = 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)';
+    doneList.style.borderLeftColor = '#6366f1';
     const doneTitle = document.getElementById("doneListTitle");
-    if (doneTitle) doneTitle.style.color = '#065f46';
-    doneList.querySelectorAll('.done-item').forEach(d => d.style.color = '#065f46');
+    if (doneTitle) doneTitle.style.color = '#1e293b';
+    doneList.querySelectorAll('.done-item').forEach(d => d.style.color = '#1e293b');
   }
 
   document.querySelectorAll('.dayLabel').forEach(el => el.style.color = 'black');
@@ -3386,11 +3389,11 @@ Dark.addEventListener("click", function() {
 
  const doneList = document.getElementById("doneAssignmentsList");
   if (doneList) {
-    doneList.style.backgroundColor = '#0f2318';
-    doneList.style.borderLeftColor = '#059669';
+    doneList.style.background = 'linear-gradient(135deg, #1e2d3d 0%, #1a2236 100%)';
+    doneList.style.borderLeftColor = '#6366f1';
     const doneTitle = document.getElementById("doneListTitle");
-    if (doneTitle) doneTitle.style.color = '#6ee7b7';
-    doneList.querySelectorAll('.done-item').forEach(d => d.style.color = '#6ee7b7');
+    if (doneTitle) doneTitle.style.color = '#e2e8f0';
+    doneList.querySelectorAll('.done-item').forEach(d => d.style.color = '#e2e8f0');
   }
 
   document.querySelectorAll('.dayLabel').forEach(el => el.style.color = 'white');
@@ -3931,16 +3934,23 @@ const resumeTimer = () => {
   window._timerActualStart = performance.now();
   if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
   window._titleUpdateInterval = setInterval(function() {
-    if (document.visibilityState === "visible" || !window._timerActualStart) return;
+    if (!window._timerActualStart) return;
     const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
     const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
     const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
     const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
-    const _phT = document.getElementById("v_playhead_fixed");
-    const _pctT = _phT ? (parseFloat(_phT.style.width) || 0) : 0;
-    const _segT = segmentMap ? segmentMap.find(s => _pctT >= s.start && _pctT < s.end) : null;
+    const _resumeOff = window._resumeOffset || 0;
+    const _currentPct = Math.min(_resumeOff + (_elT / Math.max(TOTAL_STUDY_SECONDS, 1)) * (100 - _resumeOff), 100);
+    const _segT = segmentMap ? segmentMap.find(s => _currentPct >= s.start && _currentPct < s.end) : null;
     const _snT = _segT ? (_segT.isBreak ? "☕ Break" : _segT.name) : "";
-    document.title = _snT ? `${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} | Study Planner`;
+    const _segRemT = _segT && !_segT.isBreak ? Math.max(0, ((_segT.end - _currentPct) / Math.max(_segT.end - _segT.start, 0.0001)) * _segT.durationMinutes * 60) : Infinity;
+    if (_segRemT <= 30 && _segRemT > 0) {
+      window._titleBlinkOn = !window._titleBlinkOn;
+      document.title = window._titleBlinkOn ? `🔴 ${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} — ${_snT} | Study Planner`;
+    } else {
+      window._titleBlinkOn = false;
+      document.title = _snT ? `${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} | Study Planner`;
+    }
   }, 1000);
   (function() {
     const _row = document.getElementById("sessionTimeRow");
@@ -4012,16 +4022,22 @@ ensurePlayhead();
   window._timerActualStart = performance.now();
   if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
   window._titleUpdateInterval = setInterval(function() {
-    if (document.visibilityState === "visible" || !window._timerActualStart) return;
+    if (!window._timerActualStart) return;
     const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
     const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
     const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
     const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
-    const _phT = document.getElementById("v_playhead_fixed");
-    const _pctT = _phT ? (parseFloat(_phT.style.width) || 0) : 0;
-    const _segT = segmentMap ? segmentMap.find(s => _pctT >= s.start && _pctT < s.end) : null;
+    const _currentPct = Math.min((_elT / Math.max(TOTAL_STUDY_SECONDS, 1)) * 100, 100);
+    const _segT = segmentMap ? segmentMap.find(s => _currentPct >= s.start && _currentPct < s.end) : null;
     const _snT = _segT ? (_segT.isBreak ? "☕ Break" : _segT.name) : "";
-    document.title = _snT ? `${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} | Study Planner`;
+    const _segRemT = _segT && !_segT.isBreak ? Math.max(0, ((_segT.end - _currentPct) / Math.max(_segT.end - _segT.start, 0.0001)) * _segT.durationMinutes * 60) : Infinity;
+    if (_segRemT <= 30 && _segRemT > 0) {
+      window._titleBlinkOn = !window._titleBlinkOn;
+      document.title = window._titleBlinkOn ? `🔴 ${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} — ${_snT} | Study Planner`;
+    } else {
+      window._titleBlinkOn = false;
+      document.title = _snT ? `${_cdStr} — ${_snT} | Study Planner` : `${_cdStr} | Study Planner`;
+    }
   }, 1000);
 
   const startTime = performance.now();
@@ -4152,7 +4168,9 @@ document.getElementById("resetTimerBtn").onclick = () => {
   renderStudyStats();
   stopTimer();
   TOTAL_STUDY_SECONDS = 0;
-  doReset();
+  const dl = document.getElementById("doneAssignmentsList");
+  if (dl) dl.remove();
+  document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
@@ -4257,22 +4275,6 @@ if (seg) {
     document.getElementById("currentAssignmentDisplay").textContent =
       `Current Assignment: ${seg.name} — ${displayMins} min remaining${extraText}`;
   }
-  // Document title update
-  (function() {
-    const _cd = document.getElementById("countdownDisplay").textContent;
-    const _sn = seg.isBreak ? "☕ Break" : seg.name;
-    const _rs = Math.max(0, ((seg.end - progressPercent) / Math.max(seg.end - seg.start, 0.0001)) * seg.durationMinutes * 60);
-    if (_rs <= 10 && _rs > 0) {
-      if (!window._titleBlink || Date.now() - window._titleBlink > 500) {
-        window._titleBlink = Date.now();
-        window._titleBlinkOn = !window._titleBlinkOn;
-      }
-      document.title = window._titleBlinkOn ? `🔴 ${_cd} — ${_sn} | Study Planner` : `${_cd} — ${_sn} | Study Planner`;
-    } else {
-      window._titleBlinkOn = false;
-      document.title = `${_cd} — ${_sn} | Study Planner`;
-    }
-  })();
 }
 
     } else {
@@ -4773,10 +4775,10 @@ function addDoneMarker(assignmentName) {
   if (!doneList) {
     doneList = document.createElement("div");
     doneList.id = "doneAssignmentsList";
-    doneList.style.cssText = `max-width:850px; margin:20px auto; padding:14px 18px; background:${isDark ? '#0f2318' : '#f0fdf4'}; border-left:5px solid ${isDark ? '#059669' : '#10b981'}; border-radius:10px; box-shadow:2px 2px 5px rgba(0,0,0,0.2);`;
+    doneList.style.cssText = `max-width:850px; margin:20px auto; padding:14px 18px; background:${isDark ? 'linear-gradient(135deg, #1e2d3d 0%, #1a2236 100%)' : 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)'}; border-left:5px solid #6366f1; border-radius:10px; box-shadow:2px 2px 5px rgba(0,0,0,0.2);`;
     const titleEl = document.createElement("div");
     titleEl.id = "doneListTitle";
-    titleEl.style.cssText = `font-family:'Syne',sans-serif; font-size:25px; font-weight:800; color:${isDark ? '#6ee7b7' : '#065f46'}; letter-spacing:-0.3px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(16,185,129,0.25);`;
+    titleEl.style.cssText = `font-family:'Syne',sans-serif; font-size:25px; font-weight:800; color:${isDark ? '#e2e8f0' : '#1e293b'}; letter-spacing:-0.3px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(16,185,129,0.25);`;
     titleEl.textContent = "Completed Assignments";
     doneList.appendChild(titleEl);
     const tc = document.getElementById("timelineContainer");
@@ -4784,7 +4786,7 @@ function addDoneMarker(assignmentName) {
   }
   const item = document.createElement("div");
   item.className = "done-item";
-  item.style.cssText = `padding:4px 0; color:${isDark ? '#6ee7b7' : '#065f46'}; font-weight:600; font-size:16px;`;
+  item.style.cssText = `padding:4px 0; color:${isDark ? '#e2e8f0' : '#1e293b'}; font-weight:600; font-size:16px;`;
   item.textContent = `✅ ${assignmentName}`;
   doneList.appendChild(item);
 }
@@ -5198,6 +5200,94 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+  <script>
+  (function() {
+    var lastClick = 0;
+    document.addEventListener("click", function(e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      var now = Date.now();
+      if (now - lastClick < 500) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return;
+      }
+      lastClick = now;
+    }, true);
+  })();
+  </script>
+
+  <div id="customScrollTrack" style="position:fixed;right:0;top:0;bottom:0;width:8px;z-index:99997;pointer-events:none;">
+    <div id="customScrollThumb" style="position:absolute;right:1px;width:6px;background:rgba(99,102,241,0.4);border-radius:3px;cursor:pointer;pointer-events:all;min-height:30px;opacity:0;transition:opacity 0.2s ease;"></div>
+  </div>
+  <script>
+  (function() {
+    var thumb = document.getElementById("customScrollThumb");
+    var panels = ['a','c','e'].map(function(id){ return document.getElementById(id); });
+    var hideTimer = null;
+    var isDragging = false, dragStartY = 0, dragStartScrollTop = 0, dragPanel = null;
+
+    function getActivePanel() {
+      var best = panels[0], bestDist = Infinity;
+      panels.forEach(function(p) {
+        var dist = Math.abs(p.getBoundingClientRect().left);
+        if (dist < bestDist) { bestDist = dist; best = p; }
+      });
+      return best;
+    }
+
+    function updateThumb() {
+      var panel = getActivePanel();
+      var scrollTop = panel.scrollTop;
+      var scrollHeight = panel.scrollHeight;
+      var clientHeight = panel.clientHeight;
+      if (scrollHeight <= clientHeight + 2) { thumb.style.opacity = '0'; return; }
+      var thumbHeight = Math.max(30, (clientHeight / scrollHeight) * clientHeight);
+      var maxScroll = scrollHeight - clientHeight;
+      var thumbTop = (scrollTop / maxScroll) * (clientHeight - thumbHeight);
+      thumb.style.height = thumbHeight + 'px';
+      thumb.style.top = thumbTop + 'px';
+      if (!isDragging) {
+        thumb.style.opacity = '1';
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function(){ thumb.style.opacity = '0'; }, 1500);
+      }
+    }
+
+    panels.forEach(function(p) { p.addEventListener('scroll', updateThumb, { passive: true }); });
+    window.addEventListener('resize', updateThumb);
+    setInterval(updateThumb, 400);
+
+    thumb.addEventListener('mousedown', function(e) {
+      isDragging = true; dragStartY = e.clientY;
+      dragPanel = getActivePanel(); dragStartScrollTop = dragPanel.scrollTop;
+      thumb.style.opacity = '1'; e.preventDefault();
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging || !dragPanel) return;
+      var clientHeight = dragPanel.clientHeight;
+      var thumbHeight = parseFloat(thumb.style.height) || 30;
+      var maxScroll = dragPanel.scrollHeight - clientHeight;
+      var ratio = maxScroll / (clientHeight - thumbHeight);
+      dragPanel.scrollTop = Math.max(0, Math.min(maxScroll, dragStartScrollTop + (e.clientY - dragStartY) * ratio));
+    });
+    document.addEventListener('mouseup', function() { isDragging = false; dragPanel = null; });
+
+    thumb.addEventListener('touchstart', function(e) {
+      isDragging = true; dragStartY = e.touches[0].clientY;
+      dragPanel = getActivePanel(); dragStartScrollTop = dragPanel.scrollTop;
+      thumb.style.opacity = '1'; e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchmove', function(e) {
+      if (!isDragging || !dragPanel) return;
+      var clientHeight = dragPanel.clientHeight;
+      var thumbHeight = parseFloat(thumb.style.height) || 30;
+      var maxScroll = dragPanel.scrollHeight - clientHeight;
+      dragPanel.scrollTop = Math.max(0, Math.min(maxScroll, dragStartScrollTop + (e.touches[0].clientY - dragStartY) * (maxScroll / (clientHeight - thumbHeight))));
+    }, { passive: true });
+    document.addEventListener('touchend', function() { isDragging = false; dragPanel = null; });
+  })();
+  </script>
   </body>
 </html>
 
