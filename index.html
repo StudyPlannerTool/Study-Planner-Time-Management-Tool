@@ -2125,7 +2125,7 @@ document.getElementById("timerControls").style.display = "flex";
   const outputFade = document.getElementById("outputFade");
   if (outputFade) outputFade.style.display = "block";
   output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}, 600);
+}, 300);
 };
 
 
@@ -2324,6 +2324,7 @@ document.getElementById("resetTimerBtn").onclick = () => {
   TOTAL_STUDY_SECONDS = 0;
   document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
+  
   document.getElementById("resetTimerBtn").style.display = 'none';
   document.getElementById("countdownDisplay").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
@@ -4168,10 +4169,11 @@ document.getElementById("resetTimerBtn").onclick = () => {
   renderStudyStats();
   stopTimer();
   TOTAL_STUDY_SECONDS = 0;
+  segmentMap = [];
   const dl = document.getElementById("doneAssignmentsList");
   if (dl) dl.remove();
   document.getElementById("calculateBtn").click();
-  document.getElementById("countdownDisplay").textContent = "00:00:00";
+document.getElementById("countdownDisplay").style.display = 'none';
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
@@ -5204,6 +5206,7 @@ document.addEventListener('DOMContentLoaded', () => {
   (function() {
     var lastClick = 0;
     document.addEventListener("click", function(e) {
+      if (!e.isTrusted) return;
       var btn = e.target.closest("button");
       if (!btn) return;
       var now = Date.now();
@@ -5290,6 +5293,12 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
   </body>
 </html>
+
+
+
+
+
+
 
 
 
