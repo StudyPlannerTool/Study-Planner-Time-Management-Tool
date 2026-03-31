@@ -5318,32 +5318,32 @@ document.addEventListener('DOMContentLoaded', () => {
 (function () {
   var T = {
     active: false, step: 0, timer: null, raf: null, off: [],
-    PAD: 14, DUR: 15000,
+    PAD: 6, DUR: 15000,
 
     STEPS: [
       { el: function () { return document.getElementById('addAssignmentBtn'); },
         text: 'Start by clicking this button to add your first assignment.',
-        on: 'click', post: 500 },
+        on: 'click', post: 0 },
       { el: function () {
           var c = document.querySelectorAll('#assignmentsContainer .assignment');
           return c.length ? c[c.length - 1] : null; },
         text: 'Adjust your assignment — try sliding the time estimator.',
-        on: 'slider', post: 500 },
+        on: 'slider', post: 0 },
       { el: function () { return document.getElementById('addAssignmentBtn'); },
         text: 'You can also add multiple assignments.',
-        on: 'click', post: 500 },
+        on: 'click', post: 0 },
       { el: function () { return document.getElementById('calculateBtn'); },
         text: 'Next, calculate your study plan!',
-        on: 'click', post: 800 },
+        on: 'click', post: 0 },
       { el: function () { return document.getElementById('startTimerBtn'); },
         text: 'Now begin studying — start your session!',
-        on: 'click', post: 1400 },
+        on: 'click', post: 0 },
       { el: function () { return document.getElementById('doneEarlyBtn'); },
         text: "Finished early? Click here to skip to the next assignment — or end the session if it\u2019s your last.",
-        on: 'click', post: 600 },
+        on: 'click', post: 0 },
       { el: function () { return document.getElementById('resetTimerBtn'); },
         text: 'All done! Use this button to reset your session.',
-        on: 'click', post: 300 }
+        on: 'click', post: 0 }
     ],
 
     start: function () { T.active = true; window.tutorialActive = true; T._show(0); },
@@ -5394,7 +5394,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (step.on === 'click') {
         function ch() {
           if (!T.active) return; T._clean();
-          setTimeout(function () { if (T.active) T._show(T.step + 1); }, step.post || 300);
+          setTimeout(function () { if (T.active) T._show(T.step + 1); }, step.post != null ? step.post : 0);
         }
         el.addEventListener('click', ch, { once: true });
         T.off.push(function () { el.removeEventListener('click', ch); });
