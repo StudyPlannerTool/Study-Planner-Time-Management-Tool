@@ -1900,7 +1900,7 @@ document.getElementById("addAssignmentBtn").onclick = () => {
   </div>
   `;
 
-  div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); div.remove(); };
+  div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (window.tutorialActive) return; div.remove(); };
 
   collapseAllAssignments();
   getShortestColumn().appendChild(div);
@@ -3491,7 +3491,7 @@ const onboardingBack = document.getElementById('onboardingBack');
       eDiv.style.transform = 'translateX(-110%)';
       setTimeout(() => {
         document.getElementById("controls").classList.add("show");
-    
+        if (typeof window.startTutorial === 'function') window.startTutorial();
       }, 150);
     });
 
@@ -3911,7 +3911,7 @@ document.addEventListener("click", function(e) {
     closeAllCustomDropdowns();
   }
   if (!e.target.closest('.assignment') && !e.target.closest('#controls')) {
-    collapseAllAssignments();
+    if (!window.tutorialActive) collapseAllAssignments();
   }
 });
 document.addEventListener('scroll', function(e) {
@@ -4163,7 +4163,7 @@ window.addEventListener("pagehide", () => {
 document.getElementById("doneEarlyBtn").addEventListener("click", skipCurrentAssignment);
 
 document.getElementById("resetTimerBtn").onclick = () => {
-  showCustomConfirm("End your session? Your timer and progress will be reset.", function() {
+  const _doSessionReset = () => {
   commitStudiedTime();
   finalizeSession();
   renderStudyStats();
@@ -4173,7 +4173,7 @@ document.getElementById("resetTimerBtn").onclick = () => {
   const dl = document.getElementById("doneAssignmentsList");
   if (dl) dl.remove();
   document.getElementById("calculateBtn").click();
-document.getElementById("countdownDisplay").style.display = 'none';
+  document.getElementById("countdownDisplay").style.display = 'none';
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
   document.getElementById("currentAssignmentDisplay").style.display = 'none';
@@ -4193,7 +4193,9 @@ document.getElementById("countdownDisplay").style.display = 'none';
   if (_rTR) _rTR.style.display = "none";
   const _rBM = document.getElementById("breakMessage");
   if (_rBM) _rBM.style.display = "none";
-  });
+  };
+  if (window.tutorialActive) { _doSessionReset(); return; }
+  showCustomConfirm("End your session? This will reset your timer and progress.", _doSessionReset);
 };
 
 document.getElementById("ResumeTimerBtn").onclick = () => {
@@ -4393,6 +4395,7 @@ document.getElementById("resetBtn").addEventListener("click", () => {
   if (dl) dl.remove();
 });
 function skipCurrentAssignment() {
+  if (window.tutorialActive) { _doSkipCore(); return; }
   const _ph = document.getElementById("v_playhead_fixed");
   const _pct = parseFloat(_ph ? _ph.style.width : "0") || 0;
   const _si = segmentMap.findIndex(s => _pct >= s.start && _pct < s.end);
@@ -4570,6 +4573,7 @@ function updateOutputAfterSkip(segs, totalWork, totalBreaks, label = "⏩ Assign
   output.innerHTML = `<b>${label} Updated plan:</b>\n\nRemaining Work Time: ${minutesToText(totalWork)}\n<strong>Remaining Break Time: ${minutesToText(totalBreaks)}</strong>\nRemaining Time: ${minutesToText(totalWork + totalBreaks)} <span style="color:#6366f1; font-weight:700;">(${day} ${day === 1 ? 'day' : 'days'})</span>\n\n${plan}`;
 }
 function showAssignmentEndPopup(assignmentName) {
+  if (window.tutorialActive) return;
   if (timerId) { cancelAnimationFrame(timerId); timerId = null; }
   commitStudiedTime();
   const prevSeg = segmentMap[window._popupPrevSegIndex];
@@ -5108,6 +5112,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   </script>
 
+<!-- ── Tutorial Overlay ── -->
+<div id="tutorialOverlay" style="display:none;position:fixed;inset:0;z-index:100000;pointer-events:none;">
+  <div id="tutPanel-top"    style="position:fixed;left:0;right:0;top:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:height .28s ease,top .28s ease;"></div>
+  <div id="tutPanel-bottom" style="position:fixed;left:0;right:0;bottom:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:top .28s ease;"></div>
+  <div id="tutPanel-left"   style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:width .28s ease,top .28s ease,height .28s ease;"></div>
+  <div id="tutPanel-right"  style="position:fixed;top:0;right:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:left .28s ease,top .28s ease,height .28s ease;"></div>
+  <div id="tutTooltip" style="position:fixed;z-index:100001;width:260px;background:white;border-radius:16px;padding:16px 18px 12px;box-shadow:0 16px 48px rgba(0,0,0,0.55),0 2px 8px rgba(0,0,0,0.18);font-family:'Inter',sans-serif;pointer-events:none;border:1px solid rgba(99,102,241,0.15);box-sizing:border-box;transition:left .28s ease,top .28s ease;">
+    <div id="tutArrow" style="position:absolute;pointer-events:none;"></div>
+    <p id="tutTextEl" style="margin:0 0 10px;font-size:13.5px;font-weight:600;color:#1e293b;line-height:1.65;"></p>
+    <div style="height:3px;background:#eef2ff;border-radius:100px;overflow:hidden;">
+      <div id="tutTimerFill" style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:100px;"></div>
+    </div>
+  </div>
+  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100001;pointer-events:all;">
+    <button id="tutorialSkipBtn" style="background:transparent;border:none;color:rgba(255,255,255,0.55);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:0.2px;padding:8px 20px;transition:color .2s ease;" onmouseover="this.style.color='rgba(255,255,255,0.9)'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">Skip Tutorial ↓</button>
+  </div>
+</div>
+
 <!-- ───── Custom Alert / Confirm Modal ───── -->
 <div id="customModalOverlay" style="display:none;position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,0.65);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);justify-content:center;align-items:center;">
   <div id="customModalBox" style="background:white;border-radius:24px;padding:32px 28px;max-width:380px;width:90%;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.4);font-family:'Inter',sans-serif;border:1px solid rgba(99,102,241,0.12);">
@@ -5290,6 +5312,177 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     document.addEventListener('touchend', function() { isDragging = false; dragPanel = null; });
   })();
+  </script>
+  <script>
+/* ── Tutorial Engine ── */
+(function () {
+  var T = {
+    active: false, step: 0, timer: null, raf: null, off: [],
+    PAD: 14, DUR: 15000,
+
+    STEPS: [
+      { el: function () { return document.getElementById('addAssignmentBtn'); },
+        text: 'Start by clicking this button to add your first assignment.',
+        on: 'click', post: 500 },
+      { el: function () {
+          var c = document.querySelectorAll('#assignmentsContainer .assignment');
+          return c.length ? c[c.length - 1] : null; },
+        text: 'Adjust your assignment — try sliding the time estimator.',
+        on: 'slider', post: 500 },
+      { el: function () { return document.getElementById('addAssignmentBtn'); },
+        text: 'You can also add multiple assignments.',
+        on: 'click', post: 500 },
+      { el: function () { return document.getElementById('calculateBtn'); },
+        text: 'Next, calculate your study plan!',
+        on: 'click', post: 800 },
+      { el: function () { return document.getElementById('startTimerBtn'); },
+        text: 'Now begin studying — start your session!',
+        on: 'click', post: 1400 },
+      { el: function () { return document.getElementById('doneEarlyBtn'); },
+        text: "Finished early? Click here to skip to the next assignment — or end the session if it\u2019s your last.",
+        on: 'click', post: 600 },
+      { el: function () { return document.getElementById('resetTimerBtn'); },
+        text: 'All done! Use this button to reset your session.',
+        on: 'click', post: 300 }
+    ],
+
+    start: function () { T.active = true; window.tutorialActive = true; T._show(0); },
+
+    end: function () {
+      T.active = false; window.tutorialActive = false; T._clean();
+      var ov = document.getElementById('tutorialOverlay');
+      if (ov) {
+        ov.style.transition = 'opacity .3s ease'; ov.style.opacity = '0';
+        setTimeout(function () { ov.style.display = 'none'; ov.style.opacity = '1'; ov.style.transition = ''; }, 320);
+      }
+    },
+
+    _clean: function () {
+      T.off.forEach(function (f) { try { f(); } catch (e) {} }); T.off = [];
+      if (T.timer) { clearTimeout(T.timer); T.timer = null; }
+      if (T.raf)   { cancelAnimationFrame(T.raf); T.raf = null; }
+    },
+
+    _show: function (idx) {
+      T._clean();
+      if (idx >= T.STEPS.length) { T.end(); return; }
+      T.step = idx;
+      var step = T.STEPS[idx], tries = 0;
+      function poll() {
+        if (!T.active) return;
+        var el = step.el();
+        if (!el || window.getComputedStyle(el).display === 'none') {
+          if (++tries < 80) { setTimeout(poll, 150); return; }
+          T._show(idx + 1); return;
+        }
+        try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        setTimeout(function () {
+          if (!T.active) return;
+          var el2 = step.el();
+          if (!el2 || window.getComputedStyle(el2).display === 'none') { T._show(idx + 1); return; }
+          document.getElementById('tutTextEl').textContent = step.text;
+          T._panels(el2); T._tip(el2);
+          document.getElementById('tutorialOverlay').style.display = 'block';
+          T._bar(); T._bind(step, el2);
+        }, step.pre || 450);
+      }
+      poll();
+    },
+
+    _bind: function (step, el) {
+      if (!T.active) return;
+      if (step.on === 'click') {
+        function ch() {
+          if (!T.active) return; T._clean();
+          setTimeout(function () { if (T.active) T._show(T.step + 1); }, step.post || 300);
+        }
+        el.addEventListener('click', ch, { once: true });
+        T.off.push(function () { el.removeEventListener('click', ch); });
+      } else if (step.on === 'slider') {
+        var sl = el.querySelector('.time'); if (!sl) return;
+        function sh() {
+          if (!T.active) return; T._clean();
+          setTimeout(function () { if (T.active) T._show(T.step + 1); }, step.post || 500);
+        }
+        sl.addEventListener('input', sh, { once: true });
+        T.off.push(function () { sl.removeEventListener('input', sh); });
+      }
+    },
+
+    _bar: function () {
+      var fill = document.getElementById('tutTimerFill'); if (!fill) return;
+      fill.style.transition = 'none'; fill.style.width = '100%';
+      var s0 = performance.now(), d = T.DUR;
+      function tick(now) {
+        if (!T.active) return;
+        var pct = Math.max(0, 100 * (1 - (now - s0) / d));
+        fill.style.width = pct + '%';
+        if (pct > 0) T.raf = requestAnimationFrame(tick);
+      }
+      T.raf = requestAnimationFrame(tick);
+      T.timer = setTimeout(function () {
+        if (!T.active) return;
+        var step = T.STEPS[T.step];
+        if (step.on === 'click') {
+          var el = step.el();
+          if (el && window.getComputedStyle(el).display !== 'none') { el.click(); }
+          else { T._show(T.step + 1); }
+        } else { T._show(T.step + 1); }
+      }, d);
+    },
+
+    _panels: function (el) {
+      var r = el.getBoundingClientRect(), p = T.PAD,
+          t  = Math.max(0, r.top - p),
+          b  = Math.min(window.innerHeight, r.bottom + p),
+          l  = Math.max(0, r.left - p),
+          rv = Math.min(window.innerWidth, r.right + p),
+          W = window.innerWidth, H = window.innerHeight;
+      function set(id, st) { var e = document.getElementById(id); if (e) Object.assign(e.style, st); }
+      set('tutPanel-top',    { display: t > 0   ? 'block' : 'none', height: t + 'px',       top: '0',    left: '0',   right: '0',  width: '' });
+      set('tutPanel-bottom', { display: b < H   ? 'block' : 'none', top: b + 'px',           bottom: '0', left: '0',   right: '0',  width: '', height: '' });
+      set('tutPanel-left',   { display: l > 0   ? 'block' : 'none', top: t + 'px', height: (b - t) + 'px', width: l + 'px',  left: '0',   right: '' });
+      set('tutPanel-right',  { display: rv < W  ? 'block' : 'none', top: t + 'px', height: (b - t) + 'px', left: rv + 'px', right: '0',  width: '' });
+    },
+
+    _tip: function (el) {
+      var tip = document.getElementById('tutTooltip'), arr = document.getElementById('tutArrow');
+      if (!tip) return;
+      var r = el.getBoundingClientRect(), TW = Math.min(260, window.innerWidth - 32);
+      tip.style.width = TW + 'px'; tip.style.visibility = 'hidden'; tip.style.display = 'block';
+      var TH = tip.offsetHeight; tip.style.visibility = '';
+      var A = 10, M = 12, p = T.PAD, cx = r.left + r.width / 2;
+      var spB = window.innerHeight - r.bottom - p, spA = r.top - p;
+      var below = spB >= TH + A + M || spB >= spA;
+      var tx = Math.max(M, Math.min(window.innerWidth - TW - M, cx - TW / 2));
+      var ty = below ? (r.bottom + p + A + 4) : (r.top - p - A - TH - 4);
+      tip.style.left = tx + 'px'; tip.style.top = ty + 'px';
+      if (arr) {
+        var ax = Math.max(8, Math.min(TW - A * 2 - 8, cx - tx - A));
+        arr.style.cssText = below
+          ? 'position:absolute;top:-' + A + 'px;left:' + ax + 'px;width:0;height:0;border-left:' + A + 'px solid transparent;border-right:' + A + 'px solid transparent;border-bottom:' + A + 'px solid white;pointer-events:none;'
+          : 'position:absolute;bottom:-' + A + 'px;left:' + ax + 'px;width:0;height:0;border-left:' + A + 'px solid transparent;border-right:' + A + 'px solid transparent;border-top:' + A + 'px solid white;pointer-events:none;';
+      }
+    }
+  };
+
+  var skp = document.getElementById('tutorialSkipBtn');
+  if (skp) skp.addEventListener('click', function () { T.end(); });
+
+  function repos() {
+    if (!T.active) return;
+    var step = T.STEPS[T.step], el = step && step.el();
+    if (el && window.getComputedStyle(el).display !== 'none') { T._panels(el); T._tip(el); }
+  }
+  window.addEventListener('resize', repos);
+  ['a', 'c', 'e'].forEach(function (id) {
+    var panel = document.getElementById(id);
+    if (panel) panel.addEventListener('scroll', repos, { passive: true });
+  });
+
+  window.startTutorial = function () { T.start(); };
+  window.tutorialActive = false;
+}());
   </script>
   </body>
 </html>
