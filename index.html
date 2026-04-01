@@ -322,7 +322,7 @@
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
  
-    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black;">⋮</button>
+    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black;">☀️</button>
 
   <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 150px; overflow: hidden;">
     <button id="Light" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Light Mode</button>
@@ -841,8 +841,7 @@ body.removelight .removeBtn {
   overflow: hidden;
   transition: max-height 0.4s ease-out;
   background: white;
-  border: 1px solid rgba(99,102,241,0.35);
-  border-top: none;
+  border: none;
   border-radius: 0 0 16px 16px;
 }
 .content-inner {
@@ -1982,6 +1981,7 @@ document.getElementById("resetBtn").onclick = () => {
 
 const timelineContainer = document.getElementById("timelineContainer");
 document.getElementById("calculateBtn").onclick = () => {
+  collapseAllAssignments();
   output.style.position = "relative";
   output.style.overflow = "hidden";
   timelineContainer.style.position = "relative";
@@ -2655,7 +2655,7 @@ window.loadFromLocalStorage = function() {
 
     if (savedTheme === "dark") {
         document.getElementById("Dark").click();
-    } else if (savedTheme === "light") {
+    } else {
         document.getElementById("Light").click();
     }
 
@@ -3107,6 +3107,7 @@ function showCustomConfirm(msg, onYes, onNo) {
 
     Light.addEventListener("click", function() {
   saveTheme("light");
+  document.getElementById("z").textContent = "☀️";
   document.body.classList.remove("assignmentsdark");
   document.body.classList.add("assignmentslight");
   document.body.classList.remove("dropdowndark");
@@ -3163,7 +3164,8 @@ function showCustomConfirm(msg, onYes, onNo) {
   if (presetCI) { presetCI.style.background = 'transparent'; }
   document.querySelectorAll('.accordion-content').forEach(el => {
     el.style.background = 'white';
-    el.style.borderColor = 'rgba(99,102,241,0.13)';
+    const prevHeader = el.previousElementSibling;
+    if (prevHeader && prevHeader.classList.contains('active') && prevHeader.id !== 'viewPresetButton') { el.style.border = '1px solid rgba(99,102,241,0.13)'; el.style.borderTop = 'none'; } else if (prevHeader && prevHeader.id !== 'viewPresetButton') { el.style.border = 'none'; }
   });
   const presetAC = document.getElementById("presetAccordionContent");
   if (presetAC) { presetAC.style.background = 'transparent'; presetAC.style.border = 'none'; }
@@ -3274,6 +3276,7 @@ const onboardingBack = document.getElementById('onboardingBack');
 
 Dark.addEventListener("click", function() {
   saveTheme("dark");
+  document.getElementById("z").textContent = "🌒";
   document.body.classList.remove("assignmentslight");
   document.body.classList.add("assignmentsdark");
   document.body.classList.remove("dropdownlight");
@@ -3332,7 +3335,8 @@ Dark.addEventListener("click", function() {
   if (presetCI) { presetCI.style.background = 'transparent'; }
   document.querySelectorAll('.accordion-content').forEach(el => {
     el.style.background = '#1a2236';
-    el.style.borderColor = 'rgba(139,92,246,0.2)';
+    const prevHeader = el.previousElementSibling;
+    if (prevHeader && prevHeader.classList.contains('active') && prevHeader.id !== 'viewPresetButton') { el.style.border = '1px solid rgba(139,92,246,0.2)'; el.style.borderTop = 'none'; } else if (prevHeader && prevHeader.id !== 'viewPresetButton') { el.style.border = 'none'; }
   });
   const presetAC = document.getElementById("presetAccordionContent");
   if (presetAC) { presetAC.style.background = 'transparent'; presetAC.style.border = 'none'; }
@@ -3558,8 +3562,10 @@ document.querySelectorAll('.accordion-header').forEach(header => {
     const content = header.nextElementSibling;
     if (header.classList.contains('active')) {
       content.style.maxHeight = content.scrollHeight + "px";
+      if (header.id !== 'viewPresetButton') { content.style.border = '1px solid rgba(99,102,241,0.35)'; content.style.borderTop = 'none'; }
     } else {
       content.style.maxHeight = "0";
+      if (header.id !== 'viewPresetButton') content.style.border = 'none';
     }
   });
 });
@@ -5114,19 +5120,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ── Tutorial Overlay ── -->
 <div id="tutorialOverlay" style="display:none;position:fixed;inset:0;z-index:100000;pointer-events:none;">
-  <div id="tutPanel-top"    style="position:fixed;left:0;right:0;top:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:height .28s ease,top .28s ease;"></div>
-  <div id="tutPanel-bottom" style="position:fixed;left:0;right:0;bottom:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:top .28s ease;"></div>
-  <div id="tutPanel-left"   style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:width .28s ease,top .28s ease,height .28s ease;"></div>
-  <div id="tutPanel-right"  style="position:fixed;top:0;right:0;background:rgba(0,0,0,0.74);pointer-events:all;transition:left .28s ease,top .28s ease,height .28s ease;"></div>
-  <div id="tutTooltip" style="position:fixed;z-index:100001;width:260px;background:white;border-radius:16px;padding:16px 18px 12px;box-shadow:0 16px 48px rgba(0,0,0,0.55),0 2px 8px rgba(0,0,0,0.18);font-family:'Inter',sans-serif;pointer-events:none;border:1px solid rgba(99,102,241,0.15);box-sizing:border-box;transition:left .28s ease,top .28s ease;">
+  <div id="tutPanel-top"    style="position:fixed;left:0;right:0;top:0;background:rgba(0,0,0,0.74);pointer-events:none;"></div>
+  <div id="tutPanel-bottom" style="position:fixed;left:0;right:0;bottom:0;background:rgba(0,0,0,0.74);pointer-events:none;"></div>
+  <div id="tutPanel-left"   style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.74);pointer-events:none;"></div>
+  <div id="tutPanel-right"  style="position:fixed;top:0;right:0;background:rgba(0,0,0,0.74);pointer-events:none;"></div>
+  <div id="tutSpotlightRing" style="position:fixed;display:none;border:none;border-radius:10px;pointer-events:none;z-index:100002;box-shadow:0 0 0 9999px rgba(0,0,0,0.74);background:transparent;"></div>
+  <div id="tutTooltip" style="position:fixed;z-index:100003;width:260px;background:white;border-radius:16px;padding:16px 18px 12px;box-shadow:0 16px 48px rgba(0,0,0,0.55),0 2px 8px rgba(0,0,0,0.18);font-family:'Inter',sans-serif;pointer-events:none;border:1px solid rgba(99,102,241,0.15);box-sizing:border-box;">
     <div id="tutArrow" style="position:absolute;pointer-events:none;"></div>
     <p id="tutTextEl" style="margin:0 0 10px;font-size:13.5px;font-weight:600;color:#1e293b;line-height:1.65;"></p>
     <div style="height:3px;background:#eef2ff;border-radius:100px;overflow:hidden;">
       <div id="tutTimerFill" style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:100px;"></div>
     </div>
   </div>
-  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100001;pointer-events:all;">
-    <button id="tutorialSkipBtn" style="background:transparent;border:none;color:rgba(255,255,255,0.55);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:0.2px;padding:8px 20px;transition:color .2s ease;" onmouseover="this.style.color='rgba(255,255,255,0.9)'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">Skip Tutorial ↓</button>
+  <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:100004;pointer-events:all;">
+    <button id="tutorialSkipBtn" style="background:rgba(0,0,0,0.55);border:1.5px solid rgba(255,255,255,0.18);border-radius:50px;color:rgba(255,255,255,0.92);font-family:'Inter',sans-serif;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:0.2px;padding:8px 22px;transition:background 0.2s ease,color 0.2s ease;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);" onmouseover="this.style.background='rgba(0,0,0,0.75)';this.style.color='#ffffff'" onmouseout="this.style.background='rgba(0,0,0,0.55)';this.style.color='rgba(255,255,255,0.92)'">Skip Tutorial ↓</button>
   </div>
 </div>
 
@@ -5317,16 +5324,14 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ── Tutorial Engine ── */
 (function () {
   var T = {
-    active: false, step: 0, timer: null, raf: null, off: [],
-    PAD: 6, DUR: 15000,
+    active: false, step: 0, timer: null, raf: null, posRaf: null, off: [],
+    PAD: 8, DUR: 15000,
 
     STEPS: [
       { el: function () { return document.getElementById('addAssignmentBtn'); },
         text: 'Start by clicking this button to add your first assignment.',
         on: 'click', post: 0 },
-      { el: function () {
-          var c = document.querySelectorAll('#assignmentsContainer .assignment');
-          return c.length ? c[c.length - 1] : null; },
+      { el: function () { return window._lastAddedCard || null; },
         text: 'Adjust your assignment — try sliding the time estimator.',
         on: 'slider', post: 0 },
       { el: function () { return document.getElementById('addAssignmentBtn'); },
@@ -5350,6 +5355,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     end: function () {
       T.active = false; window.tutorialActive = false; T._clean();
+      var ring = document.getElementById('tutSpotlightRing');
+      if (ring) ring.style.display = 'none';
       var ov = document.getElementById('tutorialOverlay');
       if (ov) {
         ov.style.transition = 'opacity .3s ease'; ov.style.opacity = '0';
@@ -5359,8 +5366,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     _clean: function () {
       T.off.forEach(function (f) { try { f(); } catch (e) {} }); T.off = [];
-      if (T.timer) { clearTimeout(T.timer); T.timer = null; }
-      if (T.raf)   { cancelAnimationFrame(T.raf); T.raf = null; }
+      if (T.timer)  { clearTimeout(T.timer); T.timer = null; }
+      if (T.raf)    { cancelAnimationFrame(T.raf); T.raf = null; }
+      if (T.posRaf) { cancelAnimationFrame(T.posRaf); T.posRaf = null; }
+    },
+
+    _scrollCenter: function (el, cb) {
+      var ids = ['a','c','e'], best = null, bestDist = Infinity;
+      ids.forEach(function(id) {
+        var p = document.getElementById(id); if (!p) return;
+        var d = Math.abs(p.getBoundingClientRect().left);
+        if (d < bestDist) { bestDist = d; best = p; }
+      });
+      if (best) {
+        var er = el.getBoundingClientRect(), pr = best.getBoundingClientRect();
+        var CONTROLS_H = 100; 
+        var usable = pr.height - CONTROLS_H;
+        var elH = er.height;
+        var elTop = er.top - pr.top + best.scrollTop;
+        if (elH >= usable) {
+          
+          best.scrollTop = elTop - CONTROLS_H - 12;
+        } else {
+          
+          best.scrollTop = elTop - CONTROLS_H - (usable - elH) / 2;
+        }
+      }
+      setTimeout(function () { requestAnimationFrame(function () { if (cb) cb(); }); }, 32);
+    },
+
+    _startPos: function (step) {
+      if (T.posRaf) cancelAnimationFrame(T.posRaf);
+      function track() {
+        if (!T.active) return;
+        var el = step.el();
+        if (el && window.getComputedStyle(el).display !== 'none') { T._panels(el); T._tip(el); }
+        T.posRaf = requestAnimationFrame(track);
+      }
+      T.posRaf = requestAnimationFrame(track);
     },
 
     _show: function (idx) {
@@ -5375,16 +5418,18 @@ document.addEventListener('DOMContentLoaded', () => {
           if (++tries < 80) { setTimeout(poll, 150); return; }
           T._show(idx + 1); return;
         }
-        try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
-        setTimeout(function () {
+        if (el.classList && el.classList.contains('assignment')) el.classList.remove('collapsed');
+        T._scrollCenter(el, function () {
           if (!T.active) return;
           var el2 = step.el();
           if (!el2 || window.getComputedStyle(el2).display === 'none') { T._show(idx + 1); return; }
+          if (el2.classList && el2.classList.contains('assignment')) el2.classList.remove('collapsed');
           document.getElementById('tutTextEl').textContent = step.text;
           T._panels(el2); T._tip(el2);
           document.getElementById('tutorialOverlay').style.display = 'block';
           T._bar(); T._bind(step, el2);
-        }, step.pre || 450);
+          T._startPos(step);
+        });
       }
       poll();
     },
@@ -5436,13 +5481,10 @@ document.addEventListener('DOMContentLoaded', () => {
           t  = Math.max(0, r.top - p),
           b  = Math.min(window.innerHeight, r.bottom + p),
           l  = Math.max(0, r.left - p),
-          rv = Math.min(window.innerWidth, r.right + p),
-          W = window.innerWidth, H = window.innerHeight;
-      function set(id, st) { var e = document.getElementById(id); if (e) Object.assign(e.style, st); }
-      set('tutPanel-top',    { display: t > 0   ? 'block' : 'none', height: t + 'px',       top: '0',    left: '0',   right: '0',  width: '' });
-      set('tutPanel-bottom', { display: b < H   ? 'block' : 'none', top: b + 'px',           bottom: '0', left: '0',   right: '0',  width: '', height: '' });
-      set('tutPanel-left',   { display: l > 0   ? 'block' : 'none', top: t + 'px', height: (b - t) + 'px', width: l + 'px',  left: '0',   right: '' });
-      set('tutPanel-right',  { display: rv < W  ? 'block' : 'none', top: t + 'px', height: (b - t) + 'px', left: rv + 'px', right: '0',  width: '' });
+          rv = Math.min(window.innerWidth, r.right + p);
+      ['tutPanel-top','tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+      var ring = document.getElementById('tutSpotlightRing');
+      if (ring) { ring.style.display = 'block'; ring.style.top = t + 'px'; ring.style.left = l + 'px'; ring.style.width = (rv - l) + 'px'; ring.style.height = (b - t) + 'px'; }
     },
 
     _tip: function (el) {
@@ -5466,19 +5508,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Block all clicks outside the current tutorial target (capture phase, highest priority)
+  document.addEventListener('click', function (e) {
+    if (!T.active) return;
+    if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
+    var step = T.STEPS[T.step];
+    if (!step) return;
+    var el = step.el();
+    if (!el) return;
+    if (el === e.target || el.contains(e.target)) return;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+  }, true);
+
   var skp = document.getElementById('tutorialSkipBtn');
   if (skp) skp.addEventListener('click', function () { T.end(); });
-
-  function repos() {
-    if (!T.active) return;
-    var step = T.STEPS[T.step], el = step && step.el();
-    if (el && window.getComputedStyle(el).display !== 'none') { T._panels(el); T._tip(el); }
-  }
-  window.addEventListener('resize', repos);
-  ['a', 'c', 'e'].forEach(function (id) {
-    var panel = document.getElementById(id);
-    if (panel) panel.addEventListener('scroll', repos, { passive: true });
-  });
 
   window.startTutorial = function () { T.start(); };
   window.tutorialActive = false;
