@@ -280,7 +280,8 @@
   });
 })();
 </script>
-  <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;display:none;"></canvas>
+<canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99999;display:none;"></canvas>
+<canvas id="bgCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
 <div id="assignmentEndOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:20001; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
   <div style="background:white; padding:32px; border-radius:20px; text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.5); max-width:420px; width:90%;">
     <h2 id="assignmentEndTitle" style="margin-top:0; color:#1e293b; font-size:1.3rem;"></h2>
@@ -2124,7 +2125,20 @@ document.getElementById("timerControls").style.display = "flex";
   document.getElementById("showLessContainer").style.display = "none";
   const outputFade = document.getElementById("outputFade");
   if (outputFade) outputFade.style.display = "block";
-  output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  requestAnimationFrame(() => {
+    const _cPanel = document.getElementById('c');
+    const _targetTop = Math.max(0, output.getBoundingClientRect().top + _cPanel.scrollTop - 110);
+    const _startTop = _cPanel.scrollTop;
+    const _dist = _targetTop - _startTop;
+    const _dur = 520;
+    const _t0 = performance.now();
+    (function _step(now) {
+      const p = Math.min((now - _t0) / _dur, 1);
+      const ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+      _cPanel.scrollTop = _startTop + _dist * ease;
+      if (p < 1) requestAnimationFrame(_step);
+    })(performance.now());
+  });
 }, 300);
 };
 
@@ -3495,7 +3509,8 @@ const onboardingBack = document.getElementById('onboardingBack');
       eDiv.style.transform = 'translateX(-110%)';
       setTimeout(() => {
         document.getElementById("controls").classList.add("show");
-        if (typeof window.startTutorial === 'function') window.startTutorial();
+const _existingAssignments = document.querySelectorAll('#assignmentsContainer .assignment');
+        if (typeof window.startTutorial === 'function' && _existingAssignments.length === 0) window.startTutorial();
       }, 150);
     });
 
@@ -4178,7 +4193,9 @@ document.getElementById("resetTimerBtn").onclick = () => {
   segmentMap = [];
   const dl = document.getElementById("doneAssignmentsList");
   if (dl) dl.remove();
+  window._tutorialBypassBlock = true;
   document.getElementById("calculateBtn").click();
+  window._tutorialBypassBlock = false;
   document.getElementById("countdownDisplay").style.display = 'none';
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
@@ -5509,8 +5526,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Block all clicks outside the current tutorial target (capture phase, highest priority)
-  document.addEventListener('click', function (e) {
+document.addEventListener('click', function (e) {
     if (!T.active) return;
+    if (window._tutorialBypassBlock) return;
     if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
     var step = T.STEPS[T.step];
     if (!step) return;
@@ -5528,8 +5546,59 @@ document.addEventListener('DOMContentLoaded', () => {
   window.tutorialActive = false;
 }());
   </script>
+<script>
+(function() {
+  var canvas = document.getElementById("bgCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H, start = null;
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener("resize", resize);
+  var DARK_P = Array.from({length: 110}, function(_, i) {
+    var f = Math.abs((Math.sin(i * 137.508) * 10000) % 1);
+    var f2 = Math.abs((Math.sin(i * 271.1) * 10000) % 1);
+return { f: f, f2: f2, spd: 0.004 + f * 0.008, r: 0.9 + f * 1.6 };
+  });
+  var LIGHT_P = Array.from({length: 65}, function(_, i) {
+    var f = Math.abs((Math.sin(i * 42.7) * 10000) % 1);
+    var f2 = Math.abs((Math.sin(i * 193.3) * 10000) % 1);
+return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f * 0.008 };
+  });
+  function isDark() { return document.body.classList.contains("assignmentsdark"); }
+  function loop(ts) {
+    if (!start) start = ts;
+    var t = ts - start;
+    ctx.clearRect(0, 0, W, H);
+    if (isDark()) {
+      DARK_P.forEach(function(p) {
+        var x = ((p.f * W + t * p.spd) % W + W) % W;
+        var y = p.f2 * H;
+        var twinkle = 0.22 + Math.sin(t * 0.00018 * (1 + p.f) + p.f * 100) * 0.15;
+        ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255," + (twinkle * (0.28 + p.f * 0.45)) + ")";
+        ctx.fill();
+      });
+    } else {
+      LIGHT_P.forEach(function(p) {
+        var x = ((p.f * W + t * p.spd) % W + W) % W;
+        var y = p.f2 * H;
+        ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(99,102,241," + p.alpha + ")";
+        ctx.fill();
+      });
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+  </script>
   </body>
 </html>
+
+
+
+
 
 
 
