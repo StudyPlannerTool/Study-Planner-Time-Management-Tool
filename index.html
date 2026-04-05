@@ -4165,6 +4165,12 @@ document.addEventListener("visibilitychange", () => {
     if (_ph && _ph.style.display !== "none" && _rb && _rb.style.display !== "none") {
       requestWakeLock();
     }
+    if (window._timerActualStart) {
+      const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
+      const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
+      const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
+      document.title = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")} | Study Planner`;
+    }
     return;
   }
   savePartialSessionTime();
@@ -5576,8 +5582,8 @@ return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f 
     ctx.clearRect(0, 0, W, H);
     if (isDark()) {
       DARK_P.forEach(function(p) {
-        var x = ((p.f * W + t * p.spd) % W + W) % W;
-        var y = p.f2 * H;
+      var x = ((p.f * W + t * p.spd * 0.866) % W + W) % W;
+        var y = ((p.f2 * H + t * p.spd * 0.5) % H + H) % H;
         var twinkle = 0.22 + Math.sin(t * 0.00018 * (1 + p.f) + p.f * 100) * 0.15;
         ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255,255,255," + (twinkle * (0.28 + p.f * 0.45)) + ")";
@@ -5585,8 +5591,8 @@ return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f 
       });
     } else {
       LIGHT_P.forEach(function(p) {
-        var x = ((p.f * W + t * p.spd) % W + W) % W;
-        var y = p.f2 * H;
+        var x = ((p.f * W + t * p.spd * 0.866) % W + W) % W;
+        var y = ((p.f2 * H + t * p.spd * 0.5) % H + H) % H;
         ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(99,102,241," + p.alpha + ")";
         ctx.fill();
@@ -5599,6 +5605,8 @@ return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f 
   </script>
   </body>
 </html>
+
+
 
 
 
