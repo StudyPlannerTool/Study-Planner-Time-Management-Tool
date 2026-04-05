@@ -3,7 +3,7 @@
 <head>
   
   <script>
-  window.dataLayer = window.dataLayer || [];
+  window.dataLayer = winadow.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
     analytics_storage: 'denied'
@@ -346,7 +346,7 @@
       </p>
 
       <!-- Stats Row -->
-      <div style="display: flex; gap: clamp(12px, 4vw, 48px); justify-content: center; flex-wrap: nowrap; margin-bottom: 40px;">
+<div id="heroStats" style="display: flex; gap: clamp(12px, 4vw, 48px); justify-content: center; flex-wrap: nowrap; margin-bottom: 40px;">
         <div style="text-align: center;">
           <div style="font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: #6366f1;">3</div>
           <div style="font-size: 11px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">School Levels</div>
@@ -364,7 +364,7 @@
       </div>
 
       <!-- CTA -->
-      <div style="margin-bottom: 44px;">
+      <div id="heroCTA" style="margin-bottom: 44px;">
         <button id="b" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 16px 36px; border-radius: 50px; border: none; color: white; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 8px 30px rgba(99,102,241,0.4); transition: transform 0.25s ease, box-shadow 0.25s ease; letter-spacing: 0.2px;">
           Start Planning →
         </button>
@@ -660,6 +660,33 @@ body.removelight .removeBtn {
     transform: translateY(0);
   }
 }
+
+/* ── Scroll & entrance animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes onboardSlideUp {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+@keyframes onboardScaleUp {
+  from { opacity: 0; transform: scale(0.93) translateY(18px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+.anim-ready {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1);
+}
+.anim-ready.anim-left  { transform: translateX(-32px); }
+.anim-ready.anim-right { transform: translateX(32px);  }
+.anim-ready.visible    { opacity: 1 !important; transform: none !important; }
+.anim-d1 { transition-delay: 0.08s !important; }
+.anim-d2 { transition-delay: 0.18s !important; }
+.anim-d3 { transition-delay: 0.28s !important; }
+.anim-d4 { transition-delay: 0.38s !important; }
+.anim-d5 { transition-delay: 0.48s !important; }
 
 #controls {
     transition: transform 0.5s ease, opacity 0.5s ease;
@@ -3475,6 +3502,19 @@ const onboardingBack = document.getElementById('onboardingBack');
       eDiv.style.transform = 'translateX(0%)';
       a.style.transition = 'transform 0.5s ease-in-out';
       a.style.transform = 'translateX(-110%)';
+      setTimeout(function() {
+        var _h2   = eDiv.querySelector('h2');
+        var _p    = eDiv.querySelector('div > p');
+        var _card = eDiv.querySelector('div > div');
+        var _back = document.getElementById('onboardingBack');
+        [_h2, _p, _card, _back].forEach(function(el) {
+          if (el) { el.style.animation = 'none'; void el.offsetWidth; }
+        });
+        if (_h2)   _h2.style.animation   = 'onboardSlideUp 0.55s cubic-bezier(0.16,1,0.3,1) 0.06s both';
+        if (_p)    _p.style.animation    = 'onboardSlideUp 0.55s cubic-bezier(0.16,1,0.3,1) 0.18s both';
+        if (_card) _card.style.animation = 'onboardScaleUp 0.60s cubic-bezier(0.16,1,0.3,1) 0.28s both';
+        if (_back) _back.style.animation = 'onboardSlideUp 0.50s cubic-bezier(0.16,1,0.3,1) 0.40s both';
+      }, 60);
     });
 
     onboardingSubmit.addEventListener("click", function() {
@@ -5600,8 +5640,57 @@ return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f 
     }
     requestAnimationFrame(loop);
   }
-  requestAnimationFrame(loop);
+requestAnimationFrame(loop);
 })();
+  </script>
+  <script>
+  /* ── Home page animations ── */
+  (function() {
+    var a = document.getElementById('a');
+    if (!a) return;
+
+    // Hero section: CSS entrance animations with stagger
+    var heroItems = [
+      { id: 'info',      delay: '0.28s' },
+      { id: 'heroStats', delay: '0.46s' },
+      { id: 'heroCTA',   delay: '0.62s' },
+      { id: 'name',      delay: '0.78s' },
+    ];
+    heroItems.forEach(function(item) {
+      var el = document.getElementById(item.id);
+      if (!el) return;
+      el.style.opacity = '0';
+      el.style.animation = 'fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) ' + item.delay + ' forwards';
+    });
+
+    // Scroll-triggered animations for below-fold elements
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { root: a, threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+    function tag(el, extra) {
+      if (!el) return;
+      el.classList.add('anim-ready');
+      (extra || []).forEach(function(c) { el.classList.add(c); });
+      obs.observe(el);
+    }
+
+    // Feature cards — directional stagger
+    var cards = a.querySelectorAll('#why > div');
+    if (cards[0]) tag(cards[0], ['anim-left',  'anim-d1']);
+    if (cards[1]) tag(cards[1], ['anim-d2']);
+    if (cards[2]) tag(cards[2], ['anim-right', 'anim-d3']);
+
+    // Accordion items — sequential fade-up
+    a.querySelectorAll('.accordion-item').forEach(function(el, i) {
+      tag(el, ['anim-d' + Math.min(i + 1, 5)]);
+    });
+  })();
   </script>
   </body>
 </html>
