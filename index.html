@@ -1031,7 +1031,7 @@ body.assignmentsdark .assign-summary-time {
   background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
   padding: 24px 28px;
   border-radius: 20px;
-  margin-top: 25px;
+  margin-top: 75px;
   white-space: pre-wrap;
   color: #1e293b;
   height: auto;
@@ -1647,7 +1647,7 @@ function restoreTimerState() {
     document.getElementById("startTimerBtn").style.display = "none";
     document.getElementById("PauseTimerBtn").style.display = "none";
     document.getElementById("ResumeTimerBtn").style.display = "block";
-    document.getElementById("currentAssignmentDisplay").textContent = "Session restored — tap Resume to continue!";
+    document.getElementById("currentAssignmentDisplay").textContent = "Session restored: tap Resume to continue!";
     setTimeout(() => tc.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
   } catch(e) { console.error("Restore failed:", e); clearTimerState(); }
 }
@@ -3936,7 +3936,7 @@ document.getElementById('privacyLink').addEventListener('click', function(e) {
     <h2>5. Cookies &amp; Analytics</h2>
     <p>We use cookies and similar tracking technologies to monitor the performance of our Service and understand how you interact with it.
 Google Analytics: We use Google Analytics to collect information such as your IP address, browser type, and the pages you visit. This data is used to analyze traffic and improve the tool's functionality. Google Analytics uses first-party cookies to track these interactions.
-Google Search Console: We use Google Search Console to monitor our site's presence in Google Search results. This tool does not track individual users or use cookies — it only provides aggregate data about how our site appears in search.</p>
+Google Search Console: We use Google Search Console to monitor our site's presence in Google Search results. This tool does not track individual users or use cookies. It only provides aggregate data about how our site appears in search.</p>
 </div>
 
 <div class="section" id="children">
@@ -4351,7 +4351,7 @@ if (seg) {
     const extraText = (futureMinutes > 0 && hasBreakBeforeNext) ? ` (+ ${futureMinutes} min after break)` : "";
     const displayMins = (futureMinutes > 0 && !hasBreakBeforeNext) ? remainingMins + futureMinutes : remainingMins;
     document.getElementById("currentAssignmentDisplay").textContent =
-      `Current Assignment: ${seg.name} — ${displayMins} min remaining${extraText}`;
+      `Current Assignment: ${seg.name} : ${displayMins} min remaining${extraText}`;
   }
 }
 
