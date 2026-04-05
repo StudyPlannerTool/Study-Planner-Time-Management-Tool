@@ -3569,13 +3569,38 @@ const _existingAssignments = document.querySelectorAll('#assignmentsContainer .a
     });
 
    
-     d.addEventListener("click", function() {
+d.addEventListener("click", function() {
   localStorage.removeItem("studyPlanner_pageState");
   c.style.transition = 'transform 0.5s ease-in-out';
   c.style.transform = 'translateX(110%)';
   a.style.transition = 'transform 0.5s ease-in-out';
   a.style.transform = 'translateX(0%)';
   document.getElementById("controls").classList.remove("show");
+  setTimeout(function() {
+    var heroItems = [
+      { id: 'info',      delay: '0.10s' },
+      { id: 'heroStats', delay: '0.24s' },
+      { id: 'heroCTA',   delay: '0.38s' },
+      { id: 'name',      delay: '0.50s' },
+    ];
+    heroItems.forEach(function(item) {
+      var el = document.getElementById(item.id);
+      if (!el) return;
+      el.style.animation = 'none';
+      el.style.opacity = '0';
+      void el.offsetWidth;
+      el.style.animation = 'fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) ' + item.delay + ' forwards';
+    });
+    var obs2 = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); obs2.unobserve(entry.target); }
+      });
+    }, { root: document.getElementById('a'), threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+    document.getElementById('a').querySelectorAll('.anim-ready').forEach(function(el) {
+      el.classList.remove('visible');
+      obs2.observe(el);
+    });
+  }, 520);
   const presetBtn = document.getElementById("viewPresetButton");
   if (presetBtn && presetBtn.classList.contains('active')) {
     presetBtn.classList.remove('active');
