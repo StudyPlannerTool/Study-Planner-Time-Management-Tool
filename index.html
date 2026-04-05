@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1267,6 +1268,10 @@ body.presetColslight .preset-col {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes dropdownFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-6px); }
+}
 .custom-select-option {
   padding: 9px 13px;
   font-family: 'Inter', sans-serif;
@@ -2321,7 +2326,7 @@ startBtn.addEventListener("click", function() {
   document.getElementById("timerControls").style.display = 'none';
   document.getElementById("topContainer").style.display = 'none';
   controls.style.display = 'none';
-  document.getElementById("showMoreContainer").style.display = "none";
+document.getElementById("showMoreContainer").style.display = "none";
   document.getElementById("showLessContainer").style.display = "none";
   output.style.maxHeight = "none";
   output.style.overflow = "visible";
@@ -2617,12 +2622,16 @@ function closeAllCustomDropdowns() {
     w.classList.remove('open');
   });
   document.querySelectorAll('.custom-select-dropdown.open').forEach(dd => {
-    dd.classList.remove('open');
-    dd.style.cssText = '';
-    if (dd._originalParent) {
-      dd._originalParent.appendChild(dd);
-      dd._originalParent = null;
-    }
+    dd.style.animation = 'dropdownFadeOut 0.15s ease forwards';
+    setTimeout(() => {
+      dd.classList.remove('open');
+      dd.style.animation = '';
+      dd.style.cssText = '';
+      if (dd._originalParent) {
+        dd._originalParent.appendChild(dd);
+        dd._originalParent = null;
+      }
+    }, 150);
   });
 }
 
@@ -3552,6 +3561,10 @@ const _existingAssignments = document.querySelectorAll('#assignmentsContainer .a
    
 d.addEventListener("click", function() {
   localStorage.removeItem("studyPlanner_pageState");
+  ['info', 'heroStats', 'heroCTA', 'name'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.animation = 'none'; void el.offsetWidth; el.style.opacity = '0'; }
+  });
   c.style.transition = 'transform 0.5s ease-in-out';
   c.style.transform = 'translateX(110%)';
   a.style.transition = 'transform 0.5s ease-in-out';
@@ -5694,6 +5707,45 @@ requestAnimationFrame(loop);
     });
   })();
   </script>
+  
+  <div id="hoverTooltip" style="position:fixed;z-index:150000;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 32px rgba(0,0,0,0.22),0 2px 8px rgba(0,0,0,0.1);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#1e293b;line-height:1.55;max-width:240px;pointer-events:none;border:1px solid rgba(99,102,241,0.15);display:none;opacity:0;transition:opacity 0.15s ease;"></div>
+<script>
+(function() {
+  var tip = document.getElementById('hoverTooltip');
+  var TIPS = {
+    addAssignmentBtn: 'Click to add/edit an assignment to your study plan.',
+    calculateBtn: 'Click after adding all necessary assignments to generate your plan.',
+    startTimerBtn: 'Begin studying by clicking this button.',
+    PauseTimerBtn: 'Momentarily stops the timer countdown and session progress.',
+    ResumeTimerBtn: 'Re-enables the timer countdown and session progress.',
+    doneEarlyBtn: 'Moves on to the next assignment if done earlier than planned, or finishes the session if it is the last assignment.'
+  };
+  function positionTip(btn) {
+    var r = btn.getBoundingClientRect();
+    var TW = 240, TH = tip.offsetHeight || 40, GAP = 8;
+    var x = r.left + r.width / 2 - TW / 2;
+    var y = r.top - TH - GAP;
+    if (y < 8) y = r.bottom + GAP;
+    x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  Object.keys(TIPS).forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('mouseenter', function() {
+      tip.textContent = TIPS[id];
+      tip.style.display = 'block';
+      positionTip(btn);
+      requestAnimationFrame(function() { tip.style.opacity = '1'; });
+    });
+    btn.addEventListener('mouseleave', function() {
+      tip.style.opacity = '0';
+      setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
+    });
+  });
+})();
+</script>
   </body>
 </html>
 
