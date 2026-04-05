@@ -331,6 +331,16 @@
     <button id="Dark" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Dark Mode</button>
   </div>
   </div>
+<div id="sessionBar" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background:rgba(255,255,255,0.15); border-bottom:1.5px solid rgba(139,92,246,0.28); box-shadow:0 4px 18px rgba(99,102,241,0.18),0 1px 4px rgba(0,0,0,0.08); padding:6px 32px 10px; box-sizing:border-box;">
+  <div style="text-align:center; font-family:'Inter',sans-serif; font-weight:700; font-size:10px; color:#6366f1; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">Session Controls</div>
+  <div style="max-width:600px; margin:0 auto; display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:nowrap;">
+    <button id="PauseTimerBtn" style="flex:1; max-width:150px; background:#be185d; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #831843; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Pause Session</button>
+    <button id="ResumeTimerBtn" style="flex:1; max-width:150px; background:#ea580c; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #9a3412; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Resume Session</button>
+    <button id="doneEarlyBtn" style="flex:1; max-width:180px; background:#6d28d9; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
+    <button id="resetTimerBtn" style="flex:1; max-width:150px; background:#475569; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset Session</button>
+  </div>
+</div>
+
   <div id="a" style="text-align: center;">
 
     <!-- Hero Section -->
@@ -1441,43 +1451,18 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   <p style="text-align: center; color: #94a3b8; font-family: 'Inter', sans-serif; font-size: 13px; margin: 0 0 16px; font-weight: 500;">Your assignments visualized across days</p>
 
 <div id="timerControls" style="flex-direction: column;">
-  <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: nowrap; width: 100%;">
-  <button id="startTimerBtn" style="flex: 1; max-width: 150px; min-width: 0; background: #059669; border: none; border-radius: 7px; padding: 10px 16px; color: white; font-family: 'Inter', sans-serif; font-weight: 700; font-size: clamp(11px,2.2vw,14px); letter-spacing: 0.2px; box-shadow: 0 4px 0 #064e3b; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+  <button id="startTimerBtn" style="width:100%; max-width:200px; background:#059669; border:none; border-radius:7px; padding:10px 16px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; letter-spacing:0.2px; box-shadow:0 4px 0 #064e3b; transition:transform 0.1s ease,box-shadow 0.1s ease; cursor:pointer;">
     Start Session
   </button>
-  
- <button id="PauseTimerBtn" style="display: none; flex: 1; max-width: 150px; min-width: 0; background: #be185d; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #831843; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-    Pause Session
-  </button>
-  
-  <button id="ResumeTimerBtn" style="display: none; flex: 1; max-width: 150px; min-width: 0; background: #ea580c; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #9a3412; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-    Resume Session
-  </button>
-
-  <button id="resetTimerBtn" style="display:none; flex: 1; max-width: 150px; min-width: 0; background: #475569; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #1e293b; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-    Reset Session
-  </button>
-  </div>
- <div id="countdownDisplay"
-       style="
-         font-size: 20px;
-         font-weight: 700;
-         color: #1e293b;
-         min-width: 120px;
-         text-align: center;
-         margin-top: 4px;
-         display: none;
-       ">
-  </div>
 </div>
 
-<div id="currentAssignmentDisplay" style="display:none; text-align:center; margin:8px auto 4px; max-width:94%; background:rgba(99,102,241,0.07); border:1px solid rgba(99,102,241,0.18); border-radius:10px; padding:7px 16px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#1e293b; letter-spacing:0.1px; line-height:1.5;"></div>
-<div id="breakMessage" style="display:none; text-align:center; font-size:14px; font-weight:700; color:#059669; margin-bottom:20px; font-family:'Inter',sans-serif; letter-spacing:0.1px;">☕ Time to stretch! Drink some water.</div>
-  <div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin-bottom:28px; padding:0 4px; letter-spacing:0.3px;">
-    <span id="sessionStartTimeLabel">Started: --</span>
-    <span id="sessionEndTimeLabel">Ends: --</span>
-  </div>
-  <div id="playhead-triangle" style="
+<div id="timerInfoBox" style="display:none; background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.15); border-radius:16px; padding:18px 20px 14px; margin:16px 0 0; text-align:center;">
+<div id="countdownDisplay" style="font-size:20px; font-weight:700; color:#1e293b; text-align:center; margin-bottom:8px;"></div>
+  <div id="currentAssignmentDisplay" style="font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#475569; letter-spacing:0.1px; line-height:1.55;"></div>
+  <div id="breakMessage" style="display:none; font-size:13px; font-weight:700; color:#059669; margin-top:8px; font-family:'Inter',sans-serif;">☕ Time to stretch! Drink some water.</div>
+</div>
+
+<div id="playhead-triangle" style="
   position: absolute;
   display: none;
   width: 0;
@@ -1491,6 +1476,10 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
 "></div>
 <div id="timelineBar"></div>
 
+<div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin:10px 2px 0; padding:0 2px; letter-spacing:0.3px;">
+  <span id="sessionStartTimeLabel">Started: --</span>
+  <span id="sessionEndTimeLabel">Ends: --</span>
+</div>
 
  <div id="timelineLegend" style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:16px; row-gap:5px; margin:14px 0 4px; padding:8px 14px; background:rgba(99,102,241,0.04); border-radius:10px;">
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#800080;flex-shrink:0;"></span>Priority</span>
@@ -1500,12 +1489,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#999;flex-shrink:0;"></span>Break</span>
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:2px;height:12px;background:#94a3b8;flex-shrink:0;"></span>Day</span>
   </div>
- <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 16px 0;">
-  <span id="doneEarlyLabel" style="display: none; font-size: 11px; font-weight: 700; color: #6366f1; letter-spacing: 1px; text-transform: uppercase; font-family: 'Syne', sans-serif;">Done early with this assignment?</span>
-  <button id="doneEarlyBtn" style="display:none; background: #6d28d9; border: none; box-shadow: 0 3px 0 #3b0764; padding: 8px 18px; border-radius: 7px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; cursor: pointer; transition: background 0.1s ease, box-shadow 0.1s ease, transform 0.1s ease;">
-    ✓ Skip to next assignment
-  </button>
-</div>
+
 <script>
 var hasCalculated = false;
 var calculatedStateSnapshot = null;
@@ -1649,12 +1633,12 @@ function restoreTimerState() {
     document.getElementById("c").style.transform = "translateX(0%)";
     document.getElementById("a").style.transition = "none";
     document.getElementById("a").style.transform = "translateX(-110%)";
-    document.getElementById("controls").classList.add("show");
+  document.getElementById("controls").classList.add("show");
     document.getElementById("controls").style.display = "none";
-    document.getElementById("timerControls").style.display = "flex";
+    document.getElementById("timerControls").style.display = "none";
+    document.getElementById("timerInfoBox").style.display = "block";
+    document.getElementById("sessionBar").style.display = "block";
     document.getElementById("resetTimerBtn").style.display = "block";
-    document.getElementById("currentAssignmentDisplay").style.display = "block";
-    document.getElementById("doneEarlyLabel").style.display = "block";
     document.getElementById("doneEarlyBtn").style.display = "block";
     document.getElementById("topContainer").style.display = "none";
     document.getElementById("showMoreContainer").style.display = "none";
@@ -1663,7 +1647,6 @@ function restoreTimerState() {
     document.getElementById("startTimerBtn").style.display = "none";
     document.getElementById("PauseTimerBtn").style.display = "none";
     document.getElementById("ResumeTimerBtn").style.display = "block";
-    document.getElementById("countdownDisplay").style.display = "block";
     document.getElementById("currentAssignmentDisplay").textContent = "Session restored — tap Resume to continue!";
     setTimeout(() => tc.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
   } catch(e) { console.error("Restore failed:", e); clearTimerState(); }
@@ -2333,8 +2316,9 @@ startBtn.addEventListener("click", function() {
     }
   })();
   document.getElementById("resetTimerBtn").style.display = 'block';
-  currentAssignmentDisplay.style.display = 'block';
-  document.getElementById("doneEarlyLabel").style.display = 'block';
+  document.getElementById("timerInfoBox").style.display = 'block';
+  document.getElementById("sessionBar").style.display = 'block';
+  document.getElementById("timerControls").style.display = 'none';
   document.getElementById("topContainer").style.display = 'none';
   controls.style.display = 'none';
   document.getElementById("showMoreContainer").style.display = "none";
@@ -2343,7 +2327,6 @@ startBtn.addEventListener("click", function() {
   output.style.overflow = "visible";
   const outputFadeSession = document.getElementById("outputFade");
   if (outputFadeSession) outputFadeSession.style.display = "none";
-  document.getElementById("countdownDisplay").style.display = 'block';
   document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'block';
@@ -2366,9 +2349,9 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
   
+document.getElementById("sessionBar").style.display = 'none';
+  document.getElementById("timerInfoBox").style.display = 'none';
   document.getElementById("resetTimerBtn").style.display = 'none';
-  document.getElementById("countdownDisplay").style.display = 'none';
-  document.getElementById("currentAssignmentDisplay").style.display = 'none';
   document.getElementById("z").style.display = 'block';
   document.getElementById("topContainer").style.display = 'block';
   document.getElementById("controls").style.display = 'block';
@@ -2377,8 +2360,6 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("ResumeTimerBtn").style.display = 'none';
   const deb = document.getElementById("doneEarlyBtn");
   if (deb) deb.style.display = 'none';
-  const debl = document.getElementById("doneEarlyLabel");
-  if (debl) debl.style.display = 'none';
 };
 calculateBtn.addEventListener('click', () => {
   startBtn.style.display = 'block';
@@ -4270,10 +4251,10 @@ document.getElementById("resetTimerBtn").onclick = () => {
   window._tutorialBypassBlock = true;
   document.getElementById("calculateBtn").click();
   window._tutorialBypassBlock = false;
-  document.getElementById("countdownDisplay").style.display = 'none';
+document.getElementById("sessionBar").style.display = 'none';
+  document.getElementById("timerInfoBox").style.display = 'none';
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
-  document.getElementById("currentAssignmentDisplay").style.display = 'none';
   document.getElementById("z").style.display = 'block';
   document.getElementById("topContainer").style.display = 'block';
   document.getElementById("controls").style.display = 'block';
@@ -4282,8 +4263,6 @@ document.getElementById("resetTimerBtn").onclick = () => {
   document.getElementById("ResumeTimerBtn").style.display = 'none';
   const deb = document.getElementById("doneEarlyBtn");
   if (deb) deb.style.display = 'none';
-  const debl = document.getElementById("doneEarlyLabel");
-  if (debl) debl.style.display = 'none';
   document.title = 'Study Planner & Time Management Tool';
   releaseWakeLock();
   const _rTR = document.getElementById("sessionTimeRow");
@@ -4344,16 +4323,14 @@ if (playhead && playhead.style.display !== "none") {
 
 const seg = segmentMap[segIndex];
 if (seg) {
-  const deb = document.getElementById("doneEarlyBtn");
-  const doneEarlyLabelEl = document.getElementById("doneEarlyLabel");
-  if (deb) {
-    deb.style.display = (!seg.isBreak) ? "block" : "none";
-    if (!seg.isBreak) {
-      const _futureNonBreak = segmentMap.slice(segIndex + 1).filter(s => !s.isBreak && s.name !== seg.name);
-      deb.textContent = _futureNonBreak.length === 0 ? "✓ Finish session" : "✓ Skip to next assignment";
+ const deb = document.getElementById("doneEarlyBtn");
+    if (deb) {
+      deb.style.display = (!seg.isBreak) ? "block" : "none";
+      if (!seg.isBreak) {
+        const _futureNonBreak = segmentMap.slice(segIndex + 1).filter(s => !s.isBreak && s.name !== seg.name);
+        deb.textContent = _futureNonBreak.length === 0 ? "✓ Finish session" : "✓ Skip to next assignment";
+      }
     }
-  }
-  if (doneEarlyLabelEl) doneEarlyLabelEl.style.display = (!seg.isBreak) ? "block" : "none";
   const _bm = document.getElementById("breakMessage");
   if (_bm) _bm.style.display = seg.isBreak ? "block" : "none";
   const remainingPct = seg.end - progressPercent;
@@ -5719,7 +5696,6 @@ requestAnimationFrame(loop);
   </script>
   </body>
 </html>
-
 
 
 
