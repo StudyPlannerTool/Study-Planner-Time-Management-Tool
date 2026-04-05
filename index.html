@@ -331,13 +331,13 @@
     <button id="Dark" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Dark Mode</button>
   </div>
   </div>
-<div id="sessionBar" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background:rgba(255,255,255,0.15); border-bottom:1.5px solid rgba(139,92,246,0.28); box-shadow:0 4px 18px rgba(99,102,241,0.18),0 1px 4px rgba(0,0,0,0.08); padding: 15px 50px 20px; box-sizing:border-box;">
+<div id="sessionBar" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background: rgba(255,255,255,0.15); border-bottom:1.5px solid rgba(139,92,246,0.28); box-shadow:0 4px 18px rgba(99,102,241,0.18),0 1px 4px rgba(0,0,0,0.08); padding: 15px 50px 20px; box-sizing:border-box;">
   <div style="text-align:center; font-family:'Inter',sans-serif; font-weight:700; font-size:10px; color:#6366f1; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">Session Controls</div>
   <div style="max-width:600px; margin:0 auto; display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:nowrap;">
-    <button id="PauseTimerBtn" style="flex:1; max-width:150px; background:#be185d; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #831843; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Pause Session</button>
-    <button id="ResumeTimerBtn" style="flex:1; max-width:150px; background:#ea580c; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #9a3412; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Resume Session</button>
+    <button id="PauseTimerBtn" style="flex:1; max-width:150px; background:#be185d; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #831843; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Pause</button>
+    <button id="ResumeTimerBtn" style="flex:1; max-width:150px; background:#ea580c; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #9a3412; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Resume</button>
     <button id="doneEarlyBtn" style="flex:1; max-width:180px; background:#6d28d9; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
-    <button id="resetTimerBtn" style="flex:1; max-width:150px; background:#475569; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset Session</button>
+    <button id="resetTimerBtn" style="flex:1; max-width:150px; background:#475569; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
   </div>
 </div>
 
@@ -4328,7 +4328,7 @@ if (seg) {
       deb.style.display = (!seg.isBreak) ? "block" : "none";
       if (!seg.isBreak) {
         const _futureNonBreak = segmentMap.slice(segIndex + 1).filter(s => !s.isBreak && s.name !== seg.name);
-        deb.textContent = _futureNonBreak.length === 0 ? "✓ Finish session" : "✓ Skip to next assignment";
+        deb.textContent = _futureNonBreak.length === 0 ? "✓ Finish" : "✓ Skip to next assignment";
       }
     }
   const _bm = document.getElementById("breakMessage");
