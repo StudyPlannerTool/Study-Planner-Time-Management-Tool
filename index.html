@@ -1414,20 +1414,20 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   <p style="text-align: center; color: #94a3b8; font-family: 'Inter', sans-serif; font-size: 13px; margin: 0 0 16px; font-weight: 500;">Your assignments visualized across days</p>
 
 <div id="timerControls" style="flex-direction: column;">
-  <div style="display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap;">
-  <button id="startTimerBtn" style="background: #059669; border: none; border-radius: 7px; padding: 10px 28px; color: white; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.2px; box-shadow: 0 4px 0 #064e3b; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">
+  <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: nowrap; width: 100%;">
+  <button id="startTimerBtn" style="flex: 1; max-width: 200px; min-width: 0; background: #059669; border: none; border-radius: 7px; padding: 10px 16px; color: white; font-family: 'Inter', sans-serif; font-weight: 700; font-size: clamp(11px,2.2vw,14px); letter-spacing: 0.2px; box-shadow: 0 4px 0 #064e3b; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     Start Session
   </button>
   
- <button id="PauseTimerBtn" style="display: none; background: #be185d; border: none; border-radius: 7px; padding: 8px 18px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #831843; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">
+ <button id="PauseTimerBtn" style="display: none; flex: 1; max-width: 150px; min-width: 0; background: #be185d; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #831843; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     Pause Session
   </button>
   
-  <button id="ResumeTimerBtn" style="display: none; background: #ea580c; border: none; border-radius: 7px; padding: 8px 18px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #9a3412; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">
+  <button id="ResumeTimerBtn" style="display: none; flex: 1; max-width: 150px; min-width: 0; background: #ea580c; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #9a3412; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     Resume Session
   </button>
 
-  <button id="resetTimerBtn" style="display:none; background: #475569; border: none; border-radius: 7px; padding: 8px 18px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #1e293b; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">
+  <button id="resetTimerBtn" style="display:none; flex: 1; max-width: 150px; min-width: 0; background: #475569; border: none; border-radius: 7px; padding: 8px 12px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: clamp(11px,2vw,13px); letter-spacing: 0.1px; box-shadow: 0 3px 0 #1e293b; transition: background 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
     Reset Session
   </button>
   </div>
@@ -1444,7 +1444,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   </div>
 </div>
 
-<div id="currentAssignmentDisplay" style="text-align: center; font-size: 15px; margin-top: 6px; color: #1e293b; margin-bottom: 6px; font-family: 'Franchise', sans-serif; font-weight: 700; letter-spacing: 0.2px; min-height: 22px; line-height: 1.4;"></div>
+<div id="currentAssignmentDisplay" style="display:none; text-align:center; margin:8px auto 4px; max-width:94%; background:rgba(99,102,241,0.07); border:1px solid rgba(99,102,241,0.18); border-radius:10px; padding:7px 16px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#1e293b; letter-spacing:0.1px; line-height:1.5;"></div>
 <div id="breakMessage" style="display:none; text-align:center; font-size:14px; font-weight:700; color:#059669; margin-bottom:20px; font-family:'Inter',sans-serif; letter-spacing:0.1px;">☕ Time to stretch! Drink some water.</div>
   <div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin-bottom:28px; padding:0 4px; letter-spacing:0.3px;">
     <span id="sessionStartTimeLabel">Started: --</span>
@@ -1465,13 +1465,13 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
 <div id="timelineBar"></div>
 
 
-  <div style="display:flex; justify-content:center; gap:15px; font-size:13px; margin-bottom:8px; margin-top: 20px;">
-    <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#800080; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Priority</div>
-    <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#d9613d; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Hard</div>
-    <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#f0ad4e; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Medium</div>
-    <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#5cb85c; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Easy</div>
-    <div style="color: black;"><span style="display:inline-block;width:16px;height:16px;background:#999; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Break</div>
-    <div style="color: black;"><span style="display:inline-block;width:6px;height:20px;background:black; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);"></span> Day Divider</div>
+ <div id="timelineLegend" style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:16px; row-gap:5px; margin:14px 0 4px; padding:8px 14px; background:rgba(99,102,241,0.04); border-radius:10px;">
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#800080;flex-shrink:0;"></span>Priority</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d9613d;flex-shrink:0;"></span>Hard</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0ad4e;flex-shrink:0;"></span>Medium</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5cb85c;flex-shrink:0;"></span>Easy</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#999;flex-shrink:0;"></span>Break</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:2px;height:12px;background:#94a3b8;flex-shrink:0;"></span>Day</span>
   </div>
  <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 16px 0;">
   <span id="doneEarlyLabel" style="display: none; font-size: 11px; font-weight: 700; color: #6366f1; letter-spacing: 1px; text-transform: uppercase; font-family: 'Syne', sans-serif;">Done early with this assignment?</span>
@@ -3059,14 +3059,17 @@ body.assignmentsdark input::placeholder {
 function _closeCustomModal(cb) {
   var ov = document.getElementById("customModalOverlay");
   var box = document.getElementById("customModalBox");
-  box.style.animation = "customModalBoxOut 0.18s ease forwards";
-  ov.style.animation = "customModalBgOut 0.22s ease forwards";
+  box.style.animation = "none";
+  ov.style.animation = "none";
+  void box.offsetWidth;
+  box.style.animation = "customModalBoxOut 0.28s cubic-bezier(0.4,0,0.6,1) forwards";
+  ov.style.animation = "customModalBgOut 0.28s ease forwards";
   setTimeout(function() {
     ov.style.display = "none";
     ov.style.animation = "";
     box.style.animation = "";
     if (cb) cb();
-  }, 220);
+  }, 300);
 }
 function showCustomAlert(msg, onOk) {
   document.getElementById("customModalMsg").textContent = msg;
@@ -5552,9 +5555,10 @@ document.addEventListener('click', function (e) {
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var W, H, start = null;
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function resize() { W = canvas.width = canvas.offsetWidth || window.innerWidth; H = canvas.height = canvas.offsetHeight || window.innerHeight; }
   resize();
   window.addEventListener("resize", resize);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
   var DARK_P = Array.from({length: 110}, function(_, i) {
     var f = Math.abs((Math.sin(i * 137.508) * 10000) % 1);
     var f2 = Math.abs((Math.sin(i * 271.1) * 10000) % 1);
@@ -5595,6 +5599,8 @@ return { f: f, f2: f2, r: 1.2 + f * 1.8, alpha: 0.09 + f * 0.18, spd: 0.006 + f 
   </script>
   </body>
 </html>
+
+
 
 
 
