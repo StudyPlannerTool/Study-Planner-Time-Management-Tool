@@ -4338,7 +4338,7 @@ if (seg) {
   const remainingMins = Math.ceil((remainingPct / totalPct) * seg.durationMinutes);
 
   if (seg.isBreak) {
-    document.getElementById("currentAssignmentDisplay").textContent = `Current Assignment: Break — ${remainingMins} min remaining`;
+    document.getElementById("currentAssignmentDisplay").textContent = `Current: Break — ${remainingMins} min left`;
   } else {
    
     const futureSegs = segmentMap.slice(segIndex + 1);
@@ -4348,10 +4348,10 @@ if (seg) {
       .filter(s => !s.isBreak && s.name === seg.name)
       .reduce((sum, s) => sum + s.durationMinutes, 0);
 
-    const extraText = (futureMinutes > 0 && hasBreakBeforeNext) ? ` (+ ${futureMinutes} min after break)` : "";
+    const extraText = (futureMinutes > 0 && hasBreakBeforeNext) ? ` (+${futureMinutes} min after break)` : "";
     const displayMins = (futureMinutes > 0 && !hasBreakBeforeNext) ? remainingMins + futureMinutes : remainingMins;
     document.getElementById("currentAssignmentDisplay").textContent =
-      `Current Assignment: ${seg.name} : ${displayMins} min remaining${extraText}`;
+      `Current: ${seg.name} — ${displayMins} min left ${extraText}`;
   }
 }
 
