@@ -334,10 +334,10 @@
 <div id="sessionBar" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background: rgba(255,255,255,0.15); border-bottom:1.5px solid rgba(139,92,246,0.28); box-shadow:0 4px 18px rgba(99,102,241,0.18),0 1px 4px rgba(0,0,0,0.08); padding: 15px 50px 20px; box-sizing:border-box;">
   <div style="text-align:center; font-family:'Inter',sans-serif; font-weight:700; font-size:10px; color:#6366f1; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">Session Controls</div>
   <div style="max-width:600px; margin:0 auto; display:flex; gap:8px; justify-content:center; align-items:center; flex-wrap:nowrap;">
-    <button id="PauseTimerBtn" style="flex:1; max-width:150px; background:#be185d; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #831843; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Pause</button>
-    <button id="ResumeTimerBtn" style="flex:1; max-width:150px; background:#ea580c; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #9a3412; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Resume</button>
-    <button id="doneEarlyBtn" style="flex:1; max-width:180px; background:#6d28d9; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
-    <button id="resetTimerBtn" style="flex:1; max-width:150px; background:#475569; border:none; border-radius:7px; padding:9px 14px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
+<button id="PauseTimerBtn" style="max-width:150px; background:#be185d; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #831843; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Pause</button>
+<button id="ResumeTimerBtn" style="max-width:150px; background:#ea580c; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #9a3412; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Resume</button>
+<button id="doneEarlyBtn" style="max-width:180px; background:#6d28d9; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
+<button id="resetTimerBtn" style="max-width:150px; background:#475569; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:clamp(11px,2vw,13px); box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
   </div>
 </div>
 
@@ -1594,7 +1594,7 @@ function restoreTimerState() {
     }
     if (state.schoolLevel) document.getElementById("schoolLevel").value = state.schoolLevel;
     const output = document.getElementById("output");
-    if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.add("show"); output.style.maxHeight = "none"; output.style.overflow = "visible"; }
+if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.add("show"); output.style.maxHeight = "300px"; output.style.overflow = "hidden"; document.getElementById("showMoreContainer").style.display = "block"; const _rof = document.getElementById("outputFade"); if (_rof) _rof.style.display = "block"; }
     const tc = document.getElementById("timelineContainer");
     tc.style.display = "block";
     const bar = document.getElementById("timelineBar");
@@ -1645,8 +1645,9 @@ function restoreTimerState() {
     document.getElementById("resetTimerBtn").style.display = "block";
     document.getElementById("doneEarlyBtn").style.display = "block";
     document.getElementById("topContainer").style.display = "none";
-    document.getElementById("showMoreContainer").style.display = "none";
+    document.getElementById("showMoreContainer").style.display = "block";
     document.getElementById("showLessContainer").style.display = "none";
+    const _rofR = document.getElementById("outputFade"); if (_rofR) _rofR.style.display = "block";
     const of = document.getElementById("outputFade"); if (of) of.style.display = "none";
     document.getElementById("startTimerBtn").style.display = "none";
     document.getElementById("PauseTimerBtn").style.display = "none";
@@ -2325,13 +2326,7 @@ startBtn.addEventListener("click", function() {
   document.getElementById("timerControls").style.display = 'none';
   document.getElementById("topContainer").style.display = 'none';
   controls.style.display = 'none';
-  document.getElementById("showMoreContainer").style.display = "none";
-  document.getElementById("showLessContainer").style.display = "none";
-  output.style.maxHeight = "none";
-  output.style.overflow = "visible";
-  const outputFadeSession = document.getElementById("outputFade");
-  if (outputFadeSession) outputFadeSession.style.display = "none";
-  document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
+document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'block';
   ResumeBtn.style.display = 'none';
@@ -2852,10 +2847,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
  document.getElementById("showMoreBtn").addEventListener("click", function() {
+  const _sessionActive = document.getElementById("resetTimerBtn") && document.getElementById("resetTimerBtn").style.display !== "none";
   output.style.maxHeight = "none";
   output.style.overflow = "visible";
   document.getElementById("topContainer").style.display = "none";
-  document.getElementById("timelineContainer").style.display = "none";
+  if (!_sessionActive) document.getElementById("timelineContainer").style.display = "none";
   document.getElementById("showMoreContainer").style.display = "none";
   document.getElementById("showLessContainer").style.display = "block";
   document.getElementById("outdatedBanner").style.display = "none";
@@ -2866,14 +2862,17 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.getElementById("showLessBtn").addEventListener("click", function() {
+  const _sessionActiveLess = document.getElementById("resetTimerBtn") && document.getElementById("resetTimerBtn").style.display !== "none";
   output.style.maxHeight = "300px";
   output.style.overflow = "hidden";
-  document.getElementById("topContainer").style.display = "block";
+  if (!_sessionActiveLess) {
+    document.getElementById("topContainer").style.display = "block";
+    controls.style.display = "block";
+    document.getElementById("z").style.display = "block";
+  }
   document.getElementById("timelineContainer").style.display = "block";
   document.getElementById("showMoreContainer").style.display = "block";
   document.getElementById("showLessContainer").style.display = "none";
-  controls.style.display = "block";
-  document.getElementById("z").style.display = "block";
   const outputFadeLess = document.getElementById("outputFade");
   if (outputFadeLess) outputFadeLess.style.display = "block";
   output.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -5746,7 +5745,6 @@ requestAnimationFrame(loop);
 </script>
   </body>
 </html>
-
 
 
 
