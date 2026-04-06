@@ -3336,6 +3336,9 @@ Dark.addEventListener("click", function() {
   controls.style.backgroundPosition = '';
   controls.style.boxShadow = '0 4px 18px rgba(0,0,0,0.45), 0 1px 0 rgba(99,102,241,0.15)';
   controls.style.borderBottom = '1.5px solid rgba(99,102,241,0.2)';
+  document.getElementById("sessionBar").style.background = 'rgba(0,0,0,0.15)';
+  document.getElementById("sessionBar").style.borderBottom = '1.5px solid rgba(99,102,241,0.2)';
+  document.getElementById("sessionBar").style.boxShadow = '0 4px 18px rgba(0,0,0,0.45), 0 1px 0 rgba(99,102,241,0.15)';
 
   schoolLevel.style.backgroundColor = '#66707E';
   schoolLevel.style.borderColor = '#515964';
@@ -3991,7 +3994,7 @@ document.addEventListener("click", function(e) {
   if (!e.target.closest('.custom-select-wrapper')) {
     closeAllCustomDropdowns();
   }
-  if (!e.target.closest('.assignment') && !e.target.closest('#controls')) {
+  if (!e.target.closest('.assignment') && !e.target.closest('#controls') && !e.target.closest('.custom-select-option') && !e.target.closest('.custom-select-dropdown') && !e.target.closest('.custom-select-trigger')) {
     if (!window.tutorialActive) collapseAllAssignments();
   }
 });
@@ -5441,6 +5444,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ov.style.transition = 'opacity .3s ease'; ov.style.opacity = '0';
         setTimeout(function () { ov.style.display = 'none'; ov.style.opacity = '1'; ov.style.transition = ''; }, 320);
       }
+      setTimeout(function() { if (typeof doReset === 'function') { doReset(); localStorage.removeItem("studyPlanner_tasks"); } }, 380);
     },
 
     _clean: function () {
@@ -5731,6 +5735,7 @@ requestAnimationFrame(loop);
     var btn = document.getElementById(id);
     if (!btn) return;
     btn.addEventListener('mouseenter', function() {
+      if (window.tutorialActive) return;
       tip.textContent = TIPS[id];
       tip.style.display = 'block';
       positionTip(btn);
