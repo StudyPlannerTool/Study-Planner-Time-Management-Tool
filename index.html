@@ -1586,9 +1586,13 @@ function restoreTimerState() {
     sessionDayCumOffset = state.sessionDayCumOffset || 0;
     TOTAL_STUDY_SECONDS = remaining;
     const savedPct = state.playheadPercent || 0;
-    if (state.wasRunning && state.totalSeconds > 0) {
+    // Always recalculate playhead position using wall-clock elapsed vs original total,
+    // since rAF pauses in background tabs making savedPct potentially stale.
+    if (state.totalSeconds > 0) {
       const elapsedWhileAway = Math.floor((Date.now() - state.savedAt) / 1000);
-      window._pausedPercent = Math.min(100, savedPct + (elapsedWhileAway / state.totalSeconds) * 100);
+      const elapsedBeforeSave = (state.totalSeconds - state.remainingSeconds);
+      const totalElapsed = elapsedBeforeSave + elapsedWhileAway;
+      window._pausedPercent = Math.min(100, (totalElapsed / state.totalSeconds) * 100);
     } else {
       window._pausedPercent = savedPct;
     }
@@ -4086,7 +4090,7 @@ const resumeTimer = () => {
     const segmentProgress = (elapsed / TOTAL_STUDY_SECONDS) * (100 - offset);
     playhead.style.left = '0';
     playhead.style.width = Math.min(offset + segmentProgress, 100) + "%";
-    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
+    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4172,7 +4176,7 @@ ensurePlayhead();
       playhead.style.left = '0';
     }
 
-    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
+   if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4260,25 +4264,40 @@ document.addEventListener("visibilitychange", () => {
       const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
       const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
       const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
-      document.title = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")} | Study Planner`;
+      const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
+      const _visPct = Math.min((_elT / Math.max(TOTAL_STUDY_SECONDS, 1)) * 100, 100);
+      const _visSeg = segmentMap ? segmentMap.find(s => _visPct >= s.start && _visPct < s.end) : null;
+      const _visSn = _visSeg ? (_visSeg.isBreak ? "☕ Break" : _visSeg.name) : "";
+      const _visSegRem = _visSeg && !_visSeg.isBreak
+        ? Math.max(0, ((_visSeg.end - _visPct) / Math.max(_visSeg.end - _visSeg.start, 0.0001)) * _visSeg.durationMinutes * 60)
+        : Infinity;
+      if (_visSegRem <= 30 && _visSegRem > 0) {
+        document.title = `🔴 ${_cdStr} — ${_visSn} | Study Planner`;
+      } else {
+        document.title = _visSn ? `${_cdStr} — ${_visSn} | Study Planner` : `${_cdStr} | Study Planner`;
+      }
     }
     return;
   }
+  // Tab hidden (switching to another tab) — only save partial studied time.
+  // Timer continues running via wall-clock in startTime/performance.now(); no state save here.
   savePartialSessionTime();
-  const ph = document.getElementById("v_playhead_fixed");
-  if (!ph || ph.style.display === "none") return;
-  const cd = document.getElementById("countdownDisplay").textContent.split(":");
-  if (cd.length !== 3) return;
-  const rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
-  if (rem > 0) saveTimerState(rem, false);
 });
 window.addEventListener("pagehide", () => {
   savePartialSessionTime();
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph || ph.style.display === "none") return;
-  const cd = document.getElementById("countdownDisplay").textContent.split(":");
-  if (cd.length !== 3) return;
-  const rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
+  // Use wall-clock time for accurate remaining — the display may be stale if the tab was
+  // in the background (rAF paused), so we cannot rely on countdownDisplay text here.
+  let rem;
+  if (window._timerActualStart) {
+    const _phElapsed = Math.floor((performance.now() - window._timerActualStart) / 1000);
+    rem = Math.max(0, TOTAL_STUDY_SECONDS - _phElapsed);
+  } else {
+    const cd = document.getElementById("countdownDisplay").textContent.split(":");
+    if (cd.length !== 3) return;
+    rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
+  }
   if (rem > 0) saveTimerState(rem, false);
 });
 document.getElementById("doneEarlyBtn").addEventListener("click", skipCurrentAssignment);
