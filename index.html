@@ -1052,7 +1052,7 @@ body.assignmentsdark .assign-summary-time {
   overflow: hidden;
   background: #f1f5f9;
   display: flex;
-  margin-top: 25px;
+  margin-top: 5px;
   box-shadow: 0 4px 20px rgba(99,102,241,0.18), 0 2px 8px rgba(0,0,0,0.10), inset 0 1px 3px rgba(0,0,0,0.04);
   border: 2px solid rgba(0, 139, 139, 0);
   transition: border-color 0.5s ease;
@@ -1478,6 +1478,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   z-index: 9999;
   pointer-events: none;
 "></div>
+<div id="segmentLabelTrack" style="position:relative;width:100%;height:18px;margin:10px 0 6px;display:none;overflow:visible;box-sizing:border-box;"></div>
 <div id="timelineBar"></div>
 
 <div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin:10px 2px 0; padding:0 2px; letter-spacing:0.3px;">
@@ -1632,6 +1633,7 @@ if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.ad
         });
       }
     })();
+    renderSegmentLabelTrack();
     if (state.doneListHTML) {
       const dl = document.getElementById("doneAssignmentsList"); if (dl) dl.remove();
       const tmp = document.createElement("div"); tmp.innerHTML = state.doneListHTML;
@@ -1973,7 +1975,8 @@ function doReset() {
   output.innerHTML = "";
   const outputFadeReset = document.getElementById("outputFade");
   if (outputFadeReset) outputFadeReset.style.display = "none";
-  document.getElementById("timelineBar").innerHTML = "";
+document.getElementById("timelineBar").innerHTML = "";
+  const _slt = document.getElementById("segmentLabelTrack"); if (_slt) { _slt.innerHTML = ""; _slt.style.display = "none"; }
   document.getElementById("showMoreContainer").style.display = "none";
   document.getElementById("showLessContainer").style.display = "none";
   output.style.maxHeight = "none";
@@ -2156,6 +2159,7 @@ ${plan}`;
 
 segmentMap = [];
   renderTimeline(assignments, block, dayBoundaries, cumulativeForTimeline, dailyLimit);
+  renderSegmentLabelTrack();
 document.getElementById("timerControls").style.display = "flex";
 
 
@@ -2237,6 +2241,87 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
     marker.style.left = `${(db/totalTime)*100}%`;
     bar.appendChild(marker);
 
+  });
+}
+
+function renderSegmentLabelTrack() {
+  const track = document.getElementById("segmentLabelTrack");
+  if (!track) return;
+  track.innerHTML = "";
+  if (!segmentMap || segmentMap.length === 0) { track.style.display = "none"; return; }
+  track.style.display = "block";
+
+  const isDark = document.body.classList.contains("assignmentsdark");
+  const assignLineColor = isDark ? "#475569" : "#cbd5e1";
+  const breakLineColor  = isDark ? "#059669" : "#10b981";
+  const spokeColor      = isDark ? "#64748b" : "#94a3b8";
+  const assignTextColor = isDark ? "#94a3b8" : "#64748b";
+  const breakTextColor  = isDark ? "#34d399" : "#059669";
+
+  // Merge consecutive same-name non-break chunks; breaks stay separate
+  const groups = [];
+  let i = 0;
+  while (i < segmentMap.length) {
+    const seg = segmentMap[i];
+    if (seg.isBreak) {
+      groups.push({ name: "Break", isBreak: true, start: seg.start, end: seg.end });
+      i++;
+    } else {
+      let j = i;
+      while (j + 1 < segmentMap.length && !segmentMap[j + 1].isBreak && segmentMap[j + 1].name === seg.name) j++;
+      groups.push({ name: seg.name, isBreak: false, start: seg.start, end: segmentMap[j].end });
+      i = j + 1;
+    }
+  }
+
+  // Unique sorted boundary positions
+  const boundarySet = new Set([0, 100]);
+  groups.forEach(g => { boundarySet.add(g.start); boundarySet.add(g.end); });
+  const boundaries = [...boundarySet].sort((a, b) => a - b);
+
+  // Colored line segments between spokes
+  groups.forEach(group => {
+    const w = group.end - group.start;
+    if (w <= 0) return;
+    const el = document.createElement("div");
+    el.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:4px;height:2px;background:${group.isBreak ? breakLineColor : assignLineColor};z-index:1;pointer-events:none;`;
+    track.appendChild(el);
+  });
+
+  // Spokes — start at the line's bottom edge and hang downward
+  boundaries.forEach(pos => {
+    const spoke = document.createElement("div");
+    spoke.style.cssText = `position:absolute;left:${pos}%;top:6px;width:2px;height:9px;background:${spokeColor};transform:translateX(-50%);z-index:3;border-radius:0 0 2px 2px;pointer-events:none;`;
+    track.appendChild(spoke);
+  });
+
+  // Text labels, angled when zone is too narrow
+  groups.forEach(group => {
+    const w = group.end - group.start;
+    if (w <= 0) return;
+    const wrapper = document.createElement("div");
+    wrapper.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:0;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;overflow:visible;pointer-events:none;`;
+    const span = document.createElement("span");
+    span.textContent = group.name;
+    span.style.cssText = `font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;color:${group.isBreak ? breakTextColor : assignTextColor};white-space:nowrap;display:block;transform-origin:center center;line-height:1;`;
+    wrapper.appendChild(span);
+    track.appendChild(wrapper);
+    requestAnimationFrame(() => {
+      const trackW = track.offsetWidth || (track.parentElement ? track.parentElement.offsetWidth : 0);
+      if (trackW <= 0) return;
+      const zoneW = (w / 100) * trackW;
+      if (zoneW < 30) {
+        span.style.transform = "rotate(-80deg)";
+        span.style.fontSize = "8px";
+      } else if (zoneW < 58) {
+        span.style.transform = "rotate(-55deg)";
+        span.style.fontSize = "8.5px";
+      } else {
+        span.style.maxWidth = Math.max(0, zoneW - 10) + "px";
+        span.style.overflow = "hidden";
+        span.style.textOverflow = "ellipsis";
+      }
+    });
   });
 }
 
@@ -4381,7 +4466,11 @@ if (playhead && playhead.style.display !== "none") {
   const rect = playhead.getBoundingClientRect();
   const containerRect = document.getElementById("timelineContainer").getBoundingClientRect();
   tri.style.left = (rect.right - containerRect.left) + "px";
-  tri.style.top = (playhead.getBoundingClientRect().top - containerRect.top - 12) + "px";
+const _slt = document.getElementById("segmentLabelTrack");
+const _sltTop = (_slt && _slt.style.display !== "none")
+  ? (_slt.getBoundingClientRect().top - containerRect.top - 10)
+  : (playhead.getBoundingClientRect().top - containerRect.top - 12);
+tri.style.top = _sltTop + "px";
   tri.style.display = "block";
 } else {
   tri.style.display = "none";
@@ -4702,6 +4791,7 @@ ph.style.width = "0%";
   assignmentEndShownSet.clear();
   window._prevUpdateSegIndex = -1;
   addDoneMarker(assignmentName);
+  renderSegmentLabelTrack();
   commitStudiedTime();
   startTimer();
   updateSessionEndTime();
@@ -4823,6 +4913,7 @@ function handleMarkAsDone() {
   document.getElementById("ResumeTimerBtn").style.display = "none";
   updateOutputAfterSkip(newSegMap, newSegMap.filter(s => !s.isBreak).reduce((sum, s) => sum + s.durationMinutes, 0), newSegMap.filter(s => s.isBreak).reduce((sum, s) => sum + s.durationMinutes, 0), "✅ Assignment marked as done!", newDayCum);
 
+  renderSegmentLabelTrack();
   commitStudiedTime();
   startTimer();
   updateSessionEndTime();
@@ -4925,7 +5016,7 @@ function handleNeedMoreTime() {
   if (ph) { ph.style.width = "0%"; ph.style.display = "block"; bar.appendChild(ph); }
 
 updateOutputAfterSkip(newSegs, totalWork, totalBreaks, "⏱ Time extended!", newDayCum);
-
+  renderSegmentLabelTrack();
 
   document.getElementById("assignmentEndOverlay").style.display = "none";
   document.getElementById("PauseTimerBtn").style.display = "block";
