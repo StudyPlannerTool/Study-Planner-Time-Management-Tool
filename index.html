@@ -2810,6 +2810,20 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 } else {
     document.addEventListener("DOMContentLoaded", loadAndRestore);
 }
+window.addEventListener('storage', function(e) {
+  var syncKeys = ['studyPlanner_tasks', 'studyPlanner_level', 'studyPlanner_theme'];
+  if (!syncKeys.includes(e.key)) return;
+  var resetBtn = document.getElementById("resetTimerBtn");
+  if (resetBtn && resetBtn.style.display !== 'none') return; // don't interrupt active session
+  if (e.key === 'studyPlanner_theme') {
+    if (e.newValue === 'dark') document.getElementById("Dark").click();
+    else document.getElementById("Light").click();
+    return;
+  }
+  doReset();
+  loadFromLocalStorage();
+});
+
 const _sc = parseInt(localStorage.getItem("streak_count") || "0");
 renderStreakMessage(_sc);
 renderStudyStats();
