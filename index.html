@@ -2295,33 +2295,37 @@ function renderSegmentLabelTrack() {
     track.appendChild(spoke);
   });
 
-  // Text labels, angled when zone is too narrow
+ // Hover zones — labels hidden by default, shown via custom tooltip on hover
   groups.forEach(group => {
     const w = group.end - group.start;
     if (w <= 0) return;
     const wrapper = document.createElement("div");
-    wrapper.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:0;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;overflow:visible;pointer-events:none;`;
-    const span = document.createElement("span");
-    span.textContent = group.name;
-    span.style.cssText = `font-family:'Inter',sans-serif;font-size:9.5px;font-weight:600;color:${group.isBreak ? breakTextColor : assignTextColor};white-space:nowrap;display:block;transform-origin:center center;line-height:1;`;
-    wrapper.appendChild(span);
-    track.appendChild(wrapper);
-    requestAnimationFrame(() => {
-      const trackW = track.offsetWidth || (track.parentElement ? track.parentElement.offsetWidth : 0);
-      if (trackW <= 0) return;
-      const zoneW = (w / 100) * trackW;
-      if (zoneW < 30) {
-        span.style.transform = "rotate(-80deg)";
-        span.style.fontSize = "8px";
-      } else if (zoneW < 58) {
-        span.style.transform = "rotate(-55deg)";
-        span.style.fontSize = "8.5px";
-      } else {
-        span.style.maxWidth = Math.max(0, zoneW - 10) + "px";
-        span.style.overflow = "hidden";
-        span.style.textOverflow = "ellipsis";
-      }
+    wrapper.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:0;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;overflow:hidden;pointer-events:all;cursor:default;`;
+    wrapper.addEventListener('mouseenter', function() {
+      const tip = document.getElementById('hoverTooltip');
+      if (!tip) return;
+      tip.textContent = group.name;
+      tip.style.width = '240px';
+      tip.style.display = 'block';
+      const r = wrapper.getBoundingClientRect();
+      requestAnimationFrame(function() {
+        const TW = 240, TH = tip.offsetHeight || 40, GAP = 8;
+        let x = r.left + r.width / 2 - TW / 2;
+        let y = r.top - TH - GAP;
+        if (y < 8) y = r.bottom + GAP;
+        x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+        tip.style.opacity = '1';
+      });
     });
+    wrapper.addEventListener('mouseleave', function() {
+      const tip = document.getElementById('hoverTooltip');
+      if (!tip) return;
+      tip.style.opacity = '0';
+      setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
+    });
+    track.appendChild(wrapper);
   });
 }
 
