@@ -4104,7 +4104,7 @@ const resumeTimer = () => {
     const segmentProgress = (elapsed / TOTAL_STUDY_SECONDS) * (100 - offset);
     playhead.style.left = '0';
     playhead.style.width = Math.min(offset + segmentProgress, 100) + "%";
-    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
+if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4190,7 +4190,7 @@ ensurePlayhead();
       playhead.style.left = '0';
     }
 
-   if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
+if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4312,7 +4312,7 @@ window.addEventListener("pagehide", () => {
     if (cd.length !== 3) return;
     rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
   }
-  if (rem > 0) saveTimerState(rem, false);
+  if (rem > 0) saveTimerState(rem, true);
 });
 document.getElementById("doneEarlyBtn").addEventListener("click", skipCurrentAssignment);
 
