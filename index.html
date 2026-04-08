@@ -1581,8 +1581,7 @@ function restoreTimerState() {
   try {
     const state = JSON.parse(saved);
     if (!state.inSession || !state.segmentMap || !state.segmentMap.length) return;
-    let remaining = state.remainingSeconds;
-    if (state.wasRunning) remaining = Math.max(0, remaining - Math.floor((Date.now() - state.savedAt) / 1000));
+    let remaining = Math.max(0, state.remainingSeconds - Math.floor((Date.now() - state.savedAt) / 1000));
     if (remaining <= 0) { clearTimerState(); return; }
     segmentMap = state.segmentMap;
     sessionDayCumOffset = state.sessionDayCumOffset || 0;
@@ -1634,7 +1633,23 @@ if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.ad
         });
       }
     })();
-    renderSegmentLabelTrack();
+   renderSegmentLabelTrack();
+    (function(){
+      const _rp = window._pausedPercent || 0;
+      const _rb = document.getElementById("timelineBar");
+      if (_rb && _rp > 0) {
+        let _rph = document.getElementById("v_playhead_fixed");
+        if (!_rph) {
+          _rph = document.createElement("div");
+          _rph.id = "v_playhead_fixed";
+          _rph.style.cssText = "position:absolute!important;top:-5px!important;left:0;width:4px;height:calc(100% + 10px);background:#FF2D2D;animation:playhead-pulse 2s ease-in-out infinite;z-index:9999;pointer-events:none;";
+          _rb.style.position = "relative";
+          _rb.appendChild(_rph);
+        }
+        _rph.style.width = _rp + "%";
+        _rph.style.display = "block";
+      }
+    })();
     if (state.doneListHTML) {
       const dl = document.getElementById("doneAssignmentsList"); if (dl) dl.remove();
       const tmp = document.createElement("div"); tmp.innerHTML = state.doneListHTML;
@@ -1935,7 +1950,7 @@ document.getElementById("addAssignmentBtn").onclick = () => {
   </div>
   `;
 
-  div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (window.tutorialActive) return; div.remove(); };
+div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (window.tutorialActive) return; div.remove(); saveToLocalStorage(); };
 
   collapseAllAssignments();
   getShortestColumn().appendChild(div);
@@ -1950,8 +1965,8 @@ document.getElementById("addAssignmentBtn").onclick = () => {
 
   makeCustomSelects(div);
 
-  div.querySelector('.assignment-body').addEventListener('change', () => updateAssignmentSummary(div));
-  div.querySelector('.assignment-body').addEventListener('input', () => updateAssignmentSummary(div));
+div.querySelector('.assignment-body').addEventListener('change', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
+  div.querySelector('.assignment-body').addEventListener('input', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
 
   
   div.addEventListener('click', (e) => {
@@ -2184,6 +2199,7 @@ document.getElementById("timerControls").style.display = "flex";
       if (p < 1) requestAnimationFrame(_step);
     })(performance.now());
   });
+  localStorage.setItem('studyPlanner_sync', JSON.stringify({cmd:'calculate',ts:Date.now()}));
 }, 300);
 };
 
@@ -2896,10 +2912,22 @@ if (document.readyState === "complete" || document.readyState === "interactive")
     document.addEventListener("DOMContentLoaded", loadAndRestore);
 }
 window.addEventListener('storage', function(e) {
-  var syncKeys = ['studyPlanner_tasks', 'studyPlanner_level', 'studyPlanner_theme'];
+  var syncKeys = ['studyPlanner_tasks', 'studyPlanner_level', 'studyPlanner_theme', 'studyPlanner_sync'];
   if (!syncKeys.includes(e.key)) return;
   var resetBtn = document.getElementById("resetTimerBtn");
   if (resetBtn && resetBtn.style.display !== 'none') return; // don't interrupt active session
+  if (e.key === 'studyPlanner_sync') {
+    try {
+      var _sc = JSON.parse(e.newValue || '{}');
+      if (_sc.cmd === 'calculate') {
+        setTimeout(function() {
+          var _raw = container.querySelectorAll(".assignment");
+          if (_raw.length) document.getElementById('calculateBtn').click();
+        }, 120);
+      }
+    } catch(_e) {}
+    return;
+  }
   if (e.key === 'studyPlanner_theme') {
     if (e.newValue === 'dark') document.getElementById("Dark").click();
     else document.getElementById("Light").click();
@@ -3955,9 +3983,8 @@ document.getElementById('termsLink').addEventListener('click', function(e) {
 
     </body>
     </html>`;
-  const blob = new Blob([termsContent], {type: 'text/html; charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank');
+const win = window.open('', '_blank');
+  if (win) { win.document.open(); win.document.write(termsContent); win.document.close(); }
 });
 
 document.getElementById('privacyLink').addEventListener('click', function(e) {
@@ -4107,9 +4134,8 @@ Google Search Console: We use Google Search Console to monitor our site's presen
 </footer>
 </body>
     </html>`;
-  const blob = new Blob([privacyContent], {type: 'text/html; charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank');
+ const win = window.open('', '_blank');
+  if (win) { win.document.open(); win.document.write(privacyContent); win.document.close(); }
 });
 z.addEventListener("click", function(e) {
   e.stopPropagation();
