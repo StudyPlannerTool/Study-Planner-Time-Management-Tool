@@ -4360,6 +4360,7 @@ TOTAL_STUDY_SECONDS = Math.ceil(TOTAL_STUDY_SECONDS - elapsedSeconds);
     updateSessionEndTime();
     window._sessionPaused = true;
     window._pausedAssignmentDisplay = document.getElementById("currentAssignmentDisplay").textContent;
+document.title = "\u23F8 Session Paused | Study Planner";
     document.getElementById("currentAssignmentDisplay").textContent = "Session paused. Click Resume to continue.";
     const _pauseBM = document.getElementById("breakMessage");
     if (_pauseBM) _pauseBM.style.display = "none";
@@ -4475,6 +4476,7 @@ document.getElementById("sessionBar").style.display = 'none';
 document.getElementById("ResumeTimerBtn").onclick = () => {
   if (TOTAL_STUDY_SECONDS > 0) {
     window._sessionPaused = false;
+    document.title = 'Study Planner & Time Management Tool';
     if (window._pausedAssignmentDisplay) {
       document.getElementById("currentAssignmentDisplay").textContent = window._pausedAssignmentDisplay;
       window._pausedAssignmentDisplay = null;
