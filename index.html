@@ -5848,7 +5848,9 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
 document.addEventListener('click', function (e) {
     if (!T.active) return;
     if (window._tutorialBypassBlock) return;
-    if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
+if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
+    if (e.target.closest && e.target.closest('#cookieBanner')) return;
+    if (e.target.closest && e.target.closest('#ageGateOverlay')) return;
     var step = T.STEPS[T.step];
     if (!step) return;
     var el = step.el();
@@ -6039,7 +6041,7 @@ requestAnimationFrame(loop);
       if (!e.data || e.data.id === TAB_ID) return;
       if (e.data.type === 'open') { bc.postMessage({ type: 'ack', id: TAB_ID }); showWarn(true); }
       else if (e.data.type === 'ack') showWarn(true);
-      else if (e.data.type === 'close') setTimeout(function() { pulse(); }, 500);
+else if (e.data.type === 'close') { showWarn(false); pulse(); }
     };
     window.addEventListener('beforeunload', function() { bc.postMessage({ type: 'close', id: TAB_ID }); });
   }
