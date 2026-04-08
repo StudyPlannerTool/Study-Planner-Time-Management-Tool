@@ -1499,7 +1499,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0ad4e;flex-shrink:0;"></span>Medium</span>
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5cb85c;flex-shrink:0;"></span>Easy</span>
     <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#999;flex-shrink:0;"></span>Break</span>
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:2px;height:12px;background:#94a3b8;flex-shrink:0;"></span>Day</span>
+<span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span id="legendDayBar" style="display:inline-block;width:2px;height:12px;background:#1e293b;flex-shrink:0;"></span>Day</span>
   </div>
 
 <script>
@@ -3465,6 +3465,8 @@ const onboardingBack = document.getElementById('onboardingBack');
   const _sbL = document.getElementById("studyStatsBar");
   if (_sbL) _sbL.style.background = "rgba(99,102,241,0.07)";
   document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#1e293b");
+  const _ldbL = document.getElementById("legendDayBar");
+  if (_ldbL) _ldbL.style.background = "#1e293b";
 });
 
 
@@ -3646,6 +3648,8 @@ const onboardingBack = document.getElementById('onboardingBack');
   const _sbD = document.getElementById("studyStatsBar");
   if (_sbD) _sbD.style.background = "rgba(99,102,241,0.12)";
   document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#e2e8f0");
+  const _ldbD = document.getElementById("legendDayBar");
+  if (_ldbD) _ldbD.style.background = "#000000";
 });
 
      b.addEventListener("click", function() {
