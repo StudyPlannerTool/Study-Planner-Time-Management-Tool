@@ -1728,6 +1728,14 @@ function syncCPanelTop() {
 }
 new ResizeObserver(function() { syncCPanelTop(); }).observe(document.getElementById('sessionBar'));
 window.addEventListener('resize', syncCPanelTop);
+window.addEventListener('resize', function() {
+  if (typeof renderSegmentLabelTrack === 'function') requestAnimationFrame(renderSegmentLabelTrack);
+});
+window.addEventListener('orientationchange', function() {
+  setTimeout(function() {
+    if (typeof renderSegmentLabelTrack === 'function') requestAnimationFrame(renderSegmentLabelTrack);
+  }, 350);
+});
 function updateSessionEndTime() {
   const endLabel = document.getElementById("sessionEndTimeLabel");
   if (!endLabel) return;
