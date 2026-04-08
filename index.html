@@ -1804,7 +1804,7 @@ function renderStudyStats() {
 
 function commitStudiedTime() {
   if (!window._timerActualStart) return;
-  const elapsed = (performance.now() - window._timerActualStart) / 1000;
+  const elapsed = (Date.now() - window._timerActualStart) / 1000;
   window._timerActualStart = null;
   window._sessionStudiedSeconds = (window._sessionStudiedSeconds || 0) + elapsed;
 }
@@ -4186,12 +4186,12 @@ const resumeTimer = () => {
   ensurePlayhead();
   playhead.style.display = "block";
   const offset = window._pausedPercent || 0;
-  window._resumeOffset = offset;
-  window._timerActualStart = performance.now();
+ window._resumeOffset = offset;
+  window._timerActualStart = Date.now();
   if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
   window._titleUpdateInterval = setInterval(function() {
     if (!window._timerActualStart) return;
-    const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
+    const _elT = Math.floor((Date.now() - window._timerActualStart) / 1000);
     const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
     const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
     const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
@@ -4219,9 +4219,9 @@ const resumeTimer = () => {
       updateSessionEndTime();
     }
   })();
-  const startTime = performance.now();
-  function frame(now) {
-    const elapsed = Math.floor((now - startTime) / 1000);
+  const _startWallMs = Date.now();
+  function frame() {
+    const elapsed = Math.floor((Date.now() - _startWallMs) / 1000);
     const remaining = Math.max(0, TOTAL_STUDY_SECONDS - elapsed);
     const h = Math.floor(remaining / 3600);
     const m = Math.floor((remaining % 3600) / 60);
@@ -4275,11 +4275,11 @@ const startTimer = () => {
 ensurePlayhead();  
   window._resumeOffset = 0;
   playhead.style.display = "block";
-  window._timerActualStart = performance.now();
+  window._timerActualStart = Date.now();
   if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
   window._titleUpdateInterval = setInterval(function() {
     if (!window._timerActualStart) return;
-    const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
+    const _elT = Math.floor((Date.now() - window._timerActualStart) / 1000);
     const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
     const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
     const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
@@ -4296,11 +4296,11 @@ ensurePlayhead();
     }
   }, 1000);
 
-  const startTime = performance.now();
+  const _startWallMs = Date.now();
 
-  function frame(now) {
+  function frame() {
     
-    const elapsed = Math.floor((now - startTime) / 1000);
+    const elapsed = Math.floor((Date.now() - _startWallMs) / 1000);
     const remaining = Math.max(0, TOTAL_STUDY_SECONDS - elapsed);
 
     const h = Math.floor(remaining / 3600);
@@ -4364,6 +4364,7 @@ TOTAL_STUDY_SECONDS = Math.ceil(TOTAL_STUDY_SECONDS - elapsedSeconds);
     commitStudiedTime();
     cancelAnimationFrame(timerId);
     timerId = null;
+    if (window._titleUpdateInterval) { clearInterval(window._titleUpdateInterval); window._titleUpdateInterval = null; }
     saveTimerState(TOTAL_STUDY_SECONDS, false);
     updateSessionEndTime();
     window._sessionPaused = true;
@@ -4386,7 +4387,7 @@ function savePartialSessionTime() {
   if (!resetBtn || resetBtn.style.display === "none") return;
   let totalSoFar = window._sessionStudiedSeconds || 0;
   if (window._timerActualStart) {
-    totalSoFar += (performance.now() - window._timerActualStart) / 1000;
+    totalSoFar += (Date.now() - window._timerActualStart) / 1000;
   }
   if (totalSoFar >= 1) {
     localStorage.setItem("studyTime_session_pending", JSON.stringify({
@@ -4403,7 +4404,7 @@ document.addEventListener("visibilitychange", () => {
       requestWakeLock();
     }
     if (window._timerActualStart) {
-      const _elT = Math.floor((performance.now() - window._timerActualStart) / 1000);
+      const _elT = Math.floor((Date.now() - window._timerActualStart) / 1000);
       const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
       const _hT = Math.floor(_remT / 3600), _mT = Math.floor((_remT % 3600) / 60), _sT = _remT % 60;
       const _cdStr = `${_hT.toString().padStart(2,"0")}:${_mT.toString().padStart(2,"0")}:${_sT.toString().padStart(2,"0")}`;
@@ -4433,7 +4434,7 @@ window.addEventListener("pagehide", () => {
   // in the background (rAF paused), so we cannot rely on countdownDisplay text here.
   let rem;
   if (window._timerActualStart) {
-    const _phElapsed = Math.floor((performance.now() - window._timerActualStart) / 1000);
+    const _phElapsed = Math.floor((Date.now() - window._timerActualStart) / 1000);
     rem = Math.max(0, TOTAL_STUDY_SECONDS - _phElapsed);
   } else {
     const cd = document.getElementById("countdownDisplay").textContent.split(":");
