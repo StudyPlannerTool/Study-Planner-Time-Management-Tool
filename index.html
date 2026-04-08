@@ -1587,19 +1587,18 @@ function restoreTimerState() {
   try {
     const state = JSON.parse(saved);
     if (!state.inSession || !state.segmentMap || !state.segmentMap.length) return;
-    const closedWhileRunning = state.wasRunning === true;
-    const timeElapsedWhileClosed = Math.floor((Date.now() - state.savedAt) / 1000);
-    let remaining = closedWhileRunning
-      ? Math.max(0, state.remainingSeconds - timeElapsedWhileClosed)
-      : state.remainingSeconds;
+    let remaining = Math.max(0, state.remainingSeconds - Math.floor((Date.now() - state.savedAt) / 1000));
     if (remaining <= 0) { clearTimerState(); return; }
     segmentMap = state.segmentMap;
     sessionDayCumOffset = state.sessionDayCumOffset || 0;
     TOTAL_STUDY_SECONDS = remaining;
     const savedPct = state.playheadPercent || 0;
+    // Always recalculate playhead position using wall-clock elapsed vs original total,
+    // since rAF pauses in background tabs making savedPct potentially stale.
     if (state.totalSeconds > 0) {
-      const timeForPlayhead = closedWhileRunning ? timeElapsedWhileClosed : 0;
-      const totalElapsed = (state.totalSeconds - state.remainingSeconds) + timeForPlayhead;
+      const elapsedWhileAway = Math.floor((Date.now() - state.savedAt) / 1000);
+      const elapsedBeforeSave = (state.totalSeconds - state.remainingSeconds);
+      const totalElapsed = elapsedBeforeSave + elapsedWhileAway;
       window._pausedPercent = Math.min(100, (totalElapsed / state.totalSeconds) * 100);
     } else {
       window._pausedPercent = savedPct;
@@ -4232,7 +4231,7 @@ const resumeTimer = () => {
     const segmentProgress = (elapsed / TOTAL_STUDY_SECONDS) * (100 - offset);
     playhead.style.left = '0';
     playhead.style.width = Math.min(offset + segmentProgress, 100) + "%";
-    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
+    if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4318,7 +4317,7 @@ ensurePlayhead();
       playhead.style.left = '0';
     }
 
-if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, true);
+   if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
     if (remaining > 0) {
       timerId = requestAnimationFrame(frame);
     } else {
@@ -4423,12 +4422,9 @@ document.addEventListener("visibilitychange", () => {
     }
     return;
   }
-  // Tab hidden — save partial time and clear the title interval to prevent stale tick buildup.
+  // Tab hidden (switching to another tab) — only save partial studied time.
+  // Timer continues running via wall-clock in startTime/performance.now(); no state save here.
   savePartialSessionTime();
-  if (window._titleUpdateInterval) {
-    clearInterval(window._titleUpdateInterval);
-    window._titleUpdateInterval = null;
-  }
 });
 window.addEventListener("pagehide", () => {
   savePartialSessionTime();
@@ -4445,8 +4441,7 @@ window.addEventListener("pagehide", () => {
     if (cd.length !== 3) return;
     rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
   }
-const isRunning = !window._sessionPaused && window._timerActualStart !== null;
-  if (rem > 0) saveTimerState(rem, isRunning);
+  if (rem > 0) saveTimerState(rem, false);
 });
 document.getElementById("doneEarlyBtn").addEventListener("click", skipCurrentAssignment);
 
