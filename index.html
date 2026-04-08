@@ -3989,8 +3989,7 @@ document.getElementById('termsLink').addEventListener('click', function(e) {
 
     </body>
     </html>`;
-const win = window.open('', '_blank');
-  if (win) { win.document.open(); win.document.write(termsContent); win.document.close(); }
+showLegalModal(termsContent);
 });
 
 document.getElementById('privacyLink').addEventListener('click', function(e) {
@@ -4140,8 +4139,7 @@ Google Search Console: We use Google Search Console to monitor our site's presen
 </footer>
 </body>
     </html>`;
- const win = window.open('', '_blank');
-  if (win) { win.document.open(); win.document.write(privacyContent); win.document.close(); }
+ showLegalModal(privacyContent);
 });
 z.addEventListener("click", function(e) {
   e.stopPropagation();
@@ -5425,6 +5423,28 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+
+<!-- ───── Legal Modal (works in all browsers including in-app) ───── -->
+<div id="legalModal" style="display:none;position:fixed;inset:0;z-index:400000;background:#fff;font-family:'Inter',sans-serif;">
+  <div style="position:sticky;top:0;z-index:1;background:#fff;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;justify-content:flex-end;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+    <button id="legalModalClose" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:50px;padding:8px 22px;color:#fff;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.4);">✕ Close</button>
+  </div>
+  <iframe id="legalModalFrame" srcdoc="" style="width:100%;height:calc(100vh - 56px);border:none;display:block;"></iframe>
+</div>
+<script>
+function showLegalModal(html) {
+  var m = document.getElementById('legalModal');
+  var f = document.getElementById('legalModalFrame');
+  f.srcdoc = html;
+  m.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+document.getElementById('legalModalClose').addEventListener('click', function() {
+  document.getElementById('legalModal').style.display = 'none';
+  document.getElementById('legalModalFrame').srcdoc = '';
+  document.body.style.overflow = '';
+});
+</script>
 
 <!-- ───── Cookie Consent Banner ───── -->
 
