@@ -538,6 +538,7 @@
 
  
 <style>
+
 input[type="range"] {
   appearance: none;
   -webkit-appearance: none;
@@ -1478,7 +1479,7 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   z-index: 9999;
   pointer-events: none;
 "></div>
-<div id="segmentLabelTrack" style="position:relative;width:100%;height:18px;margin:10px 0 6px;display:none;overflow:visible;box-sizing:border-box;"></div>
+<div id="segmentLabelTrack" style="position:absolute;display:none;background:transparent;z-index:20;overflow:hidden;border-radius:100px;pointer-events:none;"></div>
 <div id="timelineBar"></div>
 
 <div id="sessionTimeRow" style="display:none; justify-content:space-between; align-items:center; font-family:'Inter',sans-serif; font-size:11px; color:#94a3b8; margin:10px 2px 0; padding:0 2px; letter-spacing:0.3px;">
@@ -2246,86 +2247,81 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
 
 function renderSegmentLabelTrack() {
   const track = document.getElementById("segmentLabelTrack");
-  if (!track) return;
+  const bar = document.getElementById("timelineBar");
+  if (!track || !bar) return;
   track.innerHTML = "";
   if (!segmentMap || segmentMap.length === 0) { track.style.display = "none"; return; }
+
+  // Position track as an invisible overlay exactly covering the timelineBar
   track.style.display = "block";
-
-  const isDark = document.body.classList.contains("assignmentsdark");
-  const assignLineColor = isDark ? "#475569" : "#cbd5e1";
-  const breakLineColor  = isDark ? "#059669" : "#10b981";
-  const spokeColor      = isDark ? "#64748b" : "#94a3b8";
-  const assignTextColor = isDark ? "#94a3b8" : "#64748b";
-  const breakTextColor  = isDark ? "#34d399" : "#059669";
-
-  // Merge consecutive same-name non-break chunks; breaks stay separate
-  const groups = [];
-  let i = 0;
-  while (i < segmentMap.length) {
-    const seg = segmentMap[i];
-    if (seg.isBreak) {
-      groups.push({ name: "Break", isBreak: true, start: seg.start, end: seg.end });
-      i++;
-    } else {
-      let j = i;
-      while (j + 1 < segmentMap.length && !segmentMap[j + 1].isBreak && segmentMap[j + 1].name === seg.name) j++;
-      groups.push({ name: seg.name, isBreak: false, start: seg.start, end: segmentMap[j].end });
-      i = j + 1;
-    }
-  }
-
-  // Unique sorted boundary positions
-  const boundarySet = new Set([0, 100]);
-  groups.forEach(g => { boundarySet.add(g.start); boundarySet.add(g.end); });
-  const boundaries = [...boundarySet].sort((a, b) => a - b);
-
-  // Colored line segments between spokes
-  groups.forEach(group => {
-    const w = group.end - group.start;
-    if (w <= 0) return;
-    const el = document.createElement("div");
-    el.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:4px;height:2px;background:${group.isBreak ? breakLineColor : assignLineColor};z-index:1;pointer-events:none;`;
-    track.appendChild(el);
+  requestAnimationFrame(function() {
+    const container = document.getElementById("timelineContainer");
+    if (!container) return;
+    const barRect = bar.getBoundingClientRect();
+    const contRect = container.getBoundingClientRect();
+    track.style.left   = (barRect.left   - contRect.left) + 'px';
+    track.style.top    = (barRect.top    - contRect.top)  + 'px';
+    track.style.width  = barRect.width   + 'px';
+    track.style.height = barRect.height  + 'px';
   });
 
-  // Spokes — start at the line's bottom edge and hang downward
-  boundaries.forEach(pos => {
-    const spoke = document.createElement("div");
-    spoke.style.cssText = `position:absolute;left:${pos}%;top:6px;width:2px;height:9px;background:${spokeColor};transform:translateX(-50%);z-index:3;border-radius:0 0 2px 2px;pointer-events:none;`;
-    track.appendChild(spoke);
-  });
-
- // Hover zones — labels hidden by default, shown via custom tooltip on hover
-  groups.forEach(group => {
-    const w = group.end - group.start;
+  const wrappers = [];
+  segmentMap.forEach(function(seg) {
+    const w = seg.end - seg.start;
     if (w <= 0) return;
     const wrapper = document.createElement("div");
-    wrapper.style.cssText = `position:absolute;left:${group.start}%;width:${w}%;top:0;height:100%;display:flex;align-items:center;justify-content:center;z-index:2;overflow:hidden;pointer-events:all;cursor:default;`;
+    wrapper.style.cssText = `position:absolute;left:${seg.start}%;width:${w}%;top:0;height:100%;z-index:2;pointer-events:${seg.isBreak ? 'none' : 'all'};cursor:default;box-sizing:border-box;transition:background 0.12s ease,box-shadow 0.12s ease;`;
+    wrapper.dataset.segName = seg.isBreak ? '__break__' : seg.name;
+    wrapper.dataset.isBreak = seg.isBreak ? '1' : '0';
+    wrappers.push(wrapper);
+    track.appendChild(wrapper);
+  });
+
+  wrappers.forEach(function(wrapper) {
+    if (wrapper.dataset.isBreak === '1') return;
+    const name = wrapper.dataset.segName;
     wrapper.addEventListener('mouseenter', function() {
-      const tip = document.getElementById('hoverTooltip');
-      if (!tip) return;
-      tip.textContent = group.name;
-      tip.style.width = '240px';
-      tip.style.display = 'block';
-      const r = wrapper.getBoundingClientRect();
-      requestAnimationFrame(function() {
-        const TW = 240, TH = tip.offsetHeight || 40, GAP = 8;
-        let x = r.left + r.width / 2 - TW / 2;
-        let y = r.top - TH - GAP;
-        if (y < 8) y = r.bottom + GAP;
-        x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
-        tip.style.left = x + 'px';
-        tip.style.top = y + 'px';
-        tip.style.opacity = '1';
+      const tip     = document.getElementById('hoverTooltip');
+      const tipText = document.getElementById('hoverTooltipText');
+      const arr     = document.getElementById('hoverTooltipArrow');
+      if (tip && tipText) {
+        tipText.textContent = name;
+        tip.style.display = 'block';
+        const r = wrapper.getBoundingClientRect();
+        requestAnimationFrame(function() {
+          const TW = tip.offsetWidth, TH = tip.offsetHeight, A = 10, GAP = 8;
+          let x = r.left + r.width / 2 - TW / 2;
+          let y = r.top - TH - GAP - A;
+          let arrowBelow = true;
+          if (y < 8) { y = r.bottom + GAP + A; arrowBelow = false; }
+          x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
+          tip.style.left = x + 'px';
+          tip.style.top  = y + 'px';
+          tip.style.opacity = '1';
+          if (arr) {
+            const ax = Math.max(8, Math.min(TW - A * 2 - 8, (r.left + r.width / 2) - x - A));
+            arr.style.cssText = arrowBelow
+              ? `position:absolute;bottom:-${A}px;left:${ax}px;width:0;height:0;border-left:${A}px solid transparent;border-right:${A}px solid transparent;border-top:${A}px solid white;pointer-events:none;`
+              : `position:absolute;top:-${A}px;left:${ax}px;width:0;height:0;border-left:${A}px solid transparent;border-right:${A}px solid transparent;border-bottom:${A}px solid white;pointer-events:none;`;
+          }
+        });
+      }
+      // Highlight matching chunks; dim everything else (including breaks)
+      wrappers.forEach(function(w) {
+        if (w.dataset.segName === name) {
+          w.style.boxShadow = 'inset 0 0 0 3px rgba(255,255,255,0.92)';
+          w.style.background = 'rgba(255,255,255,0.1)';
+        } else {
+          w.style.boxShadow = '';
+          w.style.background = 'rgba(0,0,0,0.3)';
+        }
       });
     });
     wrapper.addEventListener('mouseleave', function() {
       const tip = document.getElementById('hoverTooltip');
-      if (!tip) return;
-      tip.style.opacity = '0';
-      setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
+      if (tip) { tip.style.opacity = '0'; setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150); }
+      wrappers.forEach(function(w) { w.style.background = ''; w.style.boxShadow = ''; });
     });
-    track.appendChild(wrapper);
   });
 }
 
@@ -5899,10 +5895,12 @@ requestAnimationFrame(loop);
     });
   })();
   </script>
-  <div id="hoverTooltip" style="position:fixed;z-index:150000;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 32px rgba(0,0,0,0.22),0 2px 8px rgba(0,0,0,0.1);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#1e293b;line-height:1.55;max-width:240px;pointer-events:none;border:1px solid rgba(99,102,241,0.15);display:none;opacity:0;transition:opacity 0.15s ease;"></div>
+<div id="hoverTooltip" style="position:fixed;z-index:150000;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 32px rgba(0,0,0,0.22),0 2px 8px rgba(0,0,0,0.1);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#1e293b;line-height:1.55;max-width:280px;pointer-events:none;border:1px solid rgba(99,102,241,0.15);display:none;opacity:0;transition:opacity 0.15s ease;"><span id="hoverTooltipText"></span><div id="hoverTooltipArrow" style="position:absolute;pointer-events:none;"></div></div>
 <script>
 (function() {
-  var tip = document.getElementById('hoverTooltip');
+  var tip     = document.getElementById('hoverTooltip');
+  var tipText = document.getElementById('hoverTooltipText');
+  var arr     = document.getElementById('hoverTooltipArrow');
   var TIPS = {
     addAssignmentBtn: 'Click to add/edit an assignment to your study plan.',
     calculateBtn: 'Click after adding all necessary assignments to generate your plan.',
@@ -5913,23 +5911,29 @@ requestAnimationFrame(loop);
   };
   function positionTip(btn) {
     var r = btn.getBoundingClientRect();
-    var TW = 240, TH = tip.offsetHeight || 40, GAP = 8;
+    var TW = tip.offsetWidth || 200, TH = tip.offsetHeight || 40, GAP = 8, A = 10;
     var x = r.left + r.width / 2 - TW / 2;
-    var y = r.top - TH - GAP;
-    if (y < 8) y = r.bottom + GAP;
+    var y = r.top - TH - GAP - A;
+    var arrowBelow = true;
+    if (y < 8) { y = r.bottom + GAP + A; arrowBelow = false; }
     x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
     tip.style.left = x + 'px';
-    tip.style.top = y + 'px';
+    tip.style.top  = y + 'px';
+    if (arr) {
+      var ax = Math.max(8, Math.min(TW - A * 2 - 8, (r.left + r.width / 2) - x - A));
+      arr.style.cssText = arrowBelow
+        ? 'position:absolute;bottom:-' + A + 'px;left:' + ax + 'px;width:0;height:0;border-left:' + A + 'px solid transparent;border-right:' + A + 'px solid transparent;border-top:' + A + 'px solid white;pointer-events:none;'
+        : 'position:absolute;top:-' + A + 'px;left:' + ax + 'px;width:0;height:0;border-left:' + A + 'px solid transparent;border-right:' + A + 'px solid transparent;border-bottom:' + A + 'px solid white;pointer-events:none;';
+    }
   }
   Object.keys(TIPS).forEach(function(id) {
     var btn = document.getElementById(id);
     if (!btn) return;
     btn.addEventListener('mouseenter', function() {
       if (window.tutorialActive) return;
-      tip.textContent = TIPS[id];
+      if (tipText) tipText.textContent = TIPS[id];
       tip.style.display = 'block';
-      positionTip(btn);
-      requestAnimationFrame(function() { tip.style.opacity = '1'; });
+      requestAnimationFrame(function() { positionTip(btn); tip.style.opacity = '1'; });
     });
     btn.addEventListener('mouseleave', function() {
       tip.style.opacity = '0';
