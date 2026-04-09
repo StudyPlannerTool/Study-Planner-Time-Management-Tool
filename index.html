@@ -332,8 +332,9 @@
 
   <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 215px; overflow: visible;">
     <div>
-      <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+     <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
       <div id="themeSub" class="settings-submenu" style="display:none;">
+        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;padding:6px 14px 2px;">Select Theme</div>
         <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
         <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
       </div>
@@ -351,7 +352,7 @@
     </div>
     <div style="height:1px;background:rgba(99,102,241,0.08);margin:2px 8px;"></div>
     <div>
-      <button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+<button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
       <div id="a11ySub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
         <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Accessibility</div>
         <div style="margin-bottom:12px;">
@@ -635,6 +636,14 @@ input[type="range"]:focus { outline: none; }
 @keyframes playhead-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
+}
+@keyframes sessionFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes sessionFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
 }
 #timelineBar.border-fade {
   border-color: rgba(0, 139, 139, 1);
@@ -1771,6 +1780,19 @@ function formatClockTime(date) {
   h = h % 12 || 12;
   return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
 }
+function _sessionShow(el, display) {
+  if (!el) return;
+  el.style.display = display || 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'sessionFadeIn 0.42s cubic-bezier(0.16,1,0.3,1) forwards';
+  setTimeout(function() { if (el) el.style.animation = ''; }, 450);
+}
+function _sessionHide(el, cb) {
+  if (!el || el.style.display === 'none') { if (cb) cb(); return; }
+  el.style.animation = 'sessionFadeOut 0.22s ease forwards';
+  setTimeout(function() { if (el) { el.style.display = 'none'; el.style.animation = ''; } if (cb) cb(); }, 230);
+}
 function syncCPanelTop() {
   const _sb = document.getElementById('sessionBar');
   const _cp = document.getElementById('c');
@@ -2388,20 +2410,24 @@ function renderSegmentLabelTrack() {
         tipText.textContent = name;
         tip.style.display = 'block';
         const r = wrapper.getBoundingClientRect();
-        requestAnimationFrame(function() {
-          const vp = window.visualViewport;
-          const vpOL = vp ? vp.offsetLeft : 0;
-          const vpOT = vp ? vp.offsetTop : 0;
-          const vpW = vp ? vp.width : window.innerWidth;
-          const TW = tip.offsetWidth, TH = tip.offsetHeight, A = 10, GAP = 8;
-          const rLeft = r.left - vpOL, rTop = r.top - vpOT, rBottom = r.bottom - vpOT;
-          let x = rLeft + r.width / 2 - TW / 2;
-          let y = rTop - TH - GAP - A;
-          let arrowBelow = true;
-          if (y < 8) { y = rBottom + GAP + A; arrowBelow = false; }
-          x = Math.max(8, Math.min(vpW - TW - 8, x));
-          tip.style.left = (x + vpOL) + 'px';
-          tip.style.top  = (y + vpOT) + 'px';
+          requestAnimationFrame(function() {
+            const vp = window.visualViewport;
+            const vpScale = vp ? vp.scale : 1;
+            const vpOL = vp ? vp.offsetLeft : 0;
+            const vpOT = vp ? vp.offsetTop : 0;
+            const vpW = vp ? vp.width : window.innerWidth;
+            const TW = tip.offsetWidth, TH = tip.offsetHeight, A = 10, GAP = 8;
+            const rLeft = (r.left - vpOL) / vpScale;
+            const rTop = (r.top - vpOT) / vpScale;
+            const rBottom = (r.bottom - vpOT) / vpScale;
+            const rWidth = r.width / vpScale;
+            let x = rLeft + rWidth / 2 - TW / 2;
+            let y = rTop - TH - GAP - A;
+            let arrowBelow = true;
+            if (y < 8) { y = rBottom + GAP + A; arrowBelow = false; }
+            x = Math.max(8, Math.min(vpW - TW - 8, x));
+            tip.style.left = x + 'px';
+            tip.style.top  = y + 'px';
           tip.style.opacity = '1';
           if (arr) {
             const ax = Math.max(8, Math.min(TW - A * 2 - 8, (rLeft + r.width / 2) - x - A));
@@ -2537,11 +2563,11 @@ startBtn.addEventListener("click", function() {
     }
   })();
   document.getElementById("resetTimerBtn").style.display = 'block';
-  document.getElementById("timerInfoBox").style.display = 'block';
-  document.getElementById("sessionBar").style.display = 'block';
+  _sessionShow(document.getElementById("timerInfoBox"));
+  _sessionShow(document.getElementById("sessionBar"), 'block');
   syncCPanelTop();
   document.getElementById("timerControls").style.display = 'none';
-  document.getElementById("topContainer").style.display = 'none';
+  _sessionHide(document.getElementById("topContainer"));
   controls.style.display = 'none';
 document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
@@ -4543,14 +4569,14 @@ document.getElementById("resetTimerBtn").onclick = () => {
   window._tutorialBypassBlock = true;
   document.getElementById("calculateBtn").click();
   window._tutorialBypassBlock = false;
-document.getElementById("sessionBar").style.display = 'none';
-  document.getElementById("timerInfoBox").style.display = 'none';
+_sessionHide(document.getElementById("sessionBar"));
+  _sessionHide(document.getElementById("timerInfoBox"));
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
   document.getElementById("z").style.display = 'block';
-  document.getElementById("topContainer").style.display = 'block';
-  document.getElementById("controls").style.display = 'block';
-  document.getElementById("startTimerBtn").style.display = 'block';
+  _sessionShow(document.getElementById("topContainer"));
+  _sessionShow(document.getElementById("controls"), 'block');
+  _sessionShow(document.getElementById("startTimerBtn"), 'block');
   document.getElementById("PauseTimerBtn").style.display = 'none';
   document.getElementById("ResumeTimerBtn").style.display = 'none';
   const deb = document.getElementById("doneEarlyBtn");
@@ -4596,12 +4622,13 @@ document.getElementById("ResumeTimerBtn").onclick = () => {
 if (playhead && playhead.style.display !== "none") {
   const rect = playhead.getBoundingClientRect();
   const containerRect = document.getElementById("timelineContainer").getBoundingClientRect();
-  tri.style.left = (rect.right - containerRect.left) + "px";
+  const _triZoom = parseFloat(document.getElementById("c").style.zoom) || 1;
+  tri.style.left = ((rect.right - containerRect.left) / _triZoom) + "px";
 const _slt = document.getElementById("segmentLabelTrack");
 const _sltTop = (_slt && _slt.style.display !== "none")
   ? (_slt.getBoundingClientRect().top - containerRect.top - 10)
   : (playhead.getBoundingClientRect().top - containerRect.top - 12);
-tri.style.top = _sltTop + "px";
+tri.style.top = (_sltTop / _triZoom) + "px";
   tri.style.display = "block";
 } else {
   tri.style.display = "none";
@@ -5636,10 +5663,13 @@ document.getElementById('legalModalClose').addEventListener('click', function() 
   <script>
   (function() {
     var lastClick = 0;
+    var _noDelayIds = ['addAssignmentBtn', 'calculateBtn'];
     document.addEventListener("click", function(e) {
       if (!e.isTrusted) return;
       var btn = e.target.closest("button");
       if (!btn) return;
+      if (btn.classList.contains('slider-minus') || btn.classList.contains('slider-plus')) return;
+      if (_noDelayIds.indexOf(btn.id) !== -1) return;
       var now = Date.now();
       if (now - lastClick < 500) {
         e.stopImmediatePropagation();
@@ -6142,13 +6172,13 @@ else if (e.data.type === 'close') { showWarn(false); pulse(); }
 <style>
 .settings-menu-btn { display:block; width:100%; padding:10px 14px; border:none; border-radius:10px; background:transparent; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#1e293b; cursor:pointer; text-align:left; letter-spacing:0.1px; transition:background 0.15s,color 0.15s; }
 .settings-menu-btn:hover { background:rgba(99,102,241,0.08); color:#6366f1; }
-.settings-submenu { background:rgba(99,102,241,0.04); border-radius:10px; margin:2px 4px 4px; }
+.settings-submenu { background:rgba(99,102,241,0.07); border-radius:10px; margin:2px 4px 4px; border-left:3px solid rgba(99,102,241,0.3); }
 .sub-label { font-size:12px; font-weight:600; color:#1e293b; }
 .sub-area { background:rgba(99,102,241,0.05); border-radius:10px; padding:8px 10px; }
 body.assignmentsdark #x { background:#1a2236 !important; border-color:rgba(99,102,241,0.25) !important; }
 body.assignmentsdark .settings-menu-btn { color:#e2e8f0; }
 body.assignmentsdark .settings-menu-btn:hover { background:rgba(99,102,241,0.18) !important; color:#a78bfa; }
-body.assignmentsdark .settings-submenu { background:rgba(99,102,241,0.09); }
+body.assignmentsdark .settings-submenu { background:rgba(99,102,241,0.09); border-left-color:rgba(139,92,246,0.5); }
 body.assignmentsdark .sub-label { color:#e2e8f0 !important; }
 body.assignmentsdark .sub-area { background:rgba(99,102,241,0.13) !important; }
 body.assignmentsdark #limitDisplay { color:#a78bfa !important; }
@@ -6222,11 +6252,40 @@ document.getElementById('schoolLevel').addEventListener('change', function() {
 /* Text Scale */
 function getTextScale() { return parseFloat(localStorage.getItem('studyPlanner_textScale') || '1'); }
 function applyTextScale(scale) {
+  localStorage.setItem('studyPlanner_textScale', scale);
   ['a','c','e'].forEach(function(id) {
     var el = document.getElementById(id);
-    if (el) el.style.zoom = scale;
+    if (el) el.style.zoom = '';
   });
-  localStorage.setItem('studyPlanner_textScale', scale);
+  var _tsStyle = document.getElementById('textScaleStyle');
+  if (!_tsStyle) {
+    _tsStyle = document.createElement('style');
+    _tsStyle.id = 'textScaleStyle';
+    document.head.appendChild(_tsStyle);
+  }
+  if (Math.abs(scale - 1) < 0.01) {
+    _tsStyle.textContent = '';
+  } else {
+    var _r = function(px) { return Math.round(px * scale) + 'px'; };
+    _tsStyle.textContent =
+      '#c .assignment label{font-size:' + _r(10) + '!important}' +
+      '#c .time-label{font-size:' + _r(15) + '!important}' +
+      '#c .assignmentName{font-size:' + _r(15) + '!important}' +
+      '#c .assign-summary-subject{font-size:' + _r(14) + '!important}' +
+      '#c .assign-summary-time,#c .assign-summary-diff{font-size:' + _r(11) + '!important}' +
+      '#c .custom-select-trigger,#c .custom-select-option{font-size:' + _r(13.5) + '!important}' +
+      '#c .removeBtn{font-size:' + _r(12) + '!important}' +
+      '#c #output{font-size:' + _r(14.5) + '!important}' +
+      '#c #countdownDisplay{font-size:' + _r(30) + '!important}' +
+      '#c #currentAssignmentDisplay{font-size:' + _r(13) + '!important}' +
+      '#c #streakMessage{font-size:' + _r(14) + '!important}' +
+      '#c #milestoneMessage{font-size:' + _r(15) + '!important}' +
+      '#c .day-content{font-size:' + _r(14) + '!important}' +
+      '#c .day-label-chip{font-size:' + _r(10) + '!important}' +
+      '#c .content-inner{font-size:' + _r(14.5) + '!important}' +
+      '#c #addAssignmentBtn,#c #calculateBtn,#c #resetBtn{font-size:' + _r(13) + '!important}' +
+      '#c #startTimerBtn,#c #resetTimerBtn,#c #doneEarlyBtn,#c #PauseTimerBtn,#c #ResumeTimerBtn{font-size:' + _r(14) + '!important}';
+  }
   if (typeof renderSegmentLabelTrack === 'function') {
     requestAnimationFrame(function() { requestAnimationFrame(renderSegmentLabelTrack); });
   }
