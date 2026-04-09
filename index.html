@@ -392,7 +392,7 @@
     <!-- Hero Section -->
     <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 20px 40px; position: relative; overflow: hidden;">
 
-     <h1 id="title" style="margin: 0 auto 15px; color: #0f172a; font-family: 'franchise', sans-serif; font-size: clamp(45px, 8vw, 80px); font-weight: 800; letter-spacing: -2px; max-width: 780px; min-width: 400px; line-height: 1.05;">
+     <h1 id="title" style="margin: 0 auto 15px; color: #0f172a; font-family: 'franchise', sans-serif; font-size: clamp(45px, 8vw, 80px); font-weight: 800; letter-spacing: -2px; max-width: 780px; min-width: 0; line-height: 1.05;">
         Study Smarter.<br>
         <span style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Plan Better.</span>
       </h1>
@@ -1386,6 +1386,10 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb {
 body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
   background: rgba(139,92,246,0.65);
 }
+.day-block { margin-bottom: 16px; }
+.day-label-chip { display:inline-block; background:rgba(99,102,241,0.1); color:#6366f1; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.3px; padding:3px 10px; border-radius:50px; margin-bottom:8px; }
+.day-content { font-size:14px; line-height:1.9; padding-left:2px; }
+body.assignmentsdark .day-label-chip { background:rgba(99,102,241,0.22); color:#a78bfa; }
 </style>
 <div id="topContainer" style="position: relative; z-index: 100;">
 
@@ -1537,11 +1541,11 @@ body.dropdowndark .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
 </div>
 
  <div id="timelineLegend" style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:16px; row-gap:5px; margin:14px 0 4px; padding:8px 14px; background:rgba(99,102,241,0.04); border-radius:10px;">
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#800080;flex-shrink:0;"></span>Priority</span>
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d9613d;flex-shrink:0;"></span>Hard</span>
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0ad4e;flex-shrink:0;"></span>Medium</span>
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5cb85c;flex-shrink:0;"></span>Easy</span>
-    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#999;flex-shrink:0;"></span>Break</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span data-swatch="priority" style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#800080;flex-shrink:0;"></span>Priority</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span data-swatch="hard" style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#d9613d;flex-shrink:0;"></span>Hard</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span data-swatch="medium" style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#f0ad4e;flex-shrink:0;"></span>Medium</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span data-swatch="easy" style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5cb85c;flex-shrink:0;"></span>Easy</span>
+    <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span data-swatch="break" style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#999;flex-shrink:0;"></span>Break</span>
 <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:#64748b;"><span id="legendDayBar" style="display:inline-block;width:2px;height:12px;background:#1e293b;flex-shrink:0;"></span>Day</span>
   </div>
 
@@ -2009,7 +2013,11 @@ document.getElementById("addAssignmentBtn").onclick = () => {
     <label>Estimated Completion Time</label>
     <div style="display: flex; flex-direction: column; align-items: center; margin-top: 4px;">
       <span class="time-label" style="font-weight: 700; font-family: 'Syne', sans-serif; color: #6366f1; font-size: 15px;">10 min</span>
-      <input type="range" min="10" max="180" step="5" value="10" class="time" style="width: 250px; accent-color: #6366f1; height: 8px; border-radius: 5px; cursor: pointer; margin-top: 4px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+        <button class="slider-minus" type="button" style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:18px;line-height:1;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.15s,border-color 0.15s;">−</button>
+        <input type="range" min="10" max="180" step="5" value="10" class="time" style="width:200px;accent-color:#6366f1;height:8px;border-radius:5px;cursor:pointer;">
+        <button class="slider-plus" type="button" style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:18px;line-height:1;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.15s,border-color 0.15s;">+</button>
+      </div>
     </div>
     <button class="removeBtn">🗑 Remove</button>
   </div>
@@ -2028,6 +2036,26 @@ div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (wind
     });
   }
 
+  const sliderMinusBtn = div.querySelector('.slider-minus');
+  const sliderPlusBtn = div.querySelector('.slider-plus');
+  if (sliderMinusBtn && sliderPlusBtn) {
+    sliderMinusBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newVal = Math.max(10, parseInt(slider.value) - 5);
+      slider.value = newVal;
+      timeLabel.textContent = timeValToText(newVal);
+      updateAssignmentSummary(div);
+      saveToLocalStorage();
+    });
+    sliderPlusBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const newVal = Math.min(180, parseInt(slider.value) + 5);
+      slider.value = newVal;
+      timeLabel.textContent = timeValToText(newVal);
+      updateAssignmentSummary(div);
+      saveToLocalStorage();
+    });
+  }
   makeCustomSelects(div);
 
 div.querySelector('.assignment-body').addEventListener('change', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
@@ -2113,9 +2141,10 @@ stopTimer();
     return;
   }
   const _calcBtn = document.getElementById("calculateBtn");
+  window._isCalculating = true;
   _calcBtn.textContent = "Calculating...";
   _calcBtn.disabled = true;
-  setTimeout(() => { _calcBtn.textContent = "Calculate"; _calcBtn.disabled = false;
+  setTimeout(() => { _calcBtn.textContent = "Calculate"; _calcBtn.disabled = false; window._isCalculating = false;
 
   output.classList.add('show');
 
@@ -2199,7 +2228,7 @@ plan += `${displayName} — ${minutesToText(chunk)}`;
         dayBoundaries.push(cumulativeForTimeline);
         day++;
         dayCumulative = 0;
-        plan += `\n\n<b>Day ${day}:</b>\n\n`;
+       plan += `\n\n<b>Day ${day}:</b>\n\n`;
       }
     }
     plan = plan.replace(/\n+$/, '') + "\n\n";
@@ -2207,16 +2236,6 @@ plan += `${displayName} — ${minutesToText(chunk)}`;
   });
  
 TOTAL_STUDY_SECONDS = (totalWork + totalBreaks) * 60;
-
-
-
-
-
-
-
-
-
-
 
 
   output.innerHTML =
@@ -4686,6 +4705,7 @@ function setPulse(on) {
 }
 
 function markOutdated() {
+  if (window._isCalculating) return;
   const _assignCount = document.querySelectorAll('#assignmentsContainer .assignment').length;
   if (_assignCount === 0) { outdatedBanner.style.display = "none"; setPulse(false); return; }
   if (hasCalculated) {
@@ -6140,6 +6160,11 @@ body.colorblind-mode #timelineBar > div[data-seg-diff="hard"] { background:radia
 body.colorblind-mode #timelineBar > div[data-seg-diff="medium"] { background:repeating-linear-gradient(0deg,#f0ad4e,#f0ad4e 4px,#f8d48c 4px,#f8d48c 8px) !important; }
 body.colorblind-mode #timelineBar > div[data-seg-diff="easy"] { background:repeating-linear-gradient(90deg,#5cb85c,#5cb85c 4px,#9de09d 4px,#9de09d 8px) !important; }
 body.colorblind-mode #timelineBar > div[data-seg-diff="break"] { background:repeating-linear-gradient(-45deg,#999,#999 3px,#bbb 3px,#bbb 6px) !important; }
+body.colorblind-mode [data-swatch="priority"] { background:repeating-linear-gradient(45deg,#800080,#800080 4px,#b060b0 4px,#b060b0 8px) !important; }
+body.colorblind-mode [data-swatch="hard"] { background:radial-gradient(circle,#6b2f00 2px,#d9613d 2px) !important; background-size:8px 8px !important; }
+body.colorblind-mode [data-swatch="medium"] { background:repeating-linear-gradient(0deg,#f0ad4e,#f0ad4e 4px,#f8d48c 4px,#f8d48c 8px) !important; }
+body.colorblind-mode [data-swatch="easy"] { background:repeating-linear-gradient(90deg,#5cb85c,#5cb85c 4px,#9de09d 4px,#9de09d 8px) !important; }
+body.colorblind-mode [data-swatch="break"] { background:repeating-linear-gradient(-45deg,#999,#999 3px,#bbb 3px,#bbb 6px) !important; }
 </style>
 <script>
 /* ── Settings Panel Logic ── */
@@ -6202,6 +6227,9 @@ function applyTextScale(scale) {
     if (el) el.style.zoom = scale;
   });
   localStorage.setItem('studyPlanner_textScale', scale);
+  if (typeof renderSegmentLabelTrack === 'function') {
+    requestAnimationFrame(function() { requestAnimationFrame(renderSegmentLabelTrack); });
+  }
 }
 /* Colorblind */
 function toggleColorblind() {
