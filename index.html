@@ -872,8 +872,11 @@ body.removelight .removeBtn {
 .icon {
   font-size: 20px;
   color: black;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease;
   font-weight: 300;
+}
+body.assignmentsdark .icon {
+  color: white;
 }
 #viewPresetButton .icon {
   color: white !important;
@@ -1677,10 +1680,12 @@ if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.ad
     document.getElementById("showMoreContainer").style.display = "block";
     document.getElementById("showLessContainer").style.display = "none";
     const _rofR = document.getElementById("outputFade"); if (_rofR) _rofR.style.display = "block";
-    const of = document.getElementById("outputFade"); if (of) of.style.display = "none";
+    const of = document.getElementById("outputFade"); if (of) of.style.display = "block";
     document.getElementById("startTimerBtn").style.display = "none";
     document.getElementById("PauseTimerBtn").style.display = "none";
     document.getElementById("ResumeTimerBtn").style.display = "block";
+    window._sessionPaused = true;
+    window._pausedAssignmentDisplay = "Session restored: tap Resume to continue!";
     document.getElementById("currentAssignmentDisplay").textContent = "Session restored: tap Resume to continue!";
     setTimeout(() => tc.scrollIntoView({ behavior: "smooth", block: "start" }), 400);
   } catch(e) { console.error("Restore failed:", e); clearTimerState(); }
@@ -2317,17 +2322,22 @@ function renderSegmentLabelTrack() {
         tip.style.display = 'block';
         const r = wrapper.getBoundingClientRect();
         requestAnimationFrame(function() {
+          const vp = window.visualViewport;
+          const vpOL = vp ? vp.offsetLeft : 0;
+          const vpOT = vp ? vp.offsetTop : 0;
+          const vpW = vp ? vp.width : window.innerWidth;
           const TW = tip.offsetWidth, TH = tip.offsetHeight, A = 10, GAP = 8;
-          let x = r.left + r.width / 2 - TW / 2;
-          let y = r.top - TH - GAP - A;
+          const rLeft = r.left - vpOL, rTop = r.top - vpOT, rBottom = r.bottom - vpOT;
+          let x = rLeft + r.width / 2 - TW / 2;
+          let y = rTop - TH - GAP - A;
           let arrowBelow = true;
-          if (y < 8) { y = r.bottom + GAP + A; arrowBelow = false; }
-          x = Math.max(8, Math.min(window.innerWidth - TW - 8, x));
-          tip.style.left = x + 'px';
-          tip.style.top  = y + 'px';
+          if (y < 8) { y = rBottom + GAP + A; arrowBelow = false; }
+          x = Math.max(8, Math.min(vpW - TW - 8, x));
+          tip.style.left = (x + vpOL) + 'px';
+          tip.style.top  = (y + vpOT) + 'px';
           tip.style.opacity = '1';
           if (arr) {
-            const ax = Math.max(8, Math.min(TW - A * 2 - 8, (r.left + r.width / 2) - x - A));
+            const ax = Math.max(8, Math.min(TW - A * 2 - 8, (rLeft + r.width / 2) - x - A));
             arr.style.cssText = arrowBelow
               ? `position:absolute;bottom:-${A}px;left:${ax}px;width:0;height:0;border-left:${A}px solid transparent;border-right:${A}px solid transparent;border-top:${A}px solid white;pointer-events:none;`
               : `position:absolute;top:-${A}px;left:${ax}px;width:0;height:0;border-left:${A}px solid transparent;border-right:${A}px solid transparent;border-bottom:${A}px solid white;pointer-events:none;`;
@@ -4444,7 +4454,10 @@ window.addEventListener("pagehide", () => {
   }
   if (rem > 0) saveTimerState(rem, false);
 });
-document.getElementById("doneEarlyBtn").addEventListener("click", skipCurrentAssignment);
+document.getElementById("doneEarlyBtn").addEventListener("click", function() {
+  skipCurrentAssignment();
+  requestAnimationFrame(renderSegmentLabelTrack);
+});
 
 document.getElementById("resetTimerBtn").onclick = () => {
   const _doSessionReset = () => {
@@ -6024,12 +6037,14 @@ requestAnimationFrame(loop);
       var el = document.getElementById(id); if (el) el.style.display = v ? 'block' : 'none';
     });
   }
+  var _lsWarnReady = false;
+  setTimeout(function() { _lsWarnReady = true; }, 4500);
   function pulse() {
     var t = getTabs(), now = Date.now(), count = 0;
     t[TAB_ID] = now;
     Object.keys(t).forEach(function(k) { if (now - t[k] < 9000) count++; else delete t[k]; });
     setTabs(t);
-    showWarn(count > 1);
+    if (_lsWarnReady) showWarn(count > 1);
   }
   pulse();
   setInterval(pulse, 3000);
