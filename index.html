@@ -4530,8 +4530,6 @@ document.addEventListener("visibilitychange", () => {
   savePartialSessionTime();
 });
 window.addEventListener("pagehide", () => {
-  const _pauseBtn = document.getElementById("PauseTimerBtn");
-  if (_pauseBtn && _pauseBtn.style.display !== 'none') _pauseBtn.click();
   savePartialSessionTime();
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph || ph.style.display === "none") return;
