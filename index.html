@@ -2558,37 +2558,17 @@ startBtn.addEventListener("click", function() {
     }
   })();
   document.getElementById("resetTimerBtn").style.display = 'block';
+  _sessionShow(document.getElementById("timerInfoBox"));
+  _sessionShow(document.getElementById("sessionBar"), 'block');
+  syncCPanelTop();
   document.getElementById("timerControls").style.display = 'none';
+  _sessionHide(document.getElementById("topContainer"));
+  controls.style.display = 'none';
+document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'block';
   ResumeBtn.style.display = 'none';
-  // Phase 1 — fade out controls bar and assignment list simultaneously
-  controls.style.transition = 'opacity 0.25s ease';
-  controls.style.opacity = '0';
-  controls.style.pointerEvents = 'none';
-  var _startTcFade = document.getElementById("topContainer");
-  _startTcFade.style.transition = 'opacity 0.25s ease';
-  _startTcFade.style.opacity = '0';
-  _startTcFade.style.pointerEvents = 'none';
-  setTimeout(function() {
-    // Phase 2 — commit display:none after fade, then reveal session UI
-    controls.style.display = 'none';
-    controls.style.opacity = '';
-    controls.style.transition = '';
-    controls.style.pointerEvents = '';
-    _startTcFade.style.display = 'none';
-    _startTcFade.style.opacity = '';
-    _startTcFade.style.transition = '';
-    _startTcFade.style.pointerEvents = '';
-    _sessionShow(document.getElementById("timerInfoBox"));
-    _sessionShow(document.getElementById("sessionBar"), 'block');
-    syncCPanelTop();
-    // Phase 3 — scroll only after session bar and padding-top have settled
-    setTimeout(function() {
-      document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      requestAnimationFrame(renderSegmentLabelTrack);
-    }, 260);
-  }, 270);
+  requestAnimationFrame(renderSegmentLabelTrack);
 })
 PauseBtn.addEventListener("click", function() {
   startBtn.style.display = 'none';
@@ -3319,7 +3299,6 @@ body.assignmentsdark input::placeholder {
 #c {
   transform: translateX(-110%);
   z-index: 2;
-  transition: padding-top 0.38s cubic-bezier(0.16,1,0.3,1);
 }
 #e {
   transform: translateX(110%);
@@ -4546,23 +4525,9 @@ document.addEventListener("visibilitychange", () => {
     }
     return;
   }
-  // Tab hidden — save partial time AND persist full timer state immediately.
-  // Many browsers (especially mobile) kill the tab before pagehide ever fires,
-  // so we cannot rely on pagehide alone to persist session state.
+  // Tab hidden (switching to another tab) — only save partial studied time.
+  // Timer continues running via wall-clock in startTime/performance.now(); no state save here.
   savePartialSessionTime();
-  (function() {
-    var _vph = document.getElementById("v_playhead_fixed");
-    var _vrb = document.getElementById("resetTimerBtn");
-    if (!_vph || _vph.style.display === "none" || !_vrb || _vrb.style.display === "none") return;
-    var _vrem;
-    if (window._timerActualStart) {
-      _vrem = Math.max(0, TOTAL_STUDY_SECONDS - Math.floor((Date.now() - window._timerActualStart) / 1000));
-    } else {
-      var _vcd = document.getElementById("countdownDisplay");
-      if (_vcd) { var _vp = _vcd.textContent.split(":"); if (_vp.length === 3) _vrem = parseInt(_vp[0])*3600 + parseInt(_vp[1])*60 + parseInt(_vp[2]); }
-    }
-    if (_vrem > 0) saveTimerState(_vrem, false);
-  })();
 });
 window.addEventListener("pagehide", () => {
   savePartialSessionTime();
@@ -4599,8 +4564,14 @@ document.getElementById("resetTimerBtn").onclick = () => {
   window._tutorialBypassBlock = true;
   document.getElementById("calculateBtn").click();
   window._tutorialBypassBlock = false;
-document.getElementById("resetTimerBtn").classList.remove("pulse-end");
+_sessionHide(document.getElementById("sessionBar"));
+  _sessionHide(document.getElementById("timerInfoBox"));
+  document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   document.getElementById("resetTimerBtn").style.display = 'none';
+  document.getElementById("z").style.display = 'block';
+  _sessionShow(document.getElementById("topContainer"));
+  _sessionShow(document.getElementById("controls"), 'block');
+  _sessionShow(document.getElementById("startTimerBtn"), 'block');
   document.getElementById("PauseTimerBtn").style.display = 'none';
   document.getElementById("ResumeTimerBtn").style.display = 'none';
   const deb = document.getElementById("doneEarlyBtn");
@@ -4611,32 +4582,7 @@ document.getElementById("resetTimerBtn").classList.remove("pulse-end");
   if (_rTR) _rTR.style.display = "none";
   const _rBM = document.getElementById("breakMessage");
   if (_rBM) _rBM.style.display = "none";
-  // Phase 1 — fade out session UI first
-  _sessionHide(document.getElementById("timerInfoBox"));
-  _sessionHide(document.getElementById("sessionBar"), function() {
-    // Phase 2 — after session bar is gone, fade controls and assignments back in together
-    const _resetTc = document.getElementById("topContainer");
-    _resetTc.style.display = 'block';
-    _resetTc.style.opacity = '0';
-    _resetTc.style.transition = 'opacity 0.4s ease';
-    controls.style.display = 'block';
-    controls.style.opacity = '0';
-    controls.style.transition = 'opacity 0.4s ease';
-    controls.classList.add("show");
-    document.getElementById("z").style.display = 'block';
-    _sessionShow(document.getElementById("startTimerBtn"), 'block');
-    syncCPanelTop();
-    requestAnimationFrame(function() {
-      _resetTc.style.opacity = '1';
-      controls.style.opacity = '1';
-      setTimeout(function() {
-        _resetTc.style.transition = '';
-        _resetTc.style.opacity = '';
-        controls.style.transition = '';
-        controls.style.opacity = '';
-      }, 420);
-    });
-  });
+  syncCPanelTop();
   };
   if (window.tutorialActive) { _doSessionReset(); return; }
   showCustomConfirm("End your session? This will reset your timer and progress.", _doSessionReset);
