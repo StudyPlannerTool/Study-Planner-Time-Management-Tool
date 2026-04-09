@@ -328,12 +328,52 @@
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
  
-    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black;">☀️</button>
+    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black; font-size: 18px;">⚙️</button>
 
-  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 150px; overflow: hidden;">
-    <button id="Light" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Light Mode</button>
-    <div style="height: 1px; background: rgba(99,102,241,0.08); margin: 2px 8px;"></div>
-    <button id="Dark" style="display: block; width: 100%; padding: 11px 16px; border: none; border-radius: 10px; background: transparent; font-family: 'Inter', sans-serif; font-size: 13.5px; font-weight: 600; color: #1e293b; cursor: pointer; text-align: left; letter-spacing: 0.1px;">Dark Mode</button>
+  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 215px; overflow: visible;">
+    <div>
+      <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <div id="themeSub" class="settings-submenu" style="display:none;">
+        <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
+        <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
+      </div>
+    </div>
+    <div style="height:1px;background:rgba(99,102,241,0.08);margin:2px 8px;"></div>
+    <div>
+      <button class="settings-menu-btn" onclick="toggleSettingsSub('limitSub')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <div id="limitSub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Daily Limit</div>
+        <div style="font-size:16px;font-weight:800;font-family:'Syne',sans-serif;color:#6366f1;text-align:center;margin-bottom:8px;"><span id="limitDisplay">--</span></div>
+        <input type="range" id="limitSlider" min="30" max="300" step="10" value="140" style="width:100%;margin-bottom:4px;accent-color:#6366f1;">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-bottom:8px;"><span>30 min</span><span>5 hrs</span></div>
+        <button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+      </div>
+    </div>
+    <div style="height:1px;background:rgba(99,102,241,0.08);margin:2px 8px;"></div>
+    <div>
+      <button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <div id="a11ySub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Accessibility</div>
+        <div style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+            <span class="sub-label">Text Size</span>
+            <span id="textScaleDisplay" style="font-size:11px;font-weight:700;color:#6366f1;">0%</span>
+          </div>
+          <input type="range" id="textScaleSlider" min="0.85" max="1.15" step="0.05" value="1" style="width:100%;accent-color:#6366f1;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px;"><span>Smaller</span><span>Larger</span></div>
+        </div>
+        <div class="sub-area" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div>
+            <div class="sub-label">Colorblind Mode</div>
+            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Adds patterns to timeline</div>
+          </div>
+          <div id="colorblindToggle" onclick="toggleColorblind()" style="width:38px;height:21px;background:#cbd5e1;border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;margin-left:10px;">
+            <div id="colorblindThumb" style="position:absolute;top:2px;left:2px;width:17px;height:17px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+          </div>
+        </div>
+        <button onclick="resetAccessibility()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+      </div>
+    </div>
   </div>
   </div>
 <div id="sessionBar" style="display:none; position:fixed; top:0; left:0; width:100%; z-index:9999; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); background: rgba(255,255,255,0.15); border-bottom:1.5px solid rgba(139,92,246,0.28); box-shadow:0 4px 18px rgba(99,102,241,0.18),0 1px 4px rgba(0,0,0,0.08); padding: 15px 50px 20px; box-sizing:border-box;">
@@ -1552,6 +1592,11 @@ const subjects = {
 
 const attentionBlocks = { middle:35, high:50, college:60 };
 const difficultyRank = { priority:0, hard:1, medium:2, easy:3 };
+function getDailyLimit(level) {
+  var stored = localStorage.getItem('studyPlanner_dailyLimit');
+  if (stored) return parseInt(stored);
+  return level === 'middle' ? 90 : level === 'high' ? 140 : 200;
+}
 let TOTAL_STUDY_SECONDS = 0;
 let segmentMap = [];
 let _dayMarkerPcts = [];
@@ -1618,12 +1663,13 @@ if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.ad
       const div = document.createElement("div");
       div.style.flex = seg.durationMinutes;
       div.style.background = seg.isBreak ? colors.break : (colors[seg.difficulty] || "#5cb85c");
+      div.dataset.segDiff = seg.isBreak ? 'break' : (seg.difficulty || 'easy');
       bar.appendChild(div);
     });
     // Reconstruct day markers
     (function() {
       const _sl = state.schoolLevel || "high";
-      const _dl = _sl === "middle" ? 90 : _sl === "high" ? 140 : 200;
+    const _dl = getDailyLimit(_sl);
       const _startDayCum = state.sessionDayCumOffset || 0;
       const _totalMins = segmentMap.reduce((s, seg) => s + seg.durationMinutes, 0);
       if (_totalMins > 0) {
@@ -1745,7 +1791,7 @@ function updateSessionEndTime() {
   const endLabel = document.getElementById("sessionEndTimeLabel");
   if (!endLabel) return;
   const schoolLvl = document.getElementById("schoolLevel").value;
-  const dailyLimit = schoolLvl === "middle" ? 90 : schoolLvl === "high" ? 140 : 200;
+ const dailyLimit = getDailyLimit(schoolLvl);
   const totalMins = segmentMap.reduce((sum, s) => sum + s.durationMinutes, 0);
   if (totalMins > dailyLimit) {
     endLabel.textContent = "Ends: N/A (multi-day plan)";
@@ -2105,7 +2151,7 @@ setTimeout(() => {
 
 
   const block = attentionBlocks[schoolLevel.value];
-  let dailyLimit = schoolLevel.value==="middle"?90: schoolLevel.value==="high"?140:200;
+let dailyLimit = getDailyLimit(schoolLevel.value);
 
 
 
@@ -2245,6 +2291,7 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
       const seg = document.createElement("div");
       seg.style.flex = chunk;
       seg.style.background = colors[a.difficulty] || "#5cb85c";
+      seg.dataset.segDiff = a.difficulty || 'easy';
       bar.appendChild(seg);
       segmentMap.push({ start: (cumulative / totalTime) * 100, end: ((cumulative + chunk) / totalTime) * 100, name: a.name || a.subject, subject: a.subject, isBreak: false, durationMinutes: chunk, difficulty: a.difficulty });
       cumulative += chunk;
@@ -2257,6 +2304,7 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
         const breakSeg = document.createElement("div");
         breakSeg.style.flex = 10;
         breakSeg.style.background = colors.break;
+        breakSeg.dataset.segDiff = 'break';
         bar.appendChild(breakSeg);
         segmentMap.push({ start: (cumulative / totalTime) * 100, end: ((cumulative + 10) / totalTime) * 100, name: "Break", isBreak: true, durationMinutes: 10 });
         cumulative += 10;
@@ -3061,10 +3109,13 @@ document.getElementById("showLessBtn").addEventListener("click", function() {
     const x = document.getElementById("x")
    
     z.addEventListener("click", function(){
-      x.style.display = 'block'
-    });
-    x.addEventListener("click", function() {
-      x.style.display = 'none'
+      var isOpen = x.style.display !== 'none';
+      x.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) {
+        ['themeSub','limitSub','a11ySub'].forEach(function(id){
+          var s = document.getElementById(id); if(s) s.style.display = 'none';
+        });
+      }
     });
 </script>
 
@@ -3318,7 +3369,6 @@ function showCustomConfirm(msg, onYes, onNo) {
 
     Light.addEventListener("click", function() {
   saveTheme("light");
-  document.getElementById("z").textContent = "☀️";
   document.body.classList.remove("assignmentsdark");
   document.body.classList.add("assignmentslight");
   document.body.classList.remove("dropdowndark");
@@ -3492,7 +3542,6 @@ const onboardingBack = document.getElementById('onboardingBack');
 
 Dark.addEventListener("click", function() {
   saveTheme("dark");
-  document.getElementById("z").textContent = "🌒";
   document.body.classList.remove("assignmentslight");
   document.body.classList.add("assignmentsdark");
   document.body.classList.remove("dropdownlight");
@@ -4172,6 +4221,9 @@ z.addEventListener("click", function(e) {
 document.addEventListener("click", function(e) {
   if (!x.contains(e.target) && e.target !== z) {
     x.style.display = "none";
+    ['themeSub','limitSub','a11ySub'].forEach(function(id){
+      var s = document.getElementById(id); if(s) s.style.display = 'none';
+    });
   }
   if (!e.target.closest('.custom-select-wrapper')) {
     closeAllCustomDropdowns();
@@ -4728,7 +4780,7 @@ function _doSkipCore() {
   const assignmentName = seg.name;
   const schoolLvl = document.getElementById("schoolLevel").value;
   const block = attentionBlocks[schoolLvl];
-  const dailyLimitVal = schoolLvl === "middle" ? 90 : schoolLvl === "high" ? 140 : 200;
+  const dailyLimitVal = getDailyLimit(schoolLvl);
 
  
 let dayCumAtSkip = sessionDayCumOffset;
@@ -4823,10 +4875,11 @@ let dayCumAtSkip = sessionDayCumOffset;
     const div = document.createElement("div");
     div.style.flex = s.durationMinutes;
     div.style.background = s.isBreak ? colors.break : (colors[s.difficulty] || "#5cb85c");
+    div.dataset.segDiff = s.isBreak ? 'break' : (s.difficulty || 'easy');
     bar.appendChild(div);
   });
    const _schoolLvl1 = document.getElementById("schoolLevel").value;
-  const _dailyLimit1 = _schoolLvl1 === "middle" ? 90 : _schoolLvl1 === "high" ? 140 : 200;
+  const _dailyLimit1 = getDailyLimit(_schoolLvl1);
   let _runMin1 = dayCumAtSkip; let _cum1 = 0; let _dayNum1 = 1;
   newSegMap.forEach(s => {
     const prev = _runMin1; _runMin1 += s.durationMinutes;
@@ -4897,7 +4950,7 @@ function showAssignmentEndPopup(assignmentName) {
 function handleMarkAsDone() {
   launchConfetti(document.getElementById("markDoneBtn"));
   const schoolLvl = document.getElementById("schoolLevel").value;
-  const dailyLimitVal = schoolLvl === "middle" ? 90 : schoolLvl === "high" ? 140 : 200;
+  const dailyLimitVal = getDailyLimit(schoolLvl);
   const colors = { priority:"#800080", hard:"#d9613d", medium:"#f0ad4e", easy:"#5cb85c", break:"#999" };
 
   let newDayCum = sessionDayCumOffset;
@@ -4950,10 +5003,11 @@ function handleMarkAsDone() {
     const div = document.createElement("div");
     div.style.flex = s.durationMinutes;
     div.style.background = s.isBreak ? colors.break : (colors[s.difficulty] || "#5cb85c");
+    div.dataset.segDiff = s.isBreak ? 'break' : (s.difficulty || 'easy');
     bar.appendChild(div);
   });
    const _schoolLvl2 = document.getElementById("schoolLevel").value;
-  const _dailyLimit2 = _schoolLvl2 === "middle" ? 90 : _schoolLvl2 === "high" ? 140 : 200;
+  const _dailyLimit2 = getDailyLimit(_schoolLvl2);
   let _runMin2 = newDayCum; let _cum2 = 0; let _dayNum2 = 1;
   newSegMap.forEach(s => {
     const prev = _runMin2; _runMin2 += s.durationMinutes;
@@ -4983,7 +5037,7 @@ function handleNeedMoreTime() {
   const extraMins = parseInt(document.getElementById("extraTimeSelect").value);
   const schoolLvl = document.getElementById("schoolLevel").value;
   const block = attentionBlocks[schoolLvl];
-  const dailyLimitVal = schoolLvl === "middle" ? 90 : schoolLvl === "high" ? 140 : 200;
+  const dailyLimitVal = getDailyLimit(schoolLvl);
   const colors = { priority:"#800080", hard:"#d9613d", medium:"#f0ad4e", easy:"#5cb85c", break:"#999" };
 
   let newDayCum = sessionDayCumOffset;
@@ -5056,10 +5110,11 @@ function handleNeedMoreTime() {
     const div = document.createElement("div");
     div.style.flex = s.durationMinutes;
     div.style.background = s.isBreak ? colors.break : (colors[s.difficulty] || "#5cb85c");
+    div.dataset.segDiff = s.isBreak ? 'break' : (s.difficulty || 'easy');
     bar.appendChild(div);
   });
    const _schoolLvl3 = document.getElementById("schoolLevel").value;
-  const _dailyLimit3 = _schoolLvl3 === "middle" ? 90 : _schoolLvl3 === "high" ? 140 : 200;
+  const _dailyLimit3 = getDailyLimit(_schoolLvl3);
   let _runMin3 = newDayCum; let _cum3 = 0; let _dayNum3 = 1;
   newSegMap.forEach(s => {
     const prev = _runMin3; _runMin3 += s.durationMinutes;
@@ -6061,6 +6116,139 @@ requestAnimationFrame(loop);
 else if (e.data.type === 'close') { showWarn(false); pulse(); }
     };
     window.addEventListener('beforeunload', function() { bc.postMessage({ type: 'close', id: TAB_ID }); });
+  }
+})();
+</script>
+<style>
+.settings-menu-btn { display:block; width:100%; padding:10px 14px; border:none; border-radius:10px; background:transparent; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#1e293b; cursor:pointer; text-align:left; letter-spacing:0.1px; transition:background 0.15s,color 0.15s; }
+.settings-menu-btn:hover { background:rgba(99,102,241,0.08); color:#6366f1; }
+.settings-submenu { background:rgba(99,102,241,0.04); border-radius:10px; margin:2px 4px 4px; }
+.sub-label { font-size:12px; font-weight:600; color:#1e293b; }
+.sub-area { background:rgba(99,102,241,0.05); border-radius:10px; padding:8px 10px; }
+body.assignmentsdark #x { background:#1a2236 !important; border-color:rgba(99,102,241,0.25) !important; }
+body.assignmentsdark .settings-menu-btn { color:#e2e8f0; }
+body.assignmentsdark .settings-menu-btn:hover { background:rgba(99,102,241,0.18) !important; color:#a78bfa; }
+body.assignmentsdark .settings-submenu { background:rgba(99,102,241,0.09); }
+body.assignmentsdark .sub-label { color:#e2e8f0 !important; }
+body.assignmentsdark .sub-area { background:rgba(99,102,241,0.13) !important; }
+body.assignmentsdark #limitDisplay { color:#a78bfa !important; }
+body.assignmentsdark button[onclick="resetDailyLimit()"],
+body.assignmentsdark button[onclick="resetAccessibility()"] { border-color:rgba(139,92,246,0.4) !important; color:#a78bfa !important; }
+/* Colorblind timeline patterns */
+body.colorblind-mode #timelineBar > div[data-seg-diff="priority"] { background:repeating-linear-gradient(45deg,#800080,#800080 4px,#b060b0 4px,#b060b0 8px) !important; }
+body.colorblind-mode #timelineBar > div[data-seg-diff="hard"] { background:radial-gradient(circle,#6b2f00 2px,#d9613d 2px) !important; background-size:8px 8px !important; }
+body.colorblind-mode #timelineBar > div[data-seg-diff="medium"] { background:repeating-linear-gradient(0deg,#f0ad4e,#f0ad4e 4px,#f8d48c 4px,#f8d48c 8px) !important; }
+body.colorblind-mode #timelineBar > div[data-seg-diff="easy"] { background:repeating-linear-gradient(90deg,#5cb85c,#5cb85c 4px,#9de09d 4px,#9de09d 8px) !important; }
+body.colorblind-mode #timelineBar > div[data-seg-diff="break"] { background:repeating-linear-gradient(-45deg,#999,#999 3px,#bbb 3px,#bbb 6px) !important; }
+</style>
+<script>
+/* ── Settings Panel Logic ── */
+function toggleSettingsSub(id) {
+  ['themeSub','limitSub','a11ySub'].forEach(function(s) {
+    var el = document.getElementById(s);
+    if (!el) return;
+    if (s === id) {
+      var nowOpen = el.style.display !== 'none';
+      el.style.display = nowOpen ? 'none' : 'block';
+      if (!nowOpen) {
+        if (s === 'limitSub') initLimitSlider();
+        if (s === 'a11ySub') initA11yUI();
+      }
+    } else {
+      el.style.display = 'none';
+    }
+  });
+}
+/* Daily Limit */
+function formatLimitDisplay(mins) {
+  if (mins < 60) return mins + ' min';
+  var h = Math.floor(mins / 60), m = mins % 60;
+  return m ? h + 'h ' + m + 'm' : h + ' hrs';
+}
+function initLimitSlider() {
+  var slider = document.getElementById('limitSlider');
+  var display = document.getElementById('limitDisplay');
+  var val = getDailyLimit(document.getElementById('schoolLevel').value);
+  if (slider) slider.value = val;
+  if (display) display.textContent = formatLimitDisplay(val);
+  if (slider) {
+    slider.oninput = function() {
+      var v = parseInt(this.value);
+      if (display) display.textContent = formatLimitDisplay(v);
+      localStorage.setItem('studyPlanner_dailyLimit', v);
+      if (typeof markOutdated === 'function') markOutdated();
+    };
+  }
+}
+function resetDailyLimit() {
+  localStorage.removeItem('studyPlanner_dailyLimit');
+  var l = document.getElementById('schoolLevel').value;
+  var def = l === 'middle' ? 90 : l === 'high' ? 140 : 200;
+  var slider = document.getElementById('limitSlider');
+  var display = document.getElementById('limitDisplay');
+  if (slider) slider.value = def;
+  if (display) display.textContent = formatLimitDisplay(def);
+  if (typeof markOutdated === 'function') markOutdated();
+}
+document.getElementById('schoolLevel').addEventListener('change', function() {
+  var sub = document.getElementById('limitSub');
+  if (sub && sub.style.display !== 'none') initLimitSlider();
+});
+/* Text Scale */
+function getTextScale() { return parseFloat(localStorage.getItem('studyPlanner_textScale') || '1'); }
+function applyTextScale(scale) {
+  ['a','c','e'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.zoom = scale;
+  });
+  localStorage.setItem('studyPlanner_textScale', scale);
+}
+/* Colorblind */
+function toggleColorblind() {
+  var isOn = localStorage.getItem('studyPlanner_colorblind') === 'true';
+  isOn = !isOn;
+  localStorage.setItem('studyPlanner_colorblind', isOn);
+  document.body.classList.toggle('colorblind-mode', isOn);
+  updateColorblindToggleUI(isOn);
+}
+function updateColorblindToggleUI(on) {
+  var toggle = document.getElementById('colorblindToggle');
+  var thumb = document.getElementById('colorblindThumb');
+  if (toggle) toggle.style.background = on ? '#6366f1' : '#cbd5e1';
+  if (thumb) thumb.style.left = on ? '19px' : '2px';
+}
+/* Accessibility submenu init */
+function initA11yUI() {
+  var slider = document.getElementById('textScaleSlider');
+  var display = document.getElementById('textScaleDisplay');
+  var scale = getTextScale();
+  if (slider) slider.value = scale;
+  if (display) display.textContent = (scale >= 1 ? '+' : '') + Math.round((scale - 1) * 100) + '%';
+  if (slider) {
+    slider.oninput = function() {
+      var v = parseFloat(this.value);
+      applyTextScale(v);
+      if (display) display.textContent = (v >= 1 ? '+' : '') + Math.round((v - 1) * 100) + '%';
+    };
+  }
+  updateColorblindToggleUI(localStorage.getItem('studyPlanner_colorblind') === 'true');
+}
+function resetAccessibility() {
+  applyTextScale(1);
+  var slider = document.getElementById('textScaleSlider');
+  if (slider) slider.value = 1;
+  var display = document.getElementById('textScaleDisplay');
+  if (display) display.textContent = '0%';
+  document.body.classList.remove('colorblind-mode');
+  localStorage.setItem('studyPlanner_colorblind', 'false');
+  localStorage.setItem('studyPlanner_textScale', '1');
+  updateColorblindToggleUI(false);
+}
+/* Apply saved settings on load */
+(function() {
+  applyTextScale(getTextScale());
+  if (localStorage.getItem('studyPlanner_colorblind') === 'true') {
+    document.body.classList.add('colorblind-mode');
   }
 })();
 </script>
