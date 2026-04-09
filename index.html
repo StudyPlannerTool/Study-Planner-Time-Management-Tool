@@ -2476,6 +2476,7 @@ PauseBtn.addEventListener("click", function() {
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'none';
   ResumeBtn.style.display = 'block';
+  requestAnimationFrame(renderSegmentLabelTrack);
 });
 ResumeBtn.addEventListener("click", function() {
   startBtn.style.display = 'none';
