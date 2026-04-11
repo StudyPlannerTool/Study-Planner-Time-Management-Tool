@@ -1648,22 +1648,13 @@ function restoreTimerState() {
   try {
     const state = JSON.parse(saved);
     if (!state.inSession || !state.segmentMap || !state.segmentMap.length) return;
-    let remaining = Math.max(0, state.remainingSeconds - Math.floor((Date.now() - state.savedAt) / 1000));
+    let remaining = state.remainingSeconds;
     if (remaining <= 0) { clearTimerState(); return; }
     segmentMap = state.segmentMap;
     sessionDayCumOffset = state.sessionDayCumOffset || 0;
     TOTAL_STUDY_SECONDS = remaining;
-    const savedPct = state.playheadPercent || 0;
-    // Always recalculate playhead position using wall-clock elapsed vs original total,
-    // since rAF pauses in background tabs making savedPct potentially stale.
-    if (state.totalSeconds > 0) {
-      const elapsedWhileAway = Math.floor((Date.now() - state.savedAt) / 1000);
-      const elapsedBeforeSave = (state.totalSeconds - state.remainingSeconds);
-      const totalElapsed = elapsedBeforeSave + elapsedWhileAway;
-      window._pausedPercent = Math.min(100, (totalElapsed / state.totalSeconds) * 100);
-    } else {
-      window._pausedPercent = savedPct;
-    }
+    // Closing the tab always acts as a pause, so use the saved playhead % directly
+    window._pausedPercent = state.playheadPercent || 0;
     if (state.schoolLevel) document.getElementById("schoolLevel").value = state.schoolLevel;
     const output = document.getElementById("output");
 if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.add("show"); output.style.maxHeight = "300px"; output.style.overflow = "hidden"; document.getElementById("showMoreContainer").style.display = "block"; const _rof = document.getElementById("outputFade"); if (_rof) _rof.style.display = "block"; }
@@ -4521,10 +4512,11 @@ document.addEventListener("visibilitychange", () => {
 });
 window.addEventListener("pagehide", () => {
   savePartialSessionTime();
+  const _pauseBtn = document.getElementById("PauseTimerBtn");
+  const _isRunning = _pauseBtn && _pauseBtn.style.display !== "none";
   const ph = document.getElementById("v_playhead_fixed");
   if (!ph || ph.style.display === "none") return;
-  // Use wall-clock time for accurate remaining — the display may be stale if the tab was
-  // in the background (rAF paused), so we cannot rely on countdownDisplay text here.
+
   let rem;
   if (window._timerActualStart) {
     const _phElapsed = Math.floor((Date.now() - window._timerActualStart) / 1000);
@@ -4534,7 +4526,21 @@ window.addEventListener("pagehide", () => {
     if (cd.length !== 3) return;
     rem = parseInt(cd[0]) * 3600 + parseInt(cd[1]) * 60 + parseInt(cd[2]);
   }
-  if (rem > 0) saveTimerState(rem, false);
+  if (rem <= 0) return;
+
+  if (_isRunning) {
+    // Compute correct playhead % using wall-clock so resume picks up exactly where we left off
+    const _resumeOff = window._resumeOffset || 0;
+    const _origTotal = rem + Math.floor((Date.now() - window._timerActualStart) / 1000);
+    const _elapsed = Math.floor((Date.now() - window._timerActualStart) / 1000);
+    window._pausedPercent = Math.min(
+      _resumeOff + (_elapsed / Math.max(_origTotal, 1)) * (100 - _resumeOff),
+      100
+    );
+    window._sessionPaused = true;
+  }
+
+  saveTimerState(rem, false);
 });
 document.getElementById("doneEarlyBtn").addEventListener("click", function() {
   skipCurrentAssignment();
