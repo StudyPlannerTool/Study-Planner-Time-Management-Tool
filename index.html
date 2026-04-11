@@ -1994,6 +1994,7 @@ function expandAssignment(div) { div.classList.remove('collapsed'); }
 function collapseAllAssignments() { document.querySelectorAll('#assignmentsContainer .assignment').forEach(collapseAssignment); }
 
 document.getElementById("addAssignmentBtn").onclick = () => {
+  (function(){ var _pvb=document.getElementById("viewPresetButton"); if(_pvb&&_pvb.classList.contains('active')){_pvb.classList.remove('active');var _pvc=_pvb.nextElementSibling;if(_pvc)_pvc.style.maxHeight="0";} })();
   const currentCount = container.querySelectorAll(".assignment").length;
   if (currentCount >= 25) {
     const err = document.getElementById("assignmentError");
@@ -2133,6 +2134,7 @@ if (playhead) playhead.remove();
   document.getElementById("assignmentError").style.display = "none";
 }
 document.getElementById("resetBtn").onclick = () => {
+  (function(){ var _pvb=document.getElementById("viewPresetButton"); if(_pvb&&_pvb.classList.contains('active')){_pvb.classList.remove('active');var _pvc=_pvb.nextElementSibling;if(_pvc)_pvc.style.maxHeight="0";} })();
   const raw = [...container.querySelectorAll(".assignment")];
   const hasOutput = output.innerHTML.trim().length > 0;
   if (!raw.length && !hasOutput) {
@@ -2148,6 +2150,7 @@ document.getElementById("resetBtn").onclick = () => {
 
 const timelineContainer = document.getElementById("timelineContainer");
 document.getElementById("calculateBtn").onclick = () => {
+  (function(){ var _pvb=document.getElementById("viewPresetButton"); if(_pvb&&_pvb.classList.contains('active')){_pvb.classList.remove('active');var _pvc=_pvb.nextElementSibling;if(_pvc)_pvc.style.maxHeight="0";} })();
   collapseAllAssignments();
   output.style.position = "relative";
   output.style.overflow = "hidden";
@@ -2235,7 +2238,7 @@ plan += `${displayName} — ${minutesToText(chunk)}`;
 
 
       if(dayCumulative % block === 0 && dayCumulative + 15 <= dailyLimit && (remaining>0 || idx<assignments.length-1)){
-        plan += ", <strong> then a 10-minute break </strong>";
+        plan += ", <strong>then a 10-minute break</strong>";
         dayCumulative += 10;
         cumulativeForTimeline += 10;
         totalBreaks += 10;
@@ -2305,10 +2308,8 @@ document.getElementById("timerControls").style.display = "flex";
       if (p < 1) requestAnimationFrame(_step);
     })(performance.now());
   });
-  localStorage.setItem('studyPlanner_sync', JSON.stringify({cmd:'calculate',ts:Date.now()}));
 }, 300);
 };
-
 
 
 
@@ -2544,6 +2545,7 @@ playhead.style.width = Math.min(progress, 100) + "%";
     if (startBtn) startBtn.onclick = startTimer;
   
 startBtn.addEventListener("click", function() {
+  (function(){ var _pvb=document.getElementById("viewPresetButton"); if(_pvb&&_pvb.classList.contains('active')){_pvb.classList.remove('active');var _pvc=_pvb.nextElementSibling;if(_pvc)_pvc.style.maxHeight="0";} })();
   window._sessionStudiedSeconds = 0;
   window._sessionPaused = false;
   startBtn.classList.remove('pulse-start');
@@ -3025,22 +3027,10 @@ if (document.readyState === "complete" || document.readyState === "interactive")
     document.addEventListener("DOMContentLoaded", loadAndRestore);
 }
 window.addEventListener('storage', function(e) {
-  var syncKeys = ['studyPlanner_tasks', 'studyPlanner_level', 'studyPlanner_theme', 'studyPlanner_sync'];
+  var syncKeys = ['studyPlanner_tasks', 'studyPlanner_level', 'studyPlanner_theme'];
   if (!syncKeys.includes(e.key)) return;
   var resetBtn = document.getElementById("resetTimerBtn");
-  if (resetBtn && resetBtn.style.display !== 'none') return; // don't interrupt active session
-  if (e.key === 'studyPlanner_sync') {
-    try {
-      var _sc = JSON.parse(e.newValue || '{}');
-      if (_sc.cmd === 'calculate') {
-        setTimeout(function() {
-          var _raw = container.querySelectorAll(".assignment");
-          if (_raw.length) document.getElementById('calculateBtn').click();
-        }, 120);
-      }
-    } catch(_e) {}
-    return;
-  }
+  if (resetBtn && resetBtn.style.display !== 'none') return;
   if (e.key === 'studyPlanner_theme') {
     if (e.newValue === 'dark') document.getElementById("Dark").click();
     else document.getElementById("Light").click();
@@ -4608,11 +4598,14 @@ document.getElementById("ResumeTimerBtn").onclick = () => {
     if (endOverlay && endOverlay.style.display === "flex") { requestAnimationFrame(updatePercent); return; }
     if (playhead) {
       if (!playhead.parentElement) { requestAnimationFrame(updatePercent); return; }
-      const widthStr = window.getComputedStyle(playhead).width;
-      const parentWidthStr = window.getComputedStyle(playhead.parentElement).width;
-      const width = parseFloat(widthStr);
-      const parentWidth = parseFloat(parentWidthStr);
-      const progressPercent = (width / parentWidth) * 100;
+      let progressPercent;
+      if (!window._sessionPaused && window._timerActualStart) {
+        const _elapsed = (Date.now() - window._timerActualStart) / 1000;
+        const _offset = window._resumeOffset || 0;
+        progressPercent = Math.min(_offset + (_elapsed / Math.max(TOTAL_STUDY_SECONDS, 1)) * (100 - _offset), 100);
+      } else {
+        progressPercent = parseFloat(playhead.style.width) || 0;
+      }
     const tri = document.getElementById("playhead-triangle");
 if (playhead && playhead.style.display !== "none") {
   const rect = playhead.getBoundingClientRect();
@@ -4713,7 +4706,8 @@ const calcBtn = document.getElementById("calculateBtn");
 function getAssignmentSnapshot() {
   const rows = [...document.querySelectorAll(".assignment")];
   const level = document.getElementById("schoolLevel").value;
-  return JSON.stringify({ level, rows: rows.map(r => ({
+  const limit = getDailyLimit(level);
+  return JSON.stringify({ level, limit, rows: rows.map(r => ({
     name: r.querySelector(".assignmentName") ? r.querySelector(".assignmentName").value : "",
     subject: r.querySelector(".subject") ? r.querySelector(".subject").value : "",
     time: r.querySelector(".time") ? r.querySelector(".time").value : "",
@@ -4729,7 +4723,9 @@ function setPulse(on) {
 function markOutdated() {
   if (window._isCalculating) return;
   const _assignCount = document.querySelectorAll('#assignmentsContainer .assignment').length;
-  if (_assignCount === 0) { outdatedBanner.style.display = "none"; setPulse(false); return; }
+  const _hasOutput = output.innerHTML.trim().length > 0;
+  const _hasTimeline = timelineContainer.style.display !== 'none';
+  if (_assignCount === 0 || !_hasOutput || !_hasTimeline) { outdatedBanner.style.display = "none"; setPulse(false); return; }
   if (hasCalculated) {
     const current = getAssignmentSnapshot();
     if (current === calculatedStateSnapshot) {
@@ -5896,12 +5892,17 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         T.off.push(function () { el.removeEventListener('click', ch); });
       } else if (step.on === 'slider') {
         var sl = el.querySelector('.time'); if (!sl) return;
+        var _shFired = false;
         function sh() {
-          if (!T.active) return; T._clean();
+          if (!T.active || _shFired) return; _shFired = true; T._clean();
           setTimeout(function () { if (T.active) T._show(T.step + 1); }, step.post || 500);
         }
         sl.addEventListener('input', sh, { once: true });
         T.off.push(function () { sl.removeEventListener('input', sh); });
+        var _sminus = el.querySelector('.slider-minus');
+        var _splus  = el.querySelector('.slider-plus');
+        if (_sminus) { _sminus.addEventListener('click', sh); T.off.push(function() { _sminus.removeEventListener('click', sh); }); }
+        if (_splus)  { _splus.addEventListener('click', sh);  T.off.push(function() { _splus.removeEventListener('click', sh); }); }
       }
     },
 
@@ -6130,24 +6131,35 @@ requestAnimationFrame(loop);
 (function() {
   var TAB_ID = Math.random().toString(36).slice(2);
   var LS_KEY = 'studyPlanner_tabHeartbeat';
+  var _isMultiTab = false;
   function getTabs() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) { return {}; } }
   function setTabs(t) { try { localStorage.setItem(LS_KEY, JSON.stringify(t)); } catch(e) {} }
   function showWarn(v) {
+    if (_isMultiTab === v) return;
+    _isMultiTab = v;
     ['multiTabWarnControls','multiTabWarnSession'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.style.display = v ? 'block' : 'none';
     });
   }
-  var _lsWarnReady = false;
-  setTimeout(function() { _lsWarnReady = true; }, 4500);
+  // Remove stale entries from crashed/unclean prior loads so refresh never flashes
+  (function() {
+    var t = getTabs(), now = Date.now();
+    Object.keys(t).forEach(function(k) { if (now - t[k] > 800) delete t[k]; });
+    setTabs(t);
+  })();
   function pulse() {
     var t = getTabs(), now = Date.now(), count = 0;
     t[TAB_ID] = now;
     Object.keys(t).forEach(function(k) { if (now - t[k] < 9000) count++; else delete t[k]; });
     setTabs(t);
-    if (_lsWarnReady) showWarn(count > 1);
+    // LS-based warning only for browsers without BroadcastChannel
+    if (!window.BroadcastChannel) showWarn(count > 1);
   }
   pulse();
-  setInterval(pulse, 3000);
+  setInterval(pulse, 2000);
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') pulse();
+  });
   window.addEventListener('beforeunload', function() {
     var t = getTabs(); delete t[TAB_ID]; setTabs(t);
   });
@@ -6156,9 +6168,18 @@ requestAnimationFrame(loop);
     bc.postMessage({ type: 'open', id: TAB_ID });
     bc.onmessage = function(e) {
       if (!e.data || e.data.id === TAB_ID) return;
-      if (e.data.type === 'open') { bc.postMessage({ type: 'ack', id: TAB_ID }); showWarn(true); }
-      else if (e.data.type === 'ack') showWarn(true);
-else if (e.data.type === 'close') { showWarn(false); pulse(); }
+      if (e.data.type === 'open') {
+        bc.postMessage({ type: 'ack', id: TAB_ID });
+        showWarn(true);
+      } else if (e.data.type === 'ack') {
+        showWarn(true);
+      } else if (e.data.type === 'close') {
+        var t = getTabs();
+        if (e.data.id) { delete t[e.data.id]; setTabs(t); }
+        var now = Date.now(), remaining = 0;
+        Object.keys(getTabs()).forEach(function(k) { if (now - getTabs()[k] < 9000) remaining++; });
+        if (remaining <= 1) showWarn(false);
+      }
     };
     window.addEventListener('beforeunload', function() { bc.postMessage({ type: 'close', id: TAB_ID }); });
   }
