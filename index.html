@@ -5751,25 +5751,35 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
   </script>
   <script>
   (function() {
-    var _fixedScrollEls = [document.getElementById('controls'), document.getElementById('sessionBar')];
-    _fixedScrollEls.forEach(function(el) {
-      if (!el) return;
-      var _fty = 0;
-      el.addEventListener('touchstart', function(e) {
-        _fty = e.touches[0].clientY;
-      }, { passive: true });
-      el.addEventListener('touchmove', function(e) {
-        var _delta = _fty - e.touches[0].clientY;
-        _fty = e.touches[0].clientY;
-        var _panels = ['a','c','e'], _best = null, _bestDist = Infinity;
-        _panels.forEach(function(pid) {
-          var p = document.getElementById(pid); if (!p) return;
-          var d = Math.abs(p.getBoundingClientRect().left);
-          if (d < _bestDist) { _bestDist = d; _best = p; }
-        });
-        if (_best) { _best.scrollTop += _delta; e.preventDefault(); }
-      }, { passive: false });
-    });
+    var _iosFty = 0;
+    function _iosGetPanel() {
+      var panels = ['a','c','e'], best = null, bestDist = Infinity;
+      panels.forEach(function(pid) {
+        var p = document.getElementById(pid); if (!p) return;
+        var d = Math.abs(p.getBoundingClientRect().left);
+        if (d < bestDist) { bestDist = d; best = p; }
+      });
+      return best;
+    }
+    function _iosIsInteractive(el) {
+      while (el) {
+        var tag = el.tagName;
+        if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return true;
+        if (el.classList && (el.classList.contains('custom-select-dropdown') || el.classList.contains('custom-select-trigger'))) return true;
+        el = el.parentElement;
+      }
+      return false;
+    }
+    document.addEventListener('touchstart', function(e) {
+      if (e.touches && e.touches[0]) _iosFty = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchmove', function(e) {
+      if (_iosIsInteractive(e.target)) return;
+      var _delta = _iosFty - e.touches[0].clientY;
+      _iosFty = e.touches[0].clientY;
+      var _best = _iosGetPanel();
+      if (_best) { _best.scrollTop += _delta; e.preventDefault(); }
+    }, { passive: false });
   })();
   </script>
   <script>
