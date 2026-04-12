@@ -330,16 +330,9 @@
  
     <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black; font-size: 18px;">⚙️</button>
 
-  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 215px; overflow: visible;">
-    <div>
-     <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-      <div id="themeSub" class="settings-submenu" style="display:none;">
-        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;padding:6px 14px 2px;">Select Theme</div>
-        <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
-        <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
-      </div>
-    </div>
-    <div style="height:1px;background:rgba(99,102,241,0.08);margin:2px 8px;"></div>
+  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 225px; overflow: visible;">
+    <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:8px 14px 4px;">Calculation</div>
+    <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
     <div>
       <button class="settings-menu-btn" onclick="toggleSettingsSub('limitSub')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
       <div id="limitSub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
@@ -350,9 +343,37 @@
         <button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
       </div>
     </div>
-    <div style="height:1px;background:rgba(99,102,241,0.08);margin:2px 8px;"></div>
     <div>
-<button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <button class="settings-menu-btn" onclick="toggleSettingsSub('orderSub')">↕&nbsp; Assignment Order <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <div id="orderSub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Assignment Order</div>
+        <div id="orderAutoOpt" onclick="setOrderMode('auto')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;margin-bottom:4px;transition:background 0.15s;">
+          <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <div id="orderAutoDot" style="width:8px;height:8px;border-radius:50%;background:#6366f1;transition:background 0.15s;"></div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Auto Sort (by difficulty &amp; time)</span>
+        </div>
+        <div id="orderManualOpt" onclick="setOrderMode('manual')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;transition:background 0.15s;">
+          <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+            <div id="orderManualDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Manual Order</span>
+        </div>
+      </div>
+    </div>
+    <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
+    <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Display</div>
+    <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+    <div>
+     <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+      <div id="themeSub" class="settings-submenu" style="display:none;">
+        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;padding:6px 14px 2px;">Select Theme</div>
+        <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
+        <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
+      </div>
+    </div>
+    <div>
+      <button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
       <div id="a11ySub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
         <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Accessibility</div>
         <div style="margin-bottom:12px;">
@@ -1593,6 +1614,7 @@ function rebuildCols(n) {
 }
 rebuildCols(getDesiredColCount());
 new ResizeObserver(() => {
+  if (window.isManualOrder) return;
   const n = getDesiredColCount();
   if (n !== cols.length) rebuildCols(n);
 }).observe(container);
@@ -2151,7 +2173,15 @@ document.getElementById("calculateBtn").onclick = () => {
   timelineContainer.style.overflow = "hidden";
 stopTimer();
 
-  const raw = [...container.querySelectorAll(".assignment")];
+  let raw = [...container.querySelectorAll(".assignment")];
+  if (window.isManualOrder) {
+    raw = raw.slice().sort(function(a, b) {
+      var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      var dy = ra.top - rb.top;
+      if (Math.abs(dy) > 30) return dy;
+      return ra.left - rb.left;
+    });
+  }
    if(!raw.length){
     const err = document.getElementById("assignmentError");
     err.innerHTML = '⚠️ Please <strong>add at least one assignment.</strong>';
@@ -2189,12 +2219,12 @@ setTimeout(() => {
   });
   assignments = _mergeOrder.map(k => _mergeMap.get(k));
 
-  assignments.sort((a,b)=>{
+  if (!window.isManualOrder) { assignments.sort((a,b)=>{
     if(difficultyRank[a.difficulty] !== difficultyRank[b.difficulty]){
       return difficultyRank[a.difficulty] - difficultyRank[b.difficulty];
     }
     return b.minutes - a.minutes;
-  });
+  }); }
 
 
   const block = attentionBlocks[schoolLevel.value];
@@ -3547,6 +3577,8 @@ const onboardingBack = document.getElementById('onboardingBack');
   document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#1e293b");
   const _ldbL = document.getElementById("legendDayBar");
   if (_ldbL) _ldbL.style.background = "#1e293b";
+  document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span').forEach(function(el) { el.style.color = '#1e293b'; });
+  document.querySelectorAll('.order-pos-label').forEach(function(el) { el.style.color = '#dc2626'; });
 });
 
 
@@ -3729,6 +3761,8 @@ const onboardingBack = document.getElementById('onboardingBack');
   document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#e2e8f0");
   const _ldbD = document.getElementById("legendDayBar");
   if (_ldbD) _ldbD.style.background = "#000000";
+  document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span').forEach(function(el) { el.style.color = '#e2e8f0'; });
+  document.querySelectorAll('.order-pos-label').forEach(function(el) { el.style.color = '#f87171'; });
 });
 
      b.addEventListener("click", function() {
@@ -4232,7 +4266,7 @@ z.addEventListener("click", function(e) {
 document.addEventListener("click", function(e) {
   if (!x.contains(e.target) && e.target !== z) {
     x.style.display = "none";
-    ['themeSub','limitSub','a11ySub'].forEach(function(id){
+    ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
       var s = document.getElementById(id); if(s) s.style.display = 'none';
     });
   }
@@ -6211,7 +6245,7 @@ body.colorblind-mode [data-swatch="break"] { background:repeating-linear-gradien
 <script>
 /* ── Settings Panel Logic ── */
 function toggleSettingsSub(id) {
-  ['themeSub','limitSub','a11ySub'].forEach(function(s) {
+  ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(s) {
     var el = document.getElementById(s);
     if (!el) return;
     if (s === id) {
@@ -6351,5 +6385,274 @@ function resetAccessibility() {
   }
 })();
 </script>
+<script>
+/* ── Manual Order & Drag-and-Drop ── */
+(function () {
+  window.isManualOrder = false;
+  var _dragging = null, _dragGhost = null, _dragPlaceholder = null;
+  var _dragOffX = 0, _dragOffY = 0, _dragOrigParent = null, _dragOrigNext = null;
+  var _holdTimer = null, _dragStartX = 0, _dragStartY = 0;
+  var _labelTimer = null;
+
+  /* ── Public API ── */
+  window.setOrderMode = function (mode) {
+    window.isManualOrder = (mode === 'manual');
+    var aDot = document.getElementById('orderAutoDot');
+    var mDot = document.getElementById('orderManualDot');
+    if (aDot) aDot.style.background = window.isManualOrder ? 'transparent' : '#6366f1';
+    if (mDot) mDot.style.background = window.isManualOrder ? '#6366f1' : 'transparent';
+    localStorage.setItem('studyPlanner_orderMode', mode);
+    if (window.isManualOrder) {
+      document.querySelectorAll('#assignmentsContainer .assignment').forEach(setupDrag);
+      scheduleUpdateLabels();
+    } else {
+      document.querySelectorAll('.order-pos-label').forEach(function (el) { el.remove(); });
+      var _hasCards = document.querySelectorAll('#assignmentsContainer .assignment').length > 0;
+      var _hasOutput = document.getElementById('output').innerHTML.trim().length > 0;
+      if (_hasCards && _hasOutput) { document.getElementById('calculateBtn').click(); }
+    }
+    if (typeof markOutdated === 'function') markOutdated();
+  };
+
+  /* ── Label management ── */
+  function scheduleUpdateLabels() {
+    clearTimeout(_labelTimer);
+    _labelTimer = setTimeout(updateOrderLabels, 40);
+  }
+
+  function updateOrderLabels() {
+    if (!window.isManualOrder) return;
+    var cols = Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
+    var sorted = [];
+    cols.forEach(function(col) {
+      Array.from(col.children).forEach(function(child) {
+        if (child.classList && child.classList.contains('assignment') && child.style.display !== 'none') sorted.push(child);
+      });
+    });
+    sorted.forEach(function (card, i) {
+      var lbl = card.querySelector('.order-pos-label');
+      if (!lbl) {
+        lbl = document.createElement('div');
+        lbl.className = 'order-pos-label';
+        var isDark = document.body.classList.contains('assignmentsdark');
+        lbl.style.cssText = 'font-size:11px;font-weight:800;color:' + (isDark ? '#f87171' : '#dc2626') + ';font-family:"Inter",sans-serif;letter-spacing:0.5px;margin-bottom:6px;user-select:none;pointer-events:none;';
+        card.insertBefore(lbl, card.firstChild);
+      }
+      lbl.textContent = 'Order: #' + (i + 1);
+    });
+  }
+  window.updateOrderLabels = updateOrderLabels;
+
+  /* ── Watch for cards added / removed ── */
+  var _obs = new MutationObserver(function (mutations) {
+    if (!window.isManualOrder || _dragging) return;
+    mutations.forEach(function (m) {
+      m.addedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.classList && n.classList.contains('assignment')) setupDrag(n);
+      });
+    });
+    scheduleUpdateLabels();
+  });
+  _obs.observe(document.getElementById('assignmentsContainer'), { childList: true, subtree: true });
+
+  /* ── Per-card drag setup ── */
+  function setupDrag(card) {
+    if (card._dragReady) return;
+    card._dragReady = true;
+
+    function onDown(e) {
+      if (!window.isManualOrder) return;
+      if (e.target.closest && e.target.closest('input,select,button,.custom-select-wrapper,.removeBtn,.order-pos-label,.slider-minus,.slider-plus')) return;
+      var t = e.touches ? e.touches[0] : e;
+      _dragStartX = t.clientX; _dragStartY = t.clientY;
+      _holdTimer = setTimeout(function () { beginDrag(card, t.clientX, t.clientY); }, 250);
+    }
+    function onMove(e) {
+      if (!_holdTimer) return;
+      var t = e.touches ? e.touches[0] : e;
+      if (Math.hypot(t.clientX - _dragStartX, t.clientY - _dragStartY) > 6) {
+        clearTimeout(_holdTimer); _holdTimer = null;
+      }
+    }
+    function onUp() { clearTimeout(_holdTimer); _holdTimer = null; }
+
+    card.addEventListener('mousedown', onDown);
+    card.addEventListener('touchstart', onDown, { passive: true });
+    card.addEventListener('mousemove', onMove);
+    card.addEventListener('touchmove', onMove, { passive: true });
+    card.addEventListener('mouseup', onUp);
+    card.addEventListener('touchend', onUp);
+  }
+
+  /* ── Begin drag ── */
+  function beginDrag(card, cx, cy) {
+    if (_dragging) return;
+    _dragging = card;
+
+    /* Collapse every card immediately */
+    document.querySelectorAll('#assignmentsContainer .assignment').forEach(function (c) {
+      c.classList.add('collapsed');
+    });
+
+    var rect = card.getBoundingClientRect();
+    _dragOffX = cx - rect.left;
+    _dragOffY = cy - rect.top;
+    _dragOrigParent = card.parentNode;
+    _dragOrigNext = card.nextSibling;
+
+    /* Placeholder — same size, dashed border */
+    _dragPlaceholder = document.createElement('div');
+    _dragPlaceholder.className = 'drag-placeholder';
+    _dragPlaceholder.style.cssText = [
+      'width:100%',
+      'min-height:' + rect.height + 'px',
+      'border:2.5px dashed rgba(99,102,241,0.45)',
+      'border-radius:20px',
+      'background:rgba(99,102,241,0.06)',
+      'box-sizing:border-box',
+      'flex-shrink:0',
+      'transition:min-height 0.18s ease',
+      'margin-top:15px'
+    ].join(';');
+    card.parentNode.insertBefore(_dragPlaceholder, card);
+
+    /* Floating ghost */
+    _dragGhost = card.cloneNode(true);
+    _dragGhost.querySelectorAll('.order-pos-label').forEach(function (l) { l.remove(); });
+    _dragGhost.style.cssText = [
+      'position:fixed',
+      'z-index:50000',
+      'pointer-events:none',
+      'width:' + rect.width + 'px',
+      'left:' + rect.left + 'px',
+      'top:' + rect.top + 'px',
+      'box-shadow:0 24px 64px rgba(99,102,241,0.4),0 8px 24px rgba(0,0,0,0.22)',
+      'transform:scale(1.03) rotate(1deg)',
+      'opacity:0.97',
+      'border-radius:20px',
+      'transition:transform 0.1s ease'
+    ].join(';');
+    document.body.appendChild(_dragGhost);
+
+    /* Hide original in place */
+    card.style.display = 'none';
+    card.style.pointerEvents = 'none';
+
+    document.body.style.userSelect = 'none';
+    document.body.style.webkitUserSelect = 'none';
+    if (navigator.vibrate) navigator.vibrate(40);
+
+    document.addEventListener('mousemove', onGlobalMove);
+    document.addEventListener('mouseup', onGlobalUp);
+    document.addEventListener('touchmove', onGlobalTouchMove, { passive: false });
+    document.addEventListener('touchend', onGlobalUp);
+  }
+
+  /* ── Drag move ── */
+  function onGlobalMove(e) { if (_dragging) { e.preventDefault(); moveGhost(e.clientX, e.clientY); } }
+  function onGlobalTouchMove(e) { if (!_dragging) return; e.preventDefault(); moveGhost(e.touches[0].clientX, e.touches[0].clientY); }
+
+  function moveGhost(cx, cy) {
+    _dragGhost.style.left = (cx - _dragOffX) + 'px';
+    _dragGhost.style.top  = (cy - _dragOffY) + 'px';
+    repositionPlaceholder(cx, cy);
+    scheduleUpdateLabels();
+  }
+
+  function repositionPlaceholder(cx, cy) {
+    /* Find the closest column */
+    var cols = Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
+    var targetCol = null, bestDist = Infinity;
+    cols.forEach(function (col) {
+      var r = col.getBoundingClientRect();
+      var dist = Math.abs(cx - (r.left + r.width / 2));
+      if (dist < bestDist) { bestDist = dist; targetCol = col; }
+    });
+    if (!targetCol) return;
+
+    /* Find insertion point within that column */
+    var colCards = Array.from(targetCol.querySelectorAll('.assignment')).filter(function (c) {
+      return c !== _dragging && c.style.display !== 'none';
+    });
+
+    var insertBefore = null;
+    for (var i = 0; i < colCards.length; i++) {
+      var r = colCards[i].getBoundingClientRect();
+      if (cy < r.top + r.height / 2) { insertBefore = colCards[i]; break; }
+    }
+
+    /* Only move placeholder if position genuinely changed */
+    var newParent = targetCol;
+    var newNext   = insertBefore;
+    if (_dragPlaceholder.parentNode === newParent &&
+        _dragPlaceholder.nextSibling === newNext) return;
+
+    if (newNext) targetCol.insertBefore(_dragPlaceholder, newNext);
+    else         targetCol.appendChild(_dragPlaceholder);
+  }
+
+  /* ── Drop ── */
+  function onGlobalUp() {
+    if (!_dragging) return;
+    document.removeEventListener('mousemove', onGlobalMove);
+    document.removeEventListener('mouseup',   onGlobalUp);
+    document.removeEventListener('touchmove', onGlobalTouchMove);
+    document.removeEventListener('touchend',  onGlobalUp);
+
+    var card = _dragging;
+    card.style.display       = '';
+    card.style.pointerEvents = '';
+    document.body.style.userSelect = '';
+    document.body.style.webkitUserSelect = '';
+
+    if (_dragPlaceholder && _dragPlaceholder.parentNode) {
+      _dragPlaceholder.parentNode.insertBefore(card, _dragPlaceholder);
+      _dragPlaceholder.remove();
+    } else {
+      /* Fallback: return to origin */
+      if (_dragOrigNext && _dragOrigNext.parentNode) _dragOrigParent.insertBefore(card, _dragOrigNext);
+      else _dragOrigParent.appendChild(card);
+    }
+
+    if (_dragGhost && _dragGhost.parentNode) _dragGhost.remove();
+
+    _dragging = null; _dragGhost = null; _dragPlaceholder = null;
+    _dragOrigParent = null; _dragOrigNext = null;
+
+    redistributeColsManual();
+    scheduleUpdateLabels();
+    if (typeof markOutdated === 'function') markOutdated();
+  }
+
+  function redistributeColsManual() {
+    if (!cols || cols.length < 2) return;
+    var allCards = [];
+    cols.forEach(function(col) {
+      Array.from(col.children).forEach(function(child) {
+        if (child.classList && child.classList.contains('assignment')) allCards.push(child);
+      });
+    });
+    if (allCards.length === 0) return;
+    cols.forEach(function(col) {
+      Array.from(col.children).forEach(function(child) {
+        if (child.classList && child.classList.contains('assignment')) col.removeChild(child);
+      });
+    });
+    var n = cols.length, m = allCards.length;
+    var perCol = Math.ceil(m / n);
+    allCards.forEach(function(card, i) {
+      cols[Math.min(Math.floor(i / perCol), n - 1)].appendChild(card);
+    });
+  }
+
+  /* ── Restore saved mode on page load ── */
+  window.addEventListener('load', function () {
+    if (localStorage.getItem('studyPlanner_orderMode') === 'manual') {
+      setTimeout(function () { window.setOrderMode('manual'); }, 250);
+    }
+  });
+})();
+</script>
+<!-- ── Tutorial Overlay ── -->
 </body>
 </html>
