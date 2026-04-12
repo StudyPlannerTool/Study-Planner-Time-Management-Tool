@@ -3,7 +3,7 @@
 <head>
   
   <script>
-  window.dataLayer = winadow.dataLayer || [];
+  window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('consent', 'default', {
     analytics_storage: 'denied'
@@ -1789,7 +1789,9 @@ function syncCPanelTop() {
   const _cp = document.getElementById('c');
   if (!_sb || !_cp) return;
   if (_sb.style.display !== 'none') {
-    setTimeout(function() { _cp.style.paddingTop = (_sb.offsetHeight + 8) + 'px'; }, 60);
+    requestAnimationFrame(() => {
+      _cp.style.paddingTop = (_sb.offsetHeight + 8) + 'px';
+    });
   } else {
     _cp.style.paddingTop = '20px';
   }
@@ -3267,6 +3269,7 @@ body.assignmentsdark input::placeholder {
 #c {
   transform: translateX(-110%);
   z-index: 2;
+   transition: padding-top 0.25s ease;
 }
 #e {
   transform: translateX(110%);
