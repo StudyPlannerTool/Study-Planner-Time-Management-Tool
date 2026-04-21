@@ -6389,10 +6389,78 @@ function resetAccessibility() {
 /* ── Manual Order & Drag-and-Drop ── */
 (function () {
   window.isManualOrder = false;
-  var _dragging = null, _dragGhost = null, _dragPlaceholder = null;
-  var _dragOffX = 0, _dragOffY = 0, _dragOrigParent = null, _dragOrigNext = null;
+  var _obs;
+  var _dragging = null, _dragGhost = null, _placeholder = null;
+  var _dragOffX = 0, _dragOffY = 0;
   var _holdTimer = null, _dragStartX = 0, _dragStartY = 0;
   var _labelTimer = null;
+
+  /* ── DOM helpers ── */
+  function getCols() {
+    return Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
+  }
+
+  /* Row-by-row flat order: #1=col0-row0, #2=col1-row0, #3=col0-row1 … */
+  function getAllFlatOrder() {
+    var cs = getCols();
+    if (!cs.length) return [];
+    var colCards = cs.map(function (col) {
+      return Array.from(col.children).filter(function (c) {
+        return c.classList && c.classList.contains('assignment');
+      });
+    });
+    var maxRows = 0;
+    colCards.forEach(function (cc) { if (cc.length > maxRows) maxRows = cc.length; });
+    var result = [];
+    for (var row = 0; row < maxRows; row++) {
+      for (var c = 0; c < cs.length; c++) {
+        if (colCards[c][row]) result.push(colCards[c][row]);
+      }
+    }
+    return result;
+  }
+
+ /* Place cards in row-by-row DOM order; FLIP-animate on drop (skipAnimate=false) only */
+  function layoutByFlatOrder(order, skipAnimate) {
+    var cs = getCols();
+    if (!cs.length) return;
+    var n = cs.length;
+    var beforeRects = {};
+    if (!skipAnimate) {
+      order.forEach(function (card) {
+        var id = card._dragId || (card._dragId = '_' + Math.random().toString(36).slice(2));
+        card.style.transition = 'none';
+        card.style.transform = '';
+        beforeRects[id] = card.getBoundingClientRect();
+      });
+      document.body.offsetHeight; /* force reflow before DOM changes */
+    }
+    _obs.disconnect();
+    cs.forEach(function (col) {
+      Array.from(col.children).filter(function (c) {
+        return c.classList && c.classList.contains('assignment');
+      }).forEach(function (c) { col.removeChild(c); });
+    });
+    order.forEach(function (card, i) { cs[i % n].appendChild(card); });
+    _obs.observe(document.getElementById('assignmentsContainer'), { childList: true, subtree: true });
+    if (!skipAnimate) {
+      order.forEach(function (card) {
+        var id = card._dragId;
+        if (!beforeRects[id]) return;
+        var before = beforeRects[id], after = card.getBoundingClientRect();
+        var dx = before.left - after.left, dy = before.top - after.top;
+        if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+          card.style.transition = 'none';
+          card.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+          card.offsetHeight;
+          card.style.transition = 'transform 0.22s cubic-bezier(0.25,0.1,0.25,1)';
+          card.style.transform = '';
+        } else {
+          card.style.transition = ''; card.style.transform = '';
+        }
+      });
+    }
+  }
 
   /* ── Public API ── */
   window.setOrderMode = function (mode) {
@@ -6403,10 +6471,14 @@ function resetAccessibility() {
     if (mDot) mDot.style.background = window.isManualOrder ? '#6366f1' : 'transparent';
     localStorage.setItem('studyPlanner_orderMode', mode);
     if (window.isManualOrder) {
+      layoutByFlatOrder(getAllFlatOrder(), true);
       document.querySelectorAll('#assignmentsContainer .assignment').forEach(setupDrag);
       scheduleUpdateLabels();
     } else {
       document.querySelectorAll('.order-pos-label').forEach(function (el) { el.remove(); });
+      document.querySelectorAll('#assignmentsContainer .assignment').forEach(function (c) {
+        c.style.transform = ''; c.style.transition = '';
+      });
       var _hasCards = document.querySelectorAll('#assignmentsContainer .assignment').length > 0;
       var _hasOutput = document.getElementById('output').innerHTML.trim().length > 0;
       if (_hasCards && _hasOutput) { document.getElementById('calculateBtn').click(); }
@@ -6414,7 +6486,7 @@ function resetAccessibility() {
     if (typeof markOutdated === 'function') markOutdated();
   };
 
-  /* ── Label management ── */
+  /* ── Labels ── */
   function scheduleUpdateLabels() {
     clearTimeout(_labelTimer);
     _labelTimer = setTimeout(updateOrderLabels, 40);
@@ -6422,14 +6494,7 @@ function resetAccessibility() {
 
   function updateOrderLabels() {
     if (!window.isManualOrder) return;
-    var cols = Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
-    var sorted = [];
-    cols.forEach(function(col) {
-      Array.from(col.children).forEach(function(child) {
-        if (child.classList && child.classList.contains('assignment') && child.style.display !== 'none') sorted.push(child);
-      });
-    });
-    sorted.forEach(function (card, i) {
+    getAllFlatOrder().forEach(function (card, i) {
       var lbl = card.querySelector('.order-pos-label');
       if (!lbl) {
         lbl = document.createElement('div');
@@ -6443,15 +6508,21 @@ function resetAccessibility() {
   }
   window.updateOrderLabels = updateOrderLabels;
 
-  /* ── Watch for cards added / removed ── */
-  var _obs = new MutationObserver(function (mutations) {
+  /* ── MutationObserver – handles add/remove while not dragging ── */
+  _obs = new MutationObserver(function (mutations) {
     if (!window.isManualOrder || _dragging) return;
+    var changed = false;
     mutations.forEach(function (m) {
       m.addedNodes.forEach(function (n) {
-        if (n.nodeType === 1 && n.classList && n.classList.contains('assignment')) setupDrag(n);
+        if (n.nodeType === 1 && n.classList && n.classList.contains('assignment')) {
+          setupDrag(n); changed = true;
+        }
+      });
+      m.removedNodes.forEach(function (n) {
+        if (n.nodeType === 1 && n.classList && n.classList.contains('assignment')) changed = true;
       });
     });
-    scheduleUpdateLabels();
+    if (changed) { layoutByFlatOrder(getAllFlatOrder(), true); scheduleUpdateLabels(); }
   });
   _obs.observe(document.getElementById('assignmentsContainer'), { childList: true, subtree: true });
 
@@ -6459,7 +6530,6 @@ function resetAccessibility() {
   function setupDrag(card) {
     if (card._dragReady) return;
     card._dragReady = true;
-
     function onDown(e) {
       if (!window.isManualOrder) return;
       if (e.target.closest && e.target.closest('input,select,button,.custom-select-wrapper,.removeBtn,.order-pos-label,.slider-minus,.slider-plus')) return;
@@ -6475,7 +6545,6 @@ function resetAccessibility() {
       }
     }
     function onUp() { clearTimeout(_holdTimer); _holdTimer = null; }
-
     card.addEventListener('mousedown', onDown);
     card.addEventListener('touchstart', onDown, { passive: true });
     card.addEventListener('mousemove', onMove);
@@ -6487,56 +6556,36 @@ function resetAccessibility() {
   /* ── Begin drag ── */
   function beginDrag(card, cx, cy) {
     if (_dragging) return;
-    _dragging = card;
-
-    /* Collapse every card immediately */
     document.querySelectorAll('#assignmentsContainer .assignment').forEach(function (c) {
       c.classList.add('collapsed');
     });
-
     var rect = card.getBoundingClientRect();
-    _dragOffX = cx - rect.left;
-    _dragOffY = cy - rect.top;
-    _dragOrigParent = card.parentNode;
-    _dragOrigNext = card.nextSibling;
+    _dragOffX = cx - rect.left; _dragOffY = cy - rect.top;
+    _dragging = card;
 
-    /* Placeholder — same size, dashed border */
-    _dragPlaceholder = document.createElement('div');
-    _dragPlaceholder.className = 'drag-placeholder';
-    _dragPlaceholder.style.cssText = [
-      'width:100%',
-      'min-height:' + rect.height + 'px',
-      'border:2.5px dashed rgba(99,102,241,0.45)',
-      'border-radius:20px',
-      'background:rgba(99,102,241,0.06)',
-      'box-sizing:border-box',
-      'flex-shrink:0',
-      'transition:min-height 0.18s ease',
-      'margin-top:15px'
-    ].join(';');
-    card.parentNode.insertBefore(_dragPlaceholder, card);
+    /* Placeholder occupies the card's current slot */
+    _placeholder = document.createElement('div');
+    _placeholder.className = 'drag-placeholder';
+    _placeholder.style.cssText = 'width:100%;min-height:' + rect.height + 'px;border:2.5px dashed rgba(99,102,241,0.45);border-radius:20px;background:rgba(99,102,241,0.06);box-sizing:border-box;flex-shrink:0;margin-top:15px;pointer-events:none;transition:min-height 0.18s ease;';
+    card.parentNode.insertBefore(_placeholder, card);
 
-    /* Floating ghost */
-    _dragGhost = card.cloneNode(true);
-    _dragGhost.querySelectorAll('.order-pos-label').forEach(function (l) { l.remove(); });
-    _dragGhost.style.cssText = [
-      'position:fixed',
-      'z-index:50000',
-      'pointer-events:none',
-      'width:' + rect.width + 'px',
-      'left:' + rect.left + 'px',
-      'top:' + rect.top + 'px',
-      'box-shadow:0 24px 64px rgba(99,102,241,0.4),0 8px 24px rgba(0,0,0,0.22)',
-      'transform:scale(1.03) rotate(1deg)',
-      'opacity:0.97',
-      'border-radius:20px',
-      'transition:transform 0.1s ease'
-    ].join(';');
-    document.body.appendChild(_dragGhost);
-
-    /* Hide original in place */
+    /* Hide dragged card — placeholder holds its space */
     card.style.display = 'none';
     card.style.pointerEvents = 'none';
+
+    /* Floating ghost follows cursor */
+    _dragGhost = card.cloneNode(true);
+    _dragGhost.querySelectorAll('.order-pos-label,.custom-select-dropdown').forEach(function (el) { el.remove(); });
+    _dragGhost.style.cssText = [
+      'position:fixed', 'z-index:50000', 'pointer-events:none',
+      'width:' + rect.width + 'px',
+      'left:' + (cx - _dragOffX) + 'px',
+      'top:'  + (cy - _dragOffY) + 'px',
+      'box-shadow:0 24px 64px rgba(99,102,241,0.4),0 8px 24px rgba(0,0,0,0.22)',
+      'transform:scale(1.03) rotate(1deg)',
+      'opacity:0.95', 'border-radius:20px', 'margin:0'
+    ].join(';');
+    document.body.appendChild(_dragGhost);
 
     document.body.style.userSelect = 'none';
     document.body.style.webkitUserSelect = 'none';
@@ -6548,101 +6597,79 @@ function resetAccessibility() {
     document.addEventListener('touchend', onGlobalUp);
   }
 
-  /* ── Drag move ── */
-  function onGlobalMove(e) { if (_dragging) { e.preventDefault(); moveGhost(e.clientX, e.clientY); } }
-  function onGlobalTouchMove(e) { if (!_dragging) return; e.preventDefault(); moveGhost(e.touches[0].clientX, e.touches[0].clientY); }
+  function onGlobalMove(e) {
+    if (_dragging) { e.preventDefault(); moveGhost(e.clientX, e.clientY); }
+  }
+  function onGlobalTouchMove(e) {
+    if (!_dragging) return; e.preventDefault();
+    moveGhost(e.touches[0].clientX, e.touches[0].clientY);
+  }
 
   function moveGhost(cx, cy) {
     _dragGhost.style.left = (cx - _dragOffX) + 'px';
     _dragGhost.style.top  = (cy - _dragOffY) + 'px';
     repositionPlaceholder(cx, cy);
-    scheduleUpdateLabels();
   }
 
+  /* Move only the lightweight placeholder — zero FLIP, zero layout change during drag */
   function repositionPlaceholder(cx, cy) {
-    /* Find the closest column */
-    var cols = Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
-    var targetCol = null, bestDist = Infinity;
-    cols.forEach(function (col) {
+    var cs = getCols();
+    /* Find closest column */
+    var targetCol = cs[0], bestDist = Infinity;
+    cs.forEach(function (col) {
       var r = col.getBoundingClientRect();
       var dist = Math.abs(cx - (r.left + r.width / 2));
       if (dist < bestDist) { bestDist = dist; targetCol = col; }
     });
-    if (!targetCol) return;
-
     /* Find insertion point within that column */
-    var colCards = Array.from(targetCol.querySelectorAll('.assignment')).filter(function (c) {
-      return c !== _dragging && c.style.display !== 'none';
+    var colCards = Array.from(targetCol.children).filter(function (c) {
+      return c.classList.contains('assignment') && c !== _dragging;
     });
-
     var insertBefore = null;
     for (var i = 0; i < colCards.length; i++) {
       var r = colCards[i].getBoundingClientRect();
       if (cy < r.top + r.height / 2) { insertBefore = colCards[i]; break; }
     }
-
-    /* Only move placeholder if position genuinely changed */
-    var newParent = targetCol;
-    var newNext   = insertBefore;
-    if (_dragPlaceholder.parentNode === newParent &&
-        _dragPlaceholder.nextSibling === newNext) return;
-
-    if (newNext) targetCol.insertBefore(_dragPlaceholder, newNext);
-    else         targetCol.appendChild(_dragPlaceholder);
+    /* Only touch DOM if position actually changed */
+    if (_placeholder.parentNode === targetCol && _placeholder.nextSibling === insertBefore) return;
+    if (insertBefore) targetCol.insertBefore(_placeholder, insertBefore);
+    else targetCol.appendChild(_placeholder);
   }
 
   /* ── Drop ── */
   function onGlobalUp() {
     if (!_dragging) return;
     document.removeEventListener('mousemove', onGlobalMove);
-    document.removeEventListener('mouseup',   onGlobalUp);
+    document.removeEventListener('mouseup', onGlobalUp);
     document.removeEventListener('touchmove', onGlobalTouchMove);
-    document.removeEventListener('touchend',  onGlobalUp);
+    document.removeEventListener('touchend', onGlobalUp);
 
     var card = _dragging;
-    card.style.display       = '';
+    _dragging = null;
+
+    /* Place card where placeholder is, then remove placeholder */
+    if (_placeholder && _placeholder.parentNode) {
+      _placeholder.parentNode.insertBefore(card, _placeholder);
+      _placeholder.remove();
+    }
+    _placeholder = null;
+
+    /* Restore card */
+    card.style.display = '';
     card.style.pointerEvents = '';
+    card.style.transition = '';
+    card.style.transform = '';
+
+    if (_dragGhost && _dragGhost.parentNode) _dragGhost.remove();
+    _dragGhost = null;
+
     document.body.style.userSelect = '';
     document.body.style.webkitUserSelect = '';
 
-    if (_dragPlaceholder && _dragPlaceholder.parentNode) {
-      _dragPlaceholder.parentNode.insertBefore(card, _dragPlaceholder);
-      _dragPlaceholder.remove();
-    } else {
-      /* Fallback: return to origin */
-      if (_dragOrigNext && _dragOrigNext.parentNode) _dragOrigParent.insertBefore(card, _dragOrigNext);
-      else _dragOrigParent.appendChild(card);
-    }
-
-    if (_dragGhost && _dragGhost.parentNode) _dragGhost.remove();
-
-    _dragging = null; _dragGhost = null; _dragPlaceholder = null;
-    _dragOrigParent = null; _dragOrigNext = null;
-
-    redistributeColsManual();
+    /* Single FLIP on drop — enforces row-by-row order with one smooth animation */
+    layoutByFlatOrder(getAllFlatOrder(), false);
     scheduleUpdateLabels();
     if (typeof markOutdated === 'function') markOutdated();
-  }
-
-  function redistributeColsManual() {
-    if (!cols || cols.length < 2) return;
-    var allCards = [];
-    cols.forEach(function(col) {
-      Array.from(col.children).forEach(function(child) {
-        if (child.classList && child.classList.contains('assignment')) allCards.push(child);
-      });
-    });
-    if (allCards.length === 0) return;
-    cols.forEach(function(col) {
-      Array.from(col.children).forEach(function(child) {
-        if (child.classList && child.classList.contains('assignment')) col.removeChild(child);
-      });
-    });
-    var n = cols.length, m = allCards.length;
-    var perCol = Math.ceil(m / n);
-    allCards.forEach(function(card, i) {
-      cols[Math.min(Math.floor(i / perCol), n - 1)].appendChild(card);
-    });
   }
 
   /* ── Restore saved mode on page load ── */
