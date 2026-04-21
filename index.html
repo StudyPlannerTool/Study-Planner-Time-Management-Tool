@@ -6389,18 +6389,19 @@ function resetAccessibility() {
 /* ── Manual Order & Drag-and-Drop ── */
 (function () {
   window.isManualOrder = false;
-  var _obs;
-  var _dragging = null, _dragGhost = null, _placeholder = null;
+  var _obs; /* declared early so layoutByFlatOrder can reference it */
+  var _dragging = null, _dragGhost = null;
   var _dragOffX = 0, _dragOffY = 0;
   var _holdTimer = null, _dragStartX = 0, _dragStartY = 0;
-  var _labelTimer = null;
+  var _labelTimer = null, _currentTargetIdx = -1;
 
   /* ── DOM helpers ── */
   function getCols() {
     return Array.from(document.querySelectorAll('#assignmentsContainer .assignment-col'));
   }
 
-  /* Row-by-row flat order: #1=col0-row0, #2=col1-row0, #3=col0-row1 … */
+  /* Row-by-row flat order: slot i → column i%n, row floor(i/n)
+     So #1=col0-row0, #2=col1-row0, #3=col0-row1, #4=col1-row1 … */
   function getAllFlatOrder() {
     var cs = getCols();
     if (!cs.length) return [];
@@ -6420,21 +6421,26 @@ function resetAccessibility() {
     return result;
   }
 
- /* Place cards in row-by-row DOM order; FLIP-animate on drop (skipAnimate=false) only */
+  /* Place cards in DOM by flat order and optionally FLIP-animate displaced cards */
   function layoutByFlatOrder(order, skipAnimate) {
     var cs = getCols();
     if (!cs.length) return;
     var n = cs.length;
+
+    /* Step 1 – snapshot current visual positions (clears any in-progress transform first) */
     var beforeRects = {};
     if (!skipAnimate) {
       order.forEach(function (card) {
-        var id = card._dragId || (card._dragId = '_' + Math.random().toString(36).slice(2));
+        if (card === _dragging) return;
+        var id = card._dragId;
+        if (!id) { id = '_' + Math.random().toString(36).slice(2); card._dragId = id; }
         card.style.transition = 'none';
         card.style.transform = '';
         beforeRects[id] = card.getBoundingClientRect();
       });
-      document.body.offsetHeight; /* force reflow before DOM changes */
     }
+
+    /* Step 2 – move DOM (disconnect observer to avoid re-entry) */
     _obs.disconnect();
     cs.forEach(function (col) {
       Array.from(col.children).filter(function (c) {
@@ -6443,20 +6449,26 @@ function resetAccessibility() {
     });
     order.forEach(function (card, i) { cs[i % n].appendChild(card); });
     _obs.observe(document.getElementById('assignmentsContainer'), { childList: true, subtree: true });
+
+    /* Step 3 – FLIP: animate from old position to new position */
     if (!skipAnimate) {
       order.forEach(function (card) {
+        if (card === _dragging) return;
         var id = card._dragId;
-        if (!beforeRects[id]) return;
-        var before = beforeRects[id], after = card.getBoundingClientRect();
-        var dx = before.left - after.left, dy = before.top - after.top;
+        if (!id || !beforeRects[id]) return;
+        var before = beforeRects[id];
+        var after = card.getBoundingClientRect();
+        var dx = before.left - after.left;
+        var dy = before.top  - after.top;
         if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
           card.style.transition = 'none';
-          card.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
-          card.offsetHeight;
+          card.style.transform  = 'translate(' + dx + 'px,' + dy + 'px)';
+          card.offsetHeight; /* force reflow so next frame animates */
           card.style.transition = 'transform 0.22s cubic-bezier(0.25,0.1,0.25,1)';
-          card.style.transform = '';
+          card.style.transform  = '';
         } else {
-          card.style.transition = ''; card.style.transform = '';
+          card.style.transition = '';
+          card.style.transform  = '';
         }
       });
     }
@@ -6562,16 +6574,13 @@ function resetAccessibility() {
     var rect = card.getBoundingClientRect();
     _dragOffX = cx - rect.left; _dragOffY = cy - rect.top;
     _dragging = card;
+    _currentTargetIdx = getAllFlatOrder().indexOf(card);
 
-    /* Placeholder occupies the card's current slot */
-    _placeholder = document.createElement('div');
-    _placeholder.className = 'drag-placeholder';
-    _placeholder.style.cssText = 'width:100%;min-height:' + rect.height + 'px;border:2.5px dashed rgba(99,102,241,0.45);border-radius:20px;background:rgba(99,102,241,0.06);box-sizing:border-box;flex-shrink:0;margin-top:15px;pointer-events:none;transition:min-height 0.18s ease;';
-    card.parentNode.insertBefore(_placeholder, card);
-
-    /* Hide dragged card — placeholder holds its space */
-    card.style.display = 'none';
+    /* Dim the card in-place as a position indicator */
+    card.style.opacity = '0.25';
     card.style.pointerEvents = 'none';
+    card.style.transition = 'none';
+    card.style.transform = '';
 
     /* Floating ghost follows cursor */
     _dragGhost = card.cloneNode(true);
@@ -6608,32 +6617,36 @@ function resetAccessibility() {
   function moveGhost(cx, cy) {
     _dragGhost.style.left = (cx - _dragOffX) + 'px';
     _dragGhost.style.top  = (cy - _dragOffY) + 'px';
-    repositionPlaceholder(cx, cy);
+    updateDragPosition(cx, cy);
   }
 
-  /* Move only the lightweight placeholder — zero FLIP, zero layout change during drag */
-  function repositionPlaceholder(cx, cy) {
-    var cs = getCols();
-    /* Find closest column */
-    var targetCol = cs[0], bestDist = Infinity;
-    cs.forEach(function (col) {
-      var r = col.getBoundingClientRect();
-      var dist = Math.abs(cx - (r.left + r.width / 2));
-      if (dist < bestDist) { bestDist = dist; targetCol = col; }
-    });
-    /* Find insertion point within that column */
-    var colCards = Array.from(targetCol.children).filter(function (c) {
-      return c.classList.contains('assignment') && c !== _dragging;
-    });
-    var insertBefore = null;
-    for (var i = 0; i < colCards.length; i++) {
-      var r = colCards[i].getBoundingClientRect();
-      if (cy < r.top + r.height / 2) { insertBefore = colCards[i]; break; }
+  /* ── Compute new flat index and trigger animated re-layout ── */
+  function updateDragPosition(cx, cy) {
+    /* "others" = every card except the one being dragged, in current flat order */
+    var others = getAllFlatOrder().filter(function (c) { return c !== _dragging; });
+    if (!others.length) return;
+
+    /* Find insertion point: first card whose vertical midpoint is below cursor.
+       If cursor is at the same row, also check horizontal midpoint. */
+    var targetIdx = others.length; /* default: append at end */
+    for (var i = 0; i < others.length; i++) {
+      var r = others[i].getBoundingClientRect();
+      var midY = r.top + r.height * 0.5;
+      var midX = r.left + r.width * 0.5;
+      if (cy < midY - 4) { targetIdx = i; break; }
+      if (Math.abs(cy - midY) <= r.height * 0.5 && cx < midX) { targetIdx = i; break; }
     }
-    /* Only touch DOM if position actually changed */
-    if (_placeholder.parentNode === targetCol && _placeholder.nextSibling === insertBefore) return;
-    if (insertBefore) targetCol.insertBefore(_placeholder, insertBefore);
-    else targetCol.appendChild(_placeholder);
+
+    if (targetIdx === _currentTargetIdx) return;
+    _currentTargetIdx = targetIdx;
+
+    /* Classic list splice: remove dragged item, insert at target */
+    var newOrder = others.slice();
+    newOrder.splice(targetIdx, 0, _dragging);
+
+    /* Re-layout with FLIP animation for displaced cards */
+    layoutByFlatOrder(newOrder);
+    scheduleUpdateLabels();
   }
 
   /* ── Drop ── */
@@ -6647,15 +6660,8 @@ function resetAccessibility() {
     var card = _dragging;
     _dragging = null;
 
-    /* Place card where placeholder is, then remove placeholder */
-    if (_placeholder && _placeholder.parentNode) {
-      _placeholder.parentNode.insertBefore(card, _placeholder);
-      _placeholder.remove();
-    }
-    _placeholder = null;
-
-    /* Restore card */
-    card.style.display = '';
+    /* Restore card appearance (already in correct DOM position from last updateDragPosition) */
+    card.style.opacity = '';
     card.style.pointerEvents = '';
     card.style.transition = '';
     card.style.transform = '';
@@ -6666,8 +6672,6 @@ function resetAccessibility() {
     document.body.style.userSelect = '';
     document.body.style.webkitUserSelect = '';
 
-    /* Single FLIP on drop — enforces row-by-row order with one smooth animation */
-    layoutByFlatOrder(getAllFlatOrder(), false);
     scheduleUpdateLabels();
     if (typeof markOutdated === 'function') markOutdated();
   }
