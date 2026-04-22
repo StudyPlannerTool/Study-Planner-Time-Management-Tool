@@ -6622,32 +6622,74 @@ function resetAccessibility() {
 
   /* ── Compute new flat index and trigger animated re-layout ── */
   function updateDragPosition(cx, cy) {
-    /* "others" = every card except the one being dragged, in current flat order */
-    var others = getAllFlatOrder().filter(function (c) { return c !== _dragging; });
-    if (!others.length) return;
+  /* "others" = every card except the one being dragged, in current flat order */
+  var currentOrder = getAllFlatOrder();
+  var others = currentOrder.filter(function (c) { return c !== _dragging; });
+  if (!others.length) return;
 
-    /* Find insertion point: first card whose vertical midpoint is below cursor.
-       If cursor is at the same row, also check horizontal midpoint. */
-    var targetIdx = others.length; /* default: append at end */
-    for (var i = 0; i < others.length; i++) {
-      var r = others[i].getBoundingClientRect();
-      var midY = r.top + r.height * 0.5;
-      var midX = r.left + r.width * 0.5;
-      if (cy < midY - 4) { targetIdx = i; break; }
-      if (Math.abs(cy - midY) <= r.height * 0.5 && cx < midX) { targetIdx = i; break; }
+  var container = document.getElementById('assignmentsContainer');
+  var containerRect = container.getBoundingClientRect();
+  var numCols = getCols().length;
+
+  /* 1. DETECT TARGET COLUMN: Based on horizontal mouse position */
+  var relativeX = cx - containerRect.left;
+  var colWidth = containerRect.width / numCols;
+  var targetCol = Math.floor(relativeX / colWidth);
+  targetCol = Math.max(0, Math.min(numCols - 1, targetCol));
+
+  /* 2. FIND VERTICAL SLOT: First card whose vertical midpoint is below cursor */
+  var targetIdx = others.length;
+  var currentIdx = currentOrder.indexOf(_dragging);
+
+  for (var i = 0; i < others.length; i++) {
+    var r = others[i].getBoundingClientRect();
+    var midY = r.top + r.height * 0.5;
+
+    /* Your existing STABILIZATION FIX logic */
+    var buffer = 20; 
+    var thresholdY = (i >= currentIdx) ? (midY - buffer) : (midY + buffer);
+
+    if (cy < thresholdY) {
+      targetIdx = i;
+      break;
     }
-
-    if (targetIdx === _currentTargetIdx) return;
-    _currentTargetIdx = targetIdx;
-
-    /* Classic list splice: remove dragged item, insert at target */
-    var newOrder = others.slice();
-    newOrder.splice(targetIdx, 0, _dragging);
-
-    /* Re-layout with FLIP animation for displaced cards */
-    layoutByFlatOrder(newOrder);
-    scheduleUpdateLabels();
   }
+
+  /* 3. COLUMN ALIGNMENT: Adjust targetIdx so the 'zigzag' layout puts it in the mouse's column */
+  // We look for the closest index to our vertical target that satisfies (index % numCols === targetCol)
+  var bestIdx = targetIdx;
+  var found = false;
+
+  // Search forward and backward for the nearest slot that matches the column
+  for (var offset = 0; offset <= others.length; offset++) {
+    var checkForward = targetIdx + offset;
+    var checkBackward = targetIdx - offset;
+
+    if (checkForward <= others.length && checkForward % numCols === targetCol) {
+      bestIdx = checkForward;
+      found = true;
+      break;
+    }
+    if (checkBackward >= 0 && checkBackward % numCols === targetCol) {
+      bestIdx = checkBackward;
+      found = true;
+      break;
+    }
+  }
+  if (found) targetIdx = bestIdx;
+
+  /* 4. UPDATE LOGIC */
+  if (targetIdx === _currentTargetIdx) return;
+  _currentTargetIdx = targetIdx;
+
+  /* Classic list splice: remove dragged item, insert at target */
+  var newOrder = others.slice();
+  newOrder.splice(targetIdx, 0, _dragging);
+
+  /* Re-layout with FLIP animation for displaced cards */
+  layoutByFlatOrder(newOrder);
+  scheduleUpdateLabels();
+}
 
   /* ── Drop ── */
   function onGlobalUp() {
