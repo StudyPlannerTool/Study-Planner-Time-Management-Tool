@@ -2154,6 +2154,7 @@ document.getElementById("resetBtn").onclick = () => {
   const hasOutput = output.innerHTML.trim().length > 0;
   if (!raw.length && !hasOutput) {
     const err = document.getElementById("assignmentError");
+    err.innerHTML = '⚠️ Please <strong>add at least one assignment.</strong>';
     err.style.display = "block";
     return;
   }
@@ -6640,6 +6641,13 @@ function resetAccessibility() {
   function moveGhost(cx, cy) {
     _dragGhost.style.left = (cx - _dragOffX) + 'px';
     _dragGhost.style.top  = (cy - _dragOffY) + 'px';
+    var _ZONE = 90, _SPD = 12, _vh = window.innerHeight;
+    var _panels = ['a','c','e'], _ap = null, _bd = Infinity;
+    _panels.forEach(function(id) { var p = document.getElementById(id); if (!p) return; var d = Math.abs(p.getBoundingClientRect().left); if (d < _bd) { _bd = d; _ap = p; } });
+    if (_ap) {
+      if (cy < _ZONE) _ap.scrollTop -= _SPD * (1 - cy / _ZONE);
+      else if (cy > _vh - _ZONE) _ap.scrollTop += _SPD * (1 - (_vh - cy) / _ZONE);
+    }
     updateDragPosition(cx, cy);
   }
 
