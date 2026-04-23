@@ -6515,6 +6515,23 @@ function resetAccessibility() {
       document.querySelectorAll('#assignmentsContainer .assignment').forEach(function (c) {
         c.style.transform = ''; c.style.transition = '';
       });
+      localStorage.removeItem('studyPlanner_tasks');
+      /* Physically re-sort cards in DOM to match auto-sort order (difficulty → time) */
+      var _dr = { priority:0, hard:1, medium:2, easy:3 };
+      var _sc = Array.from(document.querySelectorAll('#assignmentsContainer .assignment'));
+      if (_sc.length > 0) {
+        _sc.sort(function(a, b) {
+          var _da = (a.querySelector('.difficulty') || {}).value || 'easy';
+          var _db = (b.querySelector('.difficulty') || {}).value || 'easy';
+          var _ra = _dr[_da] !== undefined ? _dr[_da] : 3;
+          var _rb = _dr[_db] !== undefined ? _dr[_db] : 3;
+          if (_ra !== _rb) return _ra - _rb;
+          var _ta = parseInt(((a.querySelector('.time') || {}).value) || 0);
+          var _tb = parseInt(((b.querySelector('.time') || {}).value) || 0);
+          return _tb - _ta;
+        });
+        layoutByFlatOrder(_sc, false);
+      }
       var _hasCards = document.querySelectorAll('#assignmentsContainer .assignment').length > 0;
       var _hasOutput = document.getElementById('output').innerHTML.trim().length > 0;
       if (_hasCards && _hasOutput) { document.getElementById('calculateBtn').click(); }
@@ -6589,6 +6606,25 @@ function resetAccessibility() {
     card.addEventListener('touchend', onUp);
   }
 
+  var _scrollRaf = null;
+  function _dragScrollLoop() {
+    if (!_dragging || !_dragGhost) { _scrollRaf = null; return; }
+    var gr = _dragGhost.getBoundingClientRect();
+    var gy = gr.top + gr.height * 0.5;
+    var _ZONE = 90, _SPD = 14, _vh = window.innerHeight;
+    var _ap = null, _bd = Infinity;
+    ['a','c','e'].forEach(function(id) {
+      var p = document.getElementById(id); if (!p) return;
+      var d = Math.abs(p.getBoundingClientRect().left);
+      if (d < _bd) { _bd = d; _ap = p; }
+    });
+    if (_ap) {
+      if (gy < _ZONE) _ap.scrollTop -= _SPD * (1 - gy / _ZONE);
+      else if (gy > _vh - _ZONE) _ap.scrollTop += _SPD * (1 - (_vh - gy) / _ZONE);
+    }
+    _scrollRaf = requestAnimationFrame(_dragScrollLoop);
+  }
+
   /* ── Begin drag ── */
   function beginDrag(card, cx, cy) {
     if (_dragging) return;
@@ -6628,6 +6664,7 @@ function resetAccessibility() {
     document.addEventListener('mouseup', onGlobalUp);
     document.addEventListener('touchmove', onGlobalTouchMove, { passive: false });
     document.addEventListener('touchend', onGlobalUp);
+    _scrollRaf = requestAnimationFrame(_dragScrollLoop);
   }
 
   function onGlobalMove(e) {
@@ -6641,13 +6678,6 @@ function resetAccessibility() {
   function moveGhost(cx, cy) {
     _dragGhost.style.left = (cx - _dragOffX) + 'px';
     _dragGhost.style.top  = (cy - _dragOffY) + 'px';
-    var _ZONE = 90, _SPD = 12, _vh = window.innerHeight;
-    var _panels = ['a','c','e'], _ap = null, _bd = Infinity;
-    _panels.forEach(function(id) { var p = document.getElementById(id); if (!p) return; var d = Math.abs(p.getBoundingClientRect().left); if (d < _bd) { _bd = d; _ap = p; } });
-    if (_ap) {
-      if (cy < _ZONE) _ap.scrollTop -= _SPD * (1 - cy / _ZONE);
-      else if (cy > _vh - _ZONE) _ap.scrollTop += _SPD * (1 - (_vh - cy) / _ZONE);
-    }
     updateDragPosition(cx, cy);
   }
 
@@ -6729,6 +6759,7 @@ function resetAccessibility() {
     document.removeEventListener('mouseup', onGlobalUp);
     document.removeEventListener('touchmove', onGlobalTouchMove);
     document.removeEventListener('touchend', onGlobalUp);
+    if (_scrollRaf) { cancelAnimationFrame(_scrollRaf); _scrollRaf = null; }
 
     var card = _dragging;
     _dragging = null;
