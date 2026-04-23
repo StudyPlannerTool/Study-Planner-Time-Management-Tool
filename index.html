@@ -6427,20 +6427,31 @@ function resetAccessibility() {
     if (!cs.length) return;
     var n = cs.length;
 
-    /* Step 1 – snapshot current visual positions (clears any in-progress transform first) */
+    /* Step 1 – snapshot VISUAL positions before any style or DOM changes */
     var beforeRects = {};
     if (!skipAnimate) {
       order.forEach(function (card) {
         if (card === _dragging) return;
         var id = card._dragId;
         if (!id) { id = '_' + Math.random().toString(36).slice(2); card._dragId = id; }
-        card.style.transition = 'none';
-        card.style.transform = '';
-        beforeRects[id] = card.getBoundingClientRect();
+        var bcr = card.getBoundingClientRect();
+        beforeRects[id] = { left: bcr.left, top: bcr.top };
       });
     }
 
-    /* Step 2 – move DOM (disconnect observer to avoid re-entry) */
+    /* Step 2 – for cards that have already been through layout at least once,
+       suppress the CSS slideIn animation BEFORE removing from DOM.
+       Without this, every remove+reinsert restarts slideIn causing the visual glitch.
+       marginTop is set inline to preserve the animation's fill-forward value (10px)
+       so removing the animation fill doesn't cause a 5px position jump. */
+    order.forEach(function (card) {
+      if (card._layoutDone) {
+        card.style.marginTop = '10px';
+        card.style.animation = 'none';
+      }
+    });
+
+    /* Step 3 – move DOM */
     _obs.disconnect();
     cs.forEach(function (col) {
       Array.from(col.children).filter(function (c) {
@@ -6450,27 +6461,39 @@ function resetAccessibility() {
     order.forEach(function (card, i) { cs[i % n].appendChild(card); });
     _obs.observe(document.getElementById('assignmentsContainer'), { childList: true, subtree: true });
 
-    /* Step 3 – FLIP: animate from old position to new position */
+    /* Mark all cards — on the NEXT call they will have animation suppressed */
+    order.forEach(function (card) { card._layoutDone = true; });
+
+    /* Step 4 – FLIP: animate displaced cards to their new positions */
     if (!skipAnimate) {
+      order.forEach(function (card) {
+        if (card === _dragging) return;
+        card.style.transition = 'none';
+        card.style.transform = '';
+      });
+      document.getElementById('assignmentsContainer').offsetHeight;
+
+      var toAnimate = [];
       order.forEach(function (card) {
         if (card === _dragging) return;
         var id = card._dragId;
         if (!id || !beforeRects[id]) return;
-        var before = beforeRects[id];
         var after = card.getBoundingClientRect();
-        var dx = before.left - after.left;
-        var dy = before.top  - after.top;
+        var dx = beforeRects[id].left - after.left;
+        var dy = beforeRects[id].top  - after.top;
         if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
-          card.style.transition = 'none';
-          card.style.transform  = 'translate(' + dx + 'px,' + dy + 'px)';
-          card.offsetHeight; /* force reflow so next frame animates */
-          card.style.transition = 'transform 0.22s cubic-bezier(0.25,0.1,0.25,1)';
-          card.style.transform  = '';
-        } else {
-          card.style.transition = '';
-          card.style.transform  = '';
+          card.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+          toAnimate.push(card);
         }
       });
+
+      if (toAnimate.length) {
+        document.getElementById('assignmentsContainer').offsetHeight;
+        toAnimate.forEach(function (card) {
+          card.style.transition = 'transform 0.22s cubic-bezier(0.25,0.1,0.25,1)';
+          card.style.transform = '';
+        });
+      }
     }
   }
 
