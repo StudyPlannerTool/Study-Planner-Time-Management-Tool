@@ -324,6 +324,8 @@
         <button id="resetBtn" style="background: #ffffff; border: 2px solid #dc2626; border-radius: 7px; padding: 7px 18px; color: #111; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #6b0000; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">Reset</button>
       </div>
       <div id="multiTabWarnControls" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+      <div id="assignmentWarnControls" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;"></div>
+      <div id="outdatedWarnControls" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;"></div>
     </div>
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
@@ -407,6 +409,8 @@
 <button id="resetTimerBtn" style="background:#475569; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:13px; box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
   </div>
   <div id="multiTabWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+<div id="assignmentWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;"></div>
+<div id="outdatedWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;"></div>
 </div>
 
   <div id="a" style="text-align: center;">
@@ -6789,5 +6793,124 @@ function resetAccessibility() {
 })();
 </script>
 <!-- ── Tutorial Overlay ── -->
+<script>
+/* ── Bar-warning interceptors ── */
+(function () {
+  var _warnTimer = null, _outdatedTimer = null;
+  var _aeBlock   = false, _obBlock      = false;
+
+  /* Show an assignment-error warning in whichever bar is currently visible */
+  function showWarnInBar(msg) {
+    var els = [
+      document.getElementById('assignmentWarnControls'),
+      document.getElementById('assignmentWarnSession')
+    ];
+    els.forEach(function (el) {
+      if (!el) return;
+      el.textContent  = msg;
+      el.style.transition = '';
+      el.style.opacity    = '1';
+      el.style.display    = 'block';
+    });
+    clearTimeout(_warnTimer);
+    _warnTimer = setTimeout(function () {
+      els.forEach(function (el) {
+        if (!el) return;
+        el.style.transition = 'opacity 0.6s ease';
+        el.style.opacity    = '0';
+        setTimeout(function () {
+          if (parseFloat(el.style.opacity) === 0) {
+            el.style.display    = 'none';
+            el.style.transition = '';
+          }
+        }, 650);
+      });
+    }, 7000);
+  }
+
+  /* Show the outdated-plan warning in whichever bar is currently visible */
+  function showOutdatedWarn() {
+    var els = [
+      document.getElementById('outdatedWarnControls'),
+      document.getElementById('outdatedWarnSession')
+    ];
+    els.forEach(function (el) {
+      if (!el) return;
+      el.textContent  = '\u26a0\ufe0f Your plan is outdated \u2014 click Calculate to update.';
+      el.style.transition = '';
+      el.style.opacity    = '1';
+      el.style.display    = 'block';
+    });
+    clearTimeout(_outdatedTimer);
+    _outdatedTimer = setTimeout(function () {
+      els.forEach(function (el) {
+        if (!el) return;
+        el.style.transition = 'opacity 0.6s ease';
+        el.style.opacity    = '0';
+        setTimeout(function () {
+          if (parseFloat(el.style.opacity) === 0) {
+            el.style.display    = 'none';
+            el.style.transition = '';
+          }
+        }, 650);
+      });
+    }, 7000);
+  }
+
+  /* Immediately hide the outdated warning (e.g. after Calculate) */
+  function hideOutdatedWarn() {
+    clearTimeout(_outdatedTimer);
+    [
+      document.getElementById('outdatedWarnControls'),
+      document.getElementById('outdatedWarnSession')
+    ].forEach(function (el) {
+      if (!el) return;
+      el.style.transition = '';
+      el.style.opacity    = '1';
+      el.style.display    = 'none';
+    });
+  }
+
+  /* ── Watch assignmentError for display changes ── */
+  var aeEl = document.getElementById('assignmentError');
+  if (aeEl) {
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        if (muts[i].attributeName !== 'style') continue;
+        if (_aeBlock) continue;
+        if (aeEl.style.display === 'block') {
+          /* Read the message BEFORE hiding the element */
+          var msg = (aeEl.textContent || '').trim() ||
+                    '\u26a0\ufe0f Please add at least one assignment.';
+          _aeBlock = true;
+          aeEl.style.display = 'none';   /* suppress the original element */
+          setTimeout(function () { _aeBlock = false; }, 0);
+          showWarnInBar(msg);
+        }
+      }
+    }).observe(aeEl, { attributes: true, attributeFilter: ['style'] });
+  }
+
+  /* ── Watch outdatedBanner for display changes ── */
+  var obEl = document.getElementById('outdatedBanner');
+  if (obEl) {
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        if (muts[i].attributeName !== 'style') continue;
+        if (_obBlock) continue;
+        if (obEl.style.display === 'block') {
+          _obBlock = true;
+          obEl.style.display = 'none';   /* suppress the original element */
+          setTimeout(function () { _obBlock = false; }, 0);
+          showOutdatedWarn();
+        } else if (obEl.style.display === 'none') {
+          /* Existing code explicitly hid the banner → mirror that */
+          hideOutdatedWarn();
+        }
+      }
+    }).observe(obEl, { attributes: true, attributeFilter: ['style'] });
+  }
+})();
+</script>
 </body>
 </html>
