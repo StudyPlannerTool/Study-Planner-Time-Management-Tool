@@ -5138,6 +5138,15 @@ function handleNeedMoreTime() {
   let totalWork = 0;
   let totalBreaks = 0;
   let dayCum = newDayCum;
+  /* If the assignment ended exactly at a break boundary, the break that was
+     already due sits at nextIdx in segmentMap. The futureWork-building loop
+     skips it (isBreak), so we must honour it explicitly before scheduling
+     the extended work — otherwise the extra time lands before the break. */
+  if (nextIdx < segmentMap.length && segmentMap[nextIdx].isBreak) {
+    newSegs.push({ name: 'Break', durationMinutes: 10, isBreak: true });
+    totalBreaks += 10;
+    dayCum += 10;
+  }
   futureWork.forEach((a, idx) => {
     let remaining = a.durationMinutes;
     while (remaining > 0) {
