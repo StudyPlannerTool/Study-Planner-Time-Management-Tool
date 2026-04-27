@@ -323,79 +323,79 @@
         <button id="calculateBtn" style="background: #d97706; border: none; border-radius: 7px; padding: 8px 20px; color: white; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #92400e; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">Calculate</button>
         <button id="resetBtn" style="background: #ffffff; border: 2px solid #dc2626; border-radius: 7px; padding: 7px 18px; color: #111; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #6b0000; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">Reset</button>
       </div>
-      <div id="multiTabWarnControls" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
-<div id="assignmentError" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
-<div id="outdatedBanner" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
+      <div id="multiTabWarnControls" style="display:none;text-align:center;margin-top:3px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+<div id="assignmentError" style="display:none;text-align:center;margin-top:3px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
+<div id="outdatedBanner" style="display:none;text-align:center;margin-top:3px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
     </div>
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
  
-    <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black; font-size: 18px;">⚙️</button>
+   <button id="z" style="position: fixed; z-index: 10000; top: 8px; right: 10px; padding: 10px 10px; border-radius: 50%; width: 50px; height: 50px; font-size: 20px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); color: black; font-size: 18px; display: none;">⚙️</button>
 
-  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 5px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 225px; overflow: visible;">
-    <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:8px 14px 4px;">Calculation</div>
-    <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
-    <div>
-      <button class="settings-menu-btn" onclick="toggleSettingsSub('limitSub')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-      <div id="limitSub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
-        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Daily Limit</div>
-        <div style="font-size:16px;font-weight:800;font-family:'Syne',sans-serif;color:#6366f1;text-align:center;margin-bottom:8px;"><span id="limitDisplay">--</span></div>
-        <input type="range" id="limitSlider" min="30" max="300" step="10" value="140" style="width:100%;margin-bottom:4px;accent-color:#6366f1;">
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-bottom:8px;"><span>30 min</span><span>5 hrs</span></div>
-        <button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+  <div id="x" style="position: fixed; top: 60px; right: 10px; z-index: 10000; display: none; background: white; border: 1.5px solid #cbd5e1; border-radius: 16px; box-shadow: 0 12px 40px rgba(99,102,241,0.16), 0 4px 12px rgba(0,0,0,0.08); min-width: 225px; overflow: hidden; transition: height 0.32s cubic-bezier(0.4,0,0.2,1);">
+    <div id="settingsPanelTrack" style="position:relative;width:100%;">
+      <!-- Main sections panel -->
+      <div id="settingsMainPanel" style="padding:5px;box-sizing:border-box;transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);">
+        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:8px 14px 4px;">Calculation</div>
+        <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+        <button class="settings-menu-btn" onclick="openSettingsSub('limitSub','Daily Study Limit')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+        <button class="settings-menu-btn" onclick="openSettingsSub('orderSub','Assignment Order')">↕&nbsp; Assignment Order <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+        <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
+        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Display</div>
+        <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+        <button class="settings-menu-btn" onclick="openSettingsSub('themeSub','Theme Color')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+        <button class="settings-menu-btn" onclick="openSettingsSub('a11ySub','Accessibility')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
       </div>
-    </div>
-    <div>
-      <button class="settings-menu-btn" onclick="toggleSettingsSub('orderSub')">↕&nbsp; Assignment Order <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-      <div id="orderSub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
-        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Assignment Order</div>
-        <div id="orderAutoOpt" onclick="setOrderMode('auto')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;margin-bottom:4px;transition:background 0.15s;">
-          <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-            <div id="orderAutoDot" style="width:8px;height:8px;border-radius:50%;background:#6366f1;transition:background 0.15s;"></div>
-          </div>
-          <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Auto Sort (by difficulty &amp; time)</span>
+      <!-- Sub panel (slides in from right) -->
+      <div id="settingsSubPanel" style="position:absolute;top:0;left:0;width:100%;box-sizing:border-box;transform:translateX(102%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);">
+        <div style="display:flex;align-items:center;gap:6px;padding:10px 14px 8px;border-bottom:1px solid rgba(99,102,241,0.12);">
+          <button id="settingsBackBtn" onclick="closeSettingsSub()" style="background:transparent;border:none;color:#6366f1;font-size:18px;cursor:pointer;padding:0 8px 0 0;font-family:'Inter',sans-serif;font-weight:700;line-height:1;transition:color 0.15s;">←</button>
+          <div id="settingsSubTitle" style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;"></div>
         </div>
-        <div id="orderManualOpt" onclick="setOrderMode('manual')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;transition:background 0.15s;">
-          <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-            <div id="orderManualDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div>
-          </div>
-          <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Manual Order</span>
+        <div id="limitSub" style="display:none;padding:8px 12px 10px;">
+          <div style="font-size:16px;font-weight:800;font-family:'Syne',sans-serif;color:#6366f1;text-align:center;margin-bottom:8px;"><span id="limitDisplay">--</span></div>
+          <input type="range" id="limitSlider" min="30" max="300" step="10" value="140" style="width:100%;margin-bottom:4px;accent-color:#6366f1;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-bottom:8px;"><span>30 min</span><span>5 hrs</span></div>
+          <button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
         </div>
-      </div>
-    </div>
-    <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
-    <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Display</div>
-    <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
-    <div>
-     <button class="settings-menu-btn" onclick="toggleSettingsSub('themeSub')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-      <div id="themeSub" class="settings-submenu" style="display:none;">
-        <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;padding:6px 14px 2px;">Select Theme</div>
-        <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
-        <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
-      </div>
-    </div>
-    <div>
-      <button class="settings-menu-btn" onclick="toggleSettingsSub('a11ySub')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-      <div id="a11ySub" class="settings-submenu" style="display:none;padding:8px 12px 10px;">
-        <div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Accessibility</div>
-        <div style="margin-bottom:12px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-            <span class="sub-label">Text Size</span>
-            <span id="textScaleDisplay" style="font-size:11px;font-weight:700;color:#6366f1;">0%</span>
+        <div id="orderSub" style="display:none;padding:8px 12px 10px;">
+          <div id="orderAutoOpt" onclick="setOrderMode('auto')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;margin-bottom:4px;transition:background 0.15s;">
+            <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+              <div id="orderAutoDot" style="width:8px;height:8px;border-radius:50%;background:#6366f1;transition:background 0.15s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Auto Sort (by difficulty &amp; time)</span>
           </div>
-          <input type="range" id="textScaleSlider" min="0.85" max="1.15" step="0.05" value="1" style="width:100%;accent-color:#6366f1;">
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px;"><span>Smaller</span><span>Larger</span></div>
-        </div>
-        <div class="sub-area" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div>
-            <div class="sub-label">Colorblind Mode</div>
-            <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Adds patterns to timeline</div>
-          </div>
-          <div id="colorblindToggle" onclick="toggleColorblind()" style="width:38px;height:21px;background:#cbd5e1;border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;margin-left:10px;">
-            <div id="colorblindThumb" style="position:absolute;top:2px;left:2px;width:17px;height:17px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+          <div id="orderManualOpt" onclick="setOrderMode('manual')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;transition:background 0.15s;">
+            <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+              <div id="orderManualDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Manual Order</span>
           </div>
         </div>
-        <button onclick="resetAccessibility()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+        <div id="themeSub" style="display:none;padding:4px 0;">
+          <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
+          <button id="Dark" class="settings-menu-btn" style="padding-left:22px;">🌙&nbsp; Dark Mode</button>
+        </div>
+        <div id="a11ySub" style="display:none;padding:8px 12px 10px;">
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+              <span class="sub-label">Text Size</span>
+              <span id="textScaleDisplay" style="font-size:11px;font-weight:700;color:#6366f1;">0%</span>
+            </div>
+            <input type="range" id="textScaleSlider" min="0.85" max="1.15" step="0.05" value="1" style="width:100%;accent-color:#6366f1;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px;"><span>Smaller</span><span>Larger</span></div>
+          </div>
+          <div class="sub-area" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div class="sub-label">Colorblind Mode</div>
+              <div style="font-size:10px;color:#94a3b8;margin-top:2px;">Adds patterns to timeline</div>
+            </div>
+            <div id="colorblindToggle" onclick="toggleColorblind()" style="width:38px;height:21px;background:#cbd5e1;border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;margin-left:10px;">
+              <div id="colorblindThumb" style="position:absolute;top:2px;left:2px;width:17px;height:17px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+            </div>
+          </div>
+          <button onclick="resetAccessibility()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+        </div>
       </div>
     </div>
   </div>
@@ -408,9 +408,9 @@
 <button id="doneEarlyBtn" style="background:#6d28d9; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:13px; box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
 <button id="resetTimerBtn" style="background:#475569; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:13px; box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
   </div>
- <div id="multiTabWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
-<div id="assignmentErrorSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
-<div id="outdatedBannerSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
+ <div id="multiTabWarnSession" style="display:none;text-align:center;margin-top:3px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+<div id="assignmentErrorSession" style="display:none;text-align:center;margin-top:3px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
+<div id="outdatedBannerSession" style="display:none;text-align:center;margin-top:3px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
 </div>
 
   <div id="a" style="text-align: center;">
@@ -1724,6 +1724,7 @@ if (state.outputHTML) { output.innerHTML = state.outputHTML; output.classList.ad
     document.getElementById("a").style.transform = "translateX(-110%)";
   document.getElementById("controls").classList.add("show");
     document.getElementById("controls").style.display = "none";
+    document.getElementById("z").style.display = "none";
     document.getElementById("timerControls").style.display = "none";
     document.getElementById("timerInfoBox").style.display = "block";
     document.getElementById("sessionBar").style.display = "block";
@@ -2304,7 +2305,8 @@ document.getElementById("timerControls").style.display = "flex";
   if (outputFade) outputFade.style.display = "block";
   requestAnimationFrame(() => {
     const _cPanel = document.getElementById('c');
-    const _targetTop = Math.max(0, output.getBoundingClientRect().top + _cPanel.scrollTop - 110);
+    const _outputRect = output.getBoundingClientRect();
+    const _targetTop = Math.max(0, _outputRect.bottom + _cPanel.scrollTop - window.innerHeight + 40);
     const _startTop = _cPanel.scrollTop;
     const _dist = _targetTop - _startTop;
     const _dur = 520;
@@ -2574,6 +2576,7 @@ startBtn.addEventListener("click", function() {
   document.getElementById("timerControls").style.display = 'none';
   _sessionHide(document.getElementById("topContainer"));
   controls.style.display = 'none';
+  document.getElementById("z").style.display = 'none';
 document.getElementById('timelineContainer').scrollIntoView({ behavior: 'smooth' });
   startBtn.style.display = 'none';
   PauseBtn.style.display = 'block';
@@ -2948,6 +2951,7 @@ window.loadFromLocalStorage = function() {
                 const lastRow = rows[rows.length - 1];
                 if (lastRow && task.name) {
                     lastRow.querySelector(".assignmentName").value = task.name;
+                    updateAssignmentSummary(lastRow);
                 }
             });
            
@@ -3026,6 +3030,7 @@ function loadAndRestore() {
       a.style.transition = 'none';
       a.style.transform = 'translateX(-110%)';
       document.getElementById("controls").classList.add("show");
+      document.getElementById("z").style.display = 'block';
     }
   }
 }
@@ -3137,7 +3142,12 @@ document.getElementById("showLessBtn").addEventListener("click", function() {
       var isOpen = x.style.display !== 'none';
       x.style.display = isOpen ? 'none' : 'block';
       if (!isOpen) {
-        ['themeSub','limitSub','a11ySub'].forEach(function(id){
+        var _mp = document.getElementById('settingsMainPanel');
+        var _sp = document.getElementById('settingsSubPanel');
+        if (_mp) _mp.style.transform = '';
+        if (_sp) _sp.style.transform = 'translateX(102%)';
+        x.style.height = '';
+        ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
           var s = document.getElementById(id); if(s) s.style.display = 'none';
         });
       }
@@ -3782,6 +3792,7 @@ const onboardingBack = document.getElementById('onboardingBack');
       eDiv.style.transform = 'translateX(-110%)';
       setTimeout(() => {
         document.getElementById("controls").classList.add("show");
+        document.getElementById("z").style.display = 'block';
 const _existingAssignments = document.querySelectorAll('#assignmentsContainer .assignment');
         if (typeof window.startTutorial === 'function' && _existingAssignments.length === 0) window.startTutorial();
       }, 150);
@@ -3810,6 +3821,7 @@ d.addEventListener("click", function() {
   a.style.transition = 'transform 0.5s ease-in-out';
   a.style.transform = 'translateX(0%)';
   document.getElementById("controls").classList.remove("show");
+  document.getElementById("z").style.display = 'none';
   setTimeout(function() {
     var heroItems = [
       { id: 'info',      delay: '0.10s' },
@@ -4225,6 +4237,11 @@ z.addEventListener("click", function(e) {
 document.addEventListener("click", function(e) {
   if (!x.contains(e.target) && e.target !== z) {
     x.style.display = "none";
+    var _dmp = document.getElementById('settingsMainPanel');
+    var _dsp = document.getElementById('settingsSubPanel');
+    if (_dmp) _dmp.style.transform = '';
+    if (_dsp) _dsp.style.transform = 'translateX(102%)';
+    x.style.height = '';
     ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
       var s = document.getElementById(id); if(s) s.style.display = 'none';
     });
@@ -5800,8 +5817,26 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       { el: function () { return document.getElementById('calculateBtn'); },
         text: 'Next, calculate your study plan!',
         on: 'click', post: 0 },
+      { el: function () { return document.getElementById('z'); },
+        text: "Don\u2019t like your plan? Change it here!",
+        on: 'click', post: 320 },
+      { el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Daily Study Limit')!==-1)return bs[i];} return null; },
+        text: 'You can change the allotted time per day to studying by changing the Daily Study Limit. Try it out!',
+        on: 'click', post: 320 },
+      { el: function () { return document.getElementById('limitSlider'); },
+        text: 'Drag the slider to adjust your daily study limit.',
+        on: 'limitSlider', post: 0 },
+      { el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Assignment Order')!==-1)return bs[i];} return null; },
+        text: 'You can also manually re-order assignments to match your preferences, or stick to the automatic sort.',
+        on: 'click', post: 320 },
+      { el: function () { return document.getElementById('orderManualOpt'); },
+        text: 'Try switching it to manual!',
+        on: 'click', post: 0 },
+      { el: function () { return document.getElementById('assignmentsContainer'); },
+        text: 'Click and hold on any assignment, then drag it to your preferred location and leave it.',
+        on: 'drag', post: 0 },
       { el: function () { return document.getElementById('startTimerBtn'); },
-        text: 'Now begin studying — start your session!',
+        text: "It\u2019s that simple! For now, let\u2019s stick to auto sorting while we finish learning how to use this planner. Once you are happy with your plan, simply click this button to begin studying!",
         on: 'click', post: 0 },
       { el: function () { return document.getElementById('doneEarlyBtn'); },
         text: "Finished early? Click here to skip to the next assignment — or end the session if it\u2019s your last.",
@@ -5917,6 +5952,48 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         var _splus  = el.querySelector('.slider-plus');
         if (_sminus) { _sminus.addEventListener('click', sh); T.off.push(function() { _sminus.removeEventListener('click', sh); }); }
         if (_splus)  { _splus.addEventListener('click', sh);  T.off.push(function() { _splus.removeEventListener('click', sh); }); }
+      } else if (step.on === 'limitSlider') {
+        var _lsl = document.getElementById('limitSlider');
+        if (!_lsl) { setTimeout(function() { T._show(T.step + 1); }, 400); return; }
+        var _lsFired = false, _lsMoved = false;
+        function _lsInput() { _lsMoved = true; }
+        function _lsUp() {
+          if (!T.active || _lsFired || !_lsMoved) return;
+          _lsFired = true; T._clean();
+          if (typeof closeSettingsSub === 'function') closeSettingsSub();
+          setTimeout(function() { if (T.active) T._show(T.step + 1); }, 420);
+        }
+        _lsl.addEventListener('input', _lsInput);
+        _lsl.addEventListener('mouseup', _lsUp);
+        _lsl.addEventListener('touchend', _lsUp);
+        T.off.push(function() {
+          _lsl.removeEventListener('input', _lsInput);
+          _lsl.removeEventListener('mouseup', _lsUp);
+          _lsl.removeEventListener('touchend', _lsUp);
+        });
+      } else if (step.on === 'drag') {
+        window._tutorialOnDragComplete = function() {
+          window._tutorialOnDragComplete = null;
+          T._clean();
+          window._tutorialBypassBlock = true;
+          if (typeof window.setOrderMode === 'function') window.setOrderMode('auto');
+          window._tutorialBypassBlock = false;
+          setTimeout(function() {
+            if (!T.active) return;
+            var _panel = document.getElementById('c');
+            if (_panel) {
+              var _sStart = _panel.scrollTop, _sDist = _panel.scrollHeight - _panel.clientHeight - _sStart;
+              var _sT0 = performance.now(), _sDur = 600;
+              (function _sStep(now) {
+                var _p = Math.min((now - _sT0) / _sDur, 1);
+                var _e = _p < 0.5 ? 2*_p*_p : -1+(4-2*_p)*_p;
+                _panel.scrollTop = _sStart + _sDist * _e;
+                if (_p < 1) requestAnimationFrame(_sStep);
+                else setTimeout(function() { if (T.active) T._show(T.step + 1); }, 200);
+              })(performance.now());
+            } else { T._show(T.step + 1); }
+          }, 1100);
+        };
       }
     },
 
@@ -5938,6 +6015,15 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
           var el = step.el();
           if (el && window.getComputedStyle(el).display !== 'none') { el.click(); }
           else { T._show(T.step + 1); }
+        } else if (step.on === 'limitSlider') {
+          if (typeof closeSettingsSub === 'function') closeSettingsSub();
+          setTimeout(function() { if (T.active) T._show(T.step + 1); }, 420);
+        } else if (step.on === 'drag') {
+          window._tutorialOnDragComplete = null;
+          window._tutorialBypassBlock = true;
+          if (typeof window.setOrderMode === 'function') window.setOrderMode('auto');
+          window._tutorialBypassBlock = false;
+          setTimeout(function() { if (T.active) T._show(T.step + 1); }, 900);
         } else { T._show(T.step + 1); }
       }, d);
     },
@@ -5991,7 +6077,10 @@ if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
   }, true);
 
   var skp = document.getElementById('tutorialSkipBtn');
-  if (skp) skp.addEventListener('click', function () { T.end(); });
+  if (skp) skp.addEventListener('click', function () {
+    localStorage.removeItem('studyPlanner_tasks');
+    window.location.reload();
+  });
 
   window.startTutorial = function () { T.start(); };
   window.tutorialActive = false;
@@ -6146,6 +6235,7 @@ requestAnimationFrame(loop);
   var TAB_ID = Math.random().toString(36).slice(2);
   var LS_KEY = 'studyPlanner_tabHeartbeat';
   var _isMultiTab = false;
+  var bc = null;
   function getTabs() { try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e) { return {}; } }
   function setTabs(t) { try { localStorage.setItem(LS_KEY, JSON.stringify(t)); } catch(e) {} }
   function showWarn(v) {
@@ -6155,7 +6245,12 @@ requestAnimationFrame(loop);
       var el = document.getElementById(id); if (el) el.style.display = v ? 'block' : 'none';
     });
   }
-  // Remove stale entries from crashed/unclean prior loads so refresh never flashes
+  function countLiveTabs() {
+    var t = getTabs(), now = Date.now(), count = 0;
+    Object.keys(t).forEach(function(k) { if (now - t[k] < 9000) count++; });
+    return count;
+  }
+  // Remove stale entries on load so a hard-refresh never flashes a false warning
   (function() {
     var t = getTabs(), now = Date.now();
     Object.keys(t).forEach(function(k) { if (now - t[k] > 4000) delete t[k]; });
@@ -6166,20 +6261,26 @@ requestAnimationFrame(loop);
     t[TAB_ID] = now;
     Object.keys(t).forEach(function(k) { if (now - t[k] < 9000) count++; else delete t[k]; });
     setTabs(t);
-    // LS-based warning only for browsers without BroadcastChannel
     if (!window.BroadcastChannel) showWarn(count > 1);
   }
   pulse();
   setInterval(pulse, 2000);
   document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') pulse();
+    if (document.visibilityState !== 'visible') return;
+    pulse();
+    if (bc) {
+      bc.postMessage({ type: 'open', id: TAB_ID });
+      setTimeout(function() { showWarn(countLiveTabs() > 1); }, 600);
+    }
   });
   window.addEventListener('beforeunload', function() {
     var t = getTabs(); delete t[TAB_ID]; setTabs(t);
   });
   if ('BroadcastChannel' in window) {
-    var bc = new BroadcastChannel('studyPlannerTabs');
+    bc = new BroadcastChannel('studyPlannerTabs');
     bc.postMessage({ type: 'open', id: TAB_ID });
+    // Retry after a short delay to catch tabs that were still loading
+    setTimeout(function() { if (bc) bc.postMessage({ type: 'open', id: TAB_ID }); }, 900);
     bc.onmessage = function(e) {
       if (!e.data || e.data.id === TAB_ID) return;
       if (e.data.type === 'open') {
@@ -6190,9 +6291,8 @@ requestAnimationFrame(loop);
       } else if (e.data.type === 'close') {
         var t = getTabs();
         if (e.data.id) { delete t[e.data.id]; setTabs(t); }
-        var now = Date.now(), remaining = 0;
-        Object.keys(getTabs()).forEach(function(k) { if (now - getTabs()[k] < 9000) remaining++; });
-        if (remaining <= 1) showWarn(false);
+        // Re-check with a slight delay to let any concurrent close events settle
+        setTimeout(function() { showWarn(countLiveTabs() > 1); }, 350);
       }
     };
     window.addEventListener('beforeunload', function() { bc.postMessage({ type: 'close', id: TAB_ID }); });
@@ -6214,6 +6314,9 @@ body.assignmentsdark .sub-area { background:rgba(99,102,241,0.13) !important; }
 body.assignmentsdark #limitDisplay { color:#a78bfa !important; }
 body.assignmentsdark button[onclick="resetDailyLimit()"],
 body.assignmentsdark button[onclick="resetAccessibility()"] { border-color:rgba(139,92,246,0.4) !important; color:#a78bfa !important; }
+body.assignmentsdark #settingsSubPanel > div:first-child { border-bottom-color:rgba(99,102,241,0.25) !important; }
+body.assignmentsdark #settingsBackBtn { color:#a78bfa !important; }
+body.assignmentsdark #settingsSubTitle { color:#a78bfa !important; }
 /* Colorblind timeline patterns */
 body.colorblind-mode #timelineBar > div[data-seg-diff="priority"] { background:repeating-linear-gradient(45deg,#800080,#800080 4px,#b060b0 4px,#b060b0 8px) !important; }
 body.colorblind-mode #timelineBar > div[data-seg-diff="hard"] { background:radial-gradient(circle,#6b2f00 2px,#d9613d 2px) !important; background-size:8px 8px !important; }
@@ -6228,21 +6331,45 @@ body.colorblind-mode [data-swatch="break"] { background:repeating-linear-gradien
 </style>
 <script>
 /* ── Settings Panel Logic ── */
-function toggleSettingsSub(id) {
-  ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(s) {
-    var el = document.getElementById(s);
-    if (!el) return;
-    if (s === id) {
-      var nowOpen = el.style.display !== 'none';
-      el.style.display = nowOpen ? 'none' : 'block';
-      if (!nowOpen) {
-        if (s === 'limitSub') initLimitSlider();
-        if (s === 'a11ySub') initA11yUI();
-      }
-    } else {
-      el.style.display = 'none';
-    }
+function openSettingsSub(subId, title) {
+  var x = document.getElementById('x');
+  var mainPanel = document.getElementById('settingsMainPanel');
+  var subPanel = document.getElementById('settingsSubPanel');
+  var titleEl = document.getElementById('settingsSubTitle');
+  if (!x || !mainPanel || !subPanel) return;
+  ['limitSub','orderSub','themeSub','a11ySub'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = (id === subId) ? 'block' : 'none';
   });
+  if (titleEl) titleEl.textContent = title || '';
+  if (subId === 'limitSub') initLimitSlider();
+  if (subId === 'a11ySub') initA11yUI();
+  var fromH = x.offsetHeight;
+  var toH = subPanel.offsetHeight;
+  x.style.height = fromH + 'px';
+  x.offsetHeight; // force reflow
+  mainPanel.style.transform = 'translateX(-102%)';
+  subPanel.style.transform = 'translateX(0)';
+  x.style.height = Math.max(toH, 60) + 'px';
+  setTimeout(function() { x.style.height = ''; }, 380);
+}
+function closeSettingsSub() {
+  var x = document.getElementById('x');
+  var mainPanel = document.getElementById('settingsMainPanel');
+  var subPanel = document.getElementById('settingsSubPanel');
+  if (!x || !mainPanel || !subPanel) return;
+  var fromH = x.offsetHeight;
+  var toH = mainPanel.offsetHeight;
+  x.style.height = fromH + 'px';
+  x.offsetHeight;
+  mainPanel.style.transform = '';
+  subPanel.style.transform = 'translateX(102%)';
+  x.style.height = Math.max(toH, 60) + 'px';
+  setTimeout(function() { x.style.height = ''; }, 380);
+}
+function toggleSettingsSub(id) {
+  var names = { limitSub:'Daily Study Limit', orderSub:'Assignment Order', themeSub:'Theme Color', a11ySub:'Accessibility' };
+  openSettingsSub(id, names[id] || '');
 }
 /* Daily Limit */
 function formatLimitDisplay(mins) {
@@ -6283,10 +6410,6 @@ document.getElementById('schoolLevel').addEventListener('change', function() {
 function getTextScale() { return parseFloat(localStorage.getItem('studyPlanner_textScale') || '1'); }
 function applyTextScale(scale) {
   localStorage.setItem('studyPlanner_textScale', scale);
-  ['a','c','e'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.zoom = '';
-  });
   var _tsStyle = document.getElementById('textScaleStyle');
   if (!_tsStyle) {
     _tsStyle = document.createElement('style');
@@ -6298,6 +6421,7 @@ function applyTextScale(scale) {
   } else {
     var _r = function(px) { return Math.round(px * scale) + 'px'; };
     _tsStyle.textContent =
+      // ── Tools page (#c) ──
       '#c .assignment label{font-size:' + _r(10) + '!important}' +
       '#c .time-label{font-size:' + _r(15) + '!important}' +
       '#c .assignmentName{font-size:' + _r(15) + '!important}' +
@@ -6314,7 +6438,19 @@ function applyTextScale(scale) {
       '#c .day-label-chip{font-size:' + _r(10) + '!important}' +
       '#c .content-inner{font-size:' + _r(14.5) + '!important}' +
       '#c #addAssignmentBtn,#c #calculateBtn,#c #resetBtn{font-size:' + _r(13) + '!important}' +
-      '#c #startTimerBtn,#c #resetTimerBtn,#c #doneEarlyBtn,#c #PauseTimerBtn,#c #ResumeTimerBtn{font-size:' + _r(14) + '!important}';
+      '#c #startTimerBtn,#c #resetTimerBtn,#c #doneEarlyBtn,#c #PauseTimerBtn,#c #ResumeTimerBtn{font-size:' + _r(14) + '!important}' +
+      // ── Home page (#a) — feature cards, accordions; NOT title/subtitle ──
+      '#a #why h4{font-size:' + _r(16) + '!important}' +
+      '#a #why p{font-size:' + _r(14) + '!important}' +
+      '#a .accordion-header:not(#viewPresetButton){font-size:' + _r(15) + '!important}' +
+      '#a .content-inner{font-size:' + _r(14.5) + '!important}' +
+      '#a .FAQtitle{font-size:' + _r(16) + '!important}' +
+      '#a .FAQstuff{font-size:' + _r(14) + '!important}' +
+      '#a #references li{font-size:' + _r(14) + '!important}' +
+      // ── Onboarding (#e) — greeting h2, school level label, description p; NOT button ──
+      '#e h2{font-size:' + _r(44) + '!important}' +
+      '#e > div > p{font-size:' + _r(16) + '!important}' +
+      '#e label[for="schoolLevelOnboarding"],#e div > label{font-size:' + _r(11) + '!important}';
   }
   if (typeof renderSegmentLabelTrack === 'function') {
     requestAnimationFrame(function() { requestAnimationFrame(renderSegmentLabelTrack); });
@@ -6500,6 +6636,15 @@ function resetAccessibility() {
     if (aDot) aDot.style.background = window.isManualOrder ? 'transparent' : '#6366f1';
     if (mDot) mDot.style.background = window.isManualOrder ? '#6366f1' : 'transparent';
     localStorage.setItem('studyPlanner_orderMode', mode);
+    if (window.isManualOrder && window.tutorialActive) {
+      // During tutorial, close settings when manual is selected
+      var _xEl = document.getElementById('x');
+      if (_xEl) _xEl.style.display = 'none';
+      var _dmp2 = document.getElementById('settingsMainPanel');
+      var _dsp2 = document.getElementById('settingsSubPanel');
+      if (_dmp2) _dmp2.style.transform = '';
+      if (_dsp2) _dsp2.style.transform = 'translateX(102%)';
+    }
     if (window.isManualOrder) {
       layoutByFlatOrder(getAllFlatOrder(), true);
       document.querySelectorAll('#assignmentsContainer .assignment').forEach(setupDrag);
@@ -6750,6 +6895,11 @@ function resetAccessibility() {
 
     scheduleUpdateLabels();
     if (typeof markOutdated === 'function') markOutdated();
+    if (window._tutorialOnDragComplete) {
+      var _dcb = window._tutorialOnDragComplete;
+      window._tutorialOnDragComplete = null;
+      setTimeout(_dcb, 120);
+    }
   }
 
   /* ── Restore saved mode on page load ── */
