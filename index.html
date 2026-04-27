@@ -324,6 +324,8 @@
         <button id="resetBtn" style="background: #ffffff; border: 2px solid #dc2626; border-radius: 7px; padding: 7px 18px; color: #111; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.1px; box-shadow: 0 3px 0 #6b0000; transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer;">Reset</button>
       </div>
       <div id="multiTabWarnControls" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+<div id="assignmentError" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
+<div id="outdatedBanner" style="display:none;text-align:center;margin-top:5px;padding:2px 8px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
     </div>
   </div>
   <div style="display: flex; flex-direction: column; align-items: flex-end;">
@@ -406,7 +408,9 @@
 <button id="doneEarlyBtn" style="background:#6d28d9; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:13px; box-shadow:0 3px 0 #3b0764; cursor:pointer; white-space:nowrap; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">✓ Skip to Next</button>
 <button id="resetTimerBtn" style="background:#475569; border:none; border-radius:7px; padding:8px 20px; color:white; font-family:'Inter',sans-serif; font-weight:700; font-size:13px; box-shadow:0 3px 0 #1e293b; cursor:pointer; white-space:nowrap; display:none; transition:background 0.15s,transform 0.15s,box-shadow 0.15s;">Reset</button>
   </div>
-  <div id="multiTabWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+ <div id="multiTabWarnSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Multiple instances of this tool are open. Close any duplicate tabs to avoid unexpected errors.</div>
+<div id="assignmentErrorSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;"></div>
+<div id="outdatedBannerSession" style="display:none;text-align:center;margin-top:5px;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;color:#dc2626;letter-spacing:0.1px;animation:multiTabPulse 1.1s ease-in-out infinite;">⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.</div>
 </div>
 
   <div id="a" style="text-align: center;">
@@ -1494,28 +1498,6 @@ body.assignmentsdark .day-label-chip { background:rgba(99,102,241,0.22); color:#
 
 <div id="assignmentsContainer"></div>
 </div>
-<div id="outdatedBanner" style="
-  display: none;
-  max-width: 900px;
-  margin: 12px auto 0;
-  padding: 10px 16px;
-  background: #fff7ed;
-  border: 1.5px solid #f97316;
-  border-radius: 8px;
-  color: #9a3412;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(249,115,22,0.15);
-  animation: pulse-border 1.5s ease-in-out infinite;
-">
-  ⚠️ Your plan is outdated — click <strong>Calculate</strong> to update it.
-</div>
-
-
-<div id="assignmentError" style="display:none; max-width: 900px; margin: 12px auto 0; padding: 10px 16px; background: #fff7ed; border: 1.5px solid #f97316; border-radius: 8px; color: #9a3412; font-size: 14px; font-weight: 600; text-align: center; box-shadow: 0 2px 6px rgba(249,115,22,0.15); animation: pulse-border 1.5s ease-in-out infinite;">
-  ⚠️ Please <strong>add at least one assignment.</strong>
-</div>
 <div id="outputWrapper" style="position: relative; width: 100%; max-width: 900px; margin-left: auto; margin-right: auto; box-sizing: border-box;">
   <div id="output"></div>
   <div id="outputFade"></div>
@@ -2015,6 +1997,8 @@ document.getElementById("addAssignmentBtn").onclick = () => {
     const err = document.getElementById("assignmentError");
     err.innerHTML = "⚠️ Max assignments reached (25 limit).";
     err.style.display = "block";
+    clearTimeout(err._maxTimer);
+    err._maxTimer = setTimeout(() => { err.style.display = "none"; }, 6000);
     return;
   }
   document.getElementById("assignmentError").style.display = "none";
@@ -3514,19 +3498,6 @@ controls.style.borderBottom = '1.5px solid rgba(139,92,246,0.28)';
   const doneEarlyLbl = document.getElementById("doneEarlyLabel");
   if (doneEarlyLbl) doneEarlyLbl.style.color = '#6d28d9';
 
-  const outdatedBanner = document.getElementById("outdatedBanner");
-  if (outdatedBanner) {
-    outdatedBanner.style.backgroundColor = '#fff7ed';
-    outdatedBanner.style.borderColor = '#f97316';
-    outdatedBanner.style.color = '#9a3412';
-  }
-  const assignmentErr = document.getElementById("assignmentError");
-  if (assignmentErr) {
-    assignmentErr.style.backgroundColor = '#fff7ed';
-    assignmentErr.style.borderColor = '#f97316';
-    assignmentErr.style.color = '#9a3412';
-  }
-
   const doneList = document.getElementById("doneAssignmentsList");
   if (doneList) {
     doneList.style.background = 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%)';
@@ -3676,12 +3647,6 @@ Dark.addEventListener("click", function() {
   timelineContainer.style.background = 'linear-gradient(135deg, #1e2d3d 0%, #1a2236 100%)';
   timelineContainer.style.borderColor = 'rgba(99,102,241,0.2)';
   timelineContainer.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3)';
-  const assignmentErr = document.getElementById("assignmentError");
-  if (assignmentErr) {
-    assignmentErr.style.backgroundColor = '#2d1f0e';
-    assignmentErr.style.borderColor = '#c2410c';
-    assignmentErr.style.color = '#fed7aa';
-  }
 
   const tcH3 = timelineContainer.querySelector('h3');
   if (tcH3) tcH3.style.color = 'white';
@@ -3696,13 +3661,6 @@ Dark.addEventListener("click", function() {
 
   const doneEarlyLbl = document.getElementById("doneEarlyLabel");
   if (doneEarlyLbl) doneEarlyLbl.style.color = '#a78bfa';
-
-  const outdatedBanner = document.getElementById("outdatedBanner");
-  if (outdatedBanner) {
-    outdatedBanner.style.backgroundColor = '#2d1f0e';
-    outdatedBanner.style.borderColor = '#c2410c';
-    outdatedBanner.style.color = '#fed7aa';
-  }
 
  const doneList = document.getElementById("doneAssignmentsList");
   if (doneList) {
@@ -5607,6 +5565,22 @@ document.getElementById('legalModalClose').addEventListener('click', function() 
   document.body.style.overflow = '';
 });
 </script>
+<script>
+/* Keep session-bar error mirrors in sync with the controls-bar originals */
+(function () {
+  function mirrorElement(srcId, tgtId) {
+    var src = document.getElementById(srcId);
+    var tgt = document.getElementById(tgtId);
+    if (!src || !tgt) return;
+    new MutationObserver(function () {
+      tgt.style.display = src.style.display;
+      tgt.innerHTML     = src.innerHTML;
+    }).observe(src, { attributes: true, attributeFilter: ['style'], childList: true, subtree: true });
+  }
+  mirrorElement('assignmentError', 'assignmentErrorSession');
+  mirrorElement('outdatedBanner',  'outdatedBannerSession');
+})();
+</script>
 
 <!-- ───── Cookie Consent Banner ───── -->
 
@@ -6184,7 +6158,7 @@ requestAnimationFrame(loop);
   // Remove stale entries from crashed/unclean prior loads so refresh never flashes
   (function() {
     var t = getTabs(), now = Date.now();
-    Object.keys(t).forEach(function(k) { if (now - t[k] > 800) delete t[k]; });
+    Object.keys(t).forEach(function(k) { if (now - t[k] > 4000) delete t[k]; });
     setTabs(t);
   })();
   function pulse() {
