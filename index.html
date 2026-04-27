@@ -2229,56 +2229,48 @@ let dailyLimit = getDailyLimit(schoolLevel.value);
   let dayBoundaries = [];
   let day = 1;
   let dayCumulative = 0;
-  let plan = `<b>Day ${day}:</b>\n\n`;
-
+  let _planDays = [{n:1, items:[]}];
 
   assignments.forEach((a,idx)=>{
     let remaining = a.minutes;
     while(remaining>0){
       let untilBreak = block - (dayCumulative % block);
       let chunk = Math.min(remaining, untilBreak, dailyLimit - dayCumulative);
-
-
- let displayName = (a.name && a.name !== a.subject) ? `${a.name} (${a.subject})` : a.subject;
-plan += `${displayName} — ${minutesToText(chunk)}`;
+      let displayName = (a.name && a.name !== a.subject) ? `${a.name} (${a.subject})` : a.subject;
+      _planDays[_planDays.length-1].items.push({type:'task', name:displayName, dur:chunk, diff:a.difficulty});
       dayCumulative += chunk;
       cumulativeForTimeline += chunk;
       remaining -= chunk;
-
-
       if(dayCumulative % block === 0 && dayCumulative + 15 <= dailyLimit && (remaining>0 || idx<assignments.length-1)){
-        plan += ", <strong>then a 10-minute break</strong>";
+        _planDays[_planDays.length-1].items.push({type:'break', dur:10});
         dayCumulative += 10;
         cumulativeForTimeline += 10;
         totalBreaks += 10;
       }
-
-
-       const willHitDayBoundary = dayCumulative >= dailyLimit && (remaining>0 || idx<assignments.length-1);
-      if(remaining>0 && !willHitDayBoundary) plan += ",<br>then ";
-
-
+      const willHitDayBoundary = dayCumulative >= dailyLimit && (remaining>0 || idx<assignments.length-1);
       if(willHitDayBoundary){
         dayBoundaries.push(cumulativeForTimeline);
         day++;
         dayCumulative = 0;
-       plan += `\n\n<b>Day ${day}:</b>\n\n`;
+        _planDays.push({n:day, items:[]});
       }
     }
-    plan = plan.replace(/\n+$/, '') + "\n\n";
-
   });
- 
-TOTAL_STUDY_SECONDS = (totalWork + totalBreaks) * 60;
 
+  TOTAL_STUDY_SECONDS = (totalWork + totalBreaks) * 60;
 
-  output.innerHTML =
-`Total Work Time: ${minutesToText(totalWork)}
-<strong>Total Break Time: ${minutesToText(totalBreaks)}</strong>
-Total Time Required: ${minutesToText(totalWork + totalBreaks)} <span style="color:#6366f1; font-weight:700;">(${day} ${day === 1 ? 'day' : 'days'})</span>
+  const _dc={priority:'#7c3aed',hard:'#dc2626',medium:'#b45309',easy:'#059669'};
+  const _db={priority:'rgba(124,58,237,0.08)',hard:'rgba(220,38,38,0.07)',medium:'rgba(180,83,9,0.07)',easy:'rgba(5,150,105,0.07)'};
+  const _planHTML = _planDays.map(d=>{
+    const rows = d.items.map(it=>{
+      if(it.type==='break') return `<div style="display:flex;align-items:center;gap:8px;margin:6px 2px;"><div style="flex:1;height:1px;background:rgba(148,163,184,0.3);"></div><span style="font-size:11.5px;font-weight:600;opacity:0.65;white-space:nowrap;flex-shrink:0;">☕ 10-min break</span><div style="flex:1;height:1px;background:rgba(148,163,184,0.3);"></div></div>`;
+      const c=_dc[it.diff]||_dc.easy, b=_db[it.diff]||_db.easy;
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:${b};border-radius:10px;margin-bottom:4px;border-left:3px solid ${c};gap:10px;"><span style="font-weight:600;font-size:13.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${it.name}</span><span style="font-weight:700;font-size:12.5px;color:${c};white-space:nowrap;flex-shrink:0;">${minutesToText(it.dur)}</span></div>`;
+    }).join('');
+    return `<div style="margin-bottom:14px;"><div style="display:inline-block;background:rgba(99,102,241,0.1);color:#6366f1;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;padding:3px 10px;border-radius:50px;margin-bottom:8px;">Day ${d.n}</div>${rows}</div>`;
+  }).join('');
 
-
-${plan}`;
+  output.innerHTML = `<div style="font-size:13.5px;line-height:1.65;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(99,102,241,0.12);"><span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;">📚 Work: ${minutesToText(totalWork)}</span><span style="background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#059669;">☕ Breaks: ${minutesToText(totalBreaks)}</span><span style="background:rgba(139,92,246,0.09);border:1px solid rgba(139,92,246,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#7c3aed;">⏱ ${minutesToText(totalWork+totalBreaks)} · ${day} ${day===1?'day':'days'}</span></div>${_planHTML}</div>`;
   const daysText = document.createElement("div");
   daysText.style.fontSize = "18px";
   daysText.style.fontWeight = "bold";
@@ -3181,6 +3173,15 @@ body.assignmentsdark input::placeholder {
   background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
   box-shadow: 0 8px 30px rgba(99,102,241,0.4) !important;
   border-radius: 30px !important;
+}
+#why > div {
+  transition: transform 0.28s cubic-bezier(0.16,1,0.3,1), box-shadow 0.28s ease, border-color 0.28s ease;
+  cursor: default;
+}
+#why > div:hover {
+  transform: translateY(-7px) scale(1.018);
+  box-shadow: 0 20px 52px rgba(99,102,241,0.22), 0 4px 16px rgba(0,0,0,0.07) !important;
+  border-color: rgba(99,102,241,0.28) !important;
 }
       @keyframes calculate {
        0% {
@@ -4556,9 +4557,6 @@ document.getElementById("resetTimerBtn").onclick = () => {
   segmentMap = [];
   const dl = document.getElementById("doneAssignmentsList");
   if (dl) dl.remove();
-  window._tutorialBypassBlock = true;
-  document.getElementById("calculateBtn").click();
-  window._tutorialBypassBlock = false;
 _sessionHide(document.getElementById("sessionBar"));
   _sessionHide(document.getElementById("timerInfoBox"));
   document.getElementById("resetTimerBtn").classList.remove("pulse-end");
@@ -4578,6 +4576,11 @@ _sessionHide(document.getElementById("sessionBar"));
   const _rBM = document.getElementById("breakMessage");
   if (_rBM) _rBM.style.display = "none";
   syncCPanelTop();
+  setTimeout(function() {
+    window._tutorialBypassBlock = true;
+    document.getElementById("calculateBtn").click();
+    window._tutorialBypassBlock = false;
+  }, 80);
   };
   if (window.tutorialActive) { _doSessionReset(); return; }
   showCustomConfirm("End your session? This will reset your timer and progress.", _doSessionReset);
@@ -5817,7 +5820,7 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         text: 'Next, calculate your study plan!',
         on: 'click', post: 0 },
       { el: function () { return document.getElementById('z'); },
-        text: "Don\u2019t like your plan? Change it here!",
+        text: "Want to customize your plan to match your preferences? Change it here!",
         on: 'click', post: 320 },
       { el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Daily Study Limit')!==-1)return bs[i];} return null; },
         text: 'You can change the allotted time per day to studying by changing the Daily Study Limit. Try it out!',
@@ -6350,7 +6353,12 @@ function openSettingsSub(subId, title) {
   mainPanel.style.transform = 'translateX(-102%)';
   subPanel.style.transform = 'translateX(0)';
   x.style.height = Math.max(toH, 60) + 'px';
-  setTimeout(function() { x.style.height = ''; }, 380);
+  setTimeout(function() {
+    x.style.transition = 'none';
+    x.style.height = Math.max(subPanel.scrollHeight, 60) + 'px';
+    void x.offsetHeight;
+    x.style.transition = '';
+  }, 390);
 }
 function closeSettingsSub() {
   var x = document.getElementById('x');
@@ -6364,7 +6372,12 @@ function closeSettingsSub() {
   mainPanel.style.transform = '';
   subPanel.style.transform = 'translateX(102%)';
   x.style.height = Math.max(toH, 60) + 'px';
-  setTimeout(function() { x.style.height = ''; }, 380);
+  setTimeout(function() {
+    x.style.transition = 'none';
+    x.style.height = Math.max(mainPanel.scrollHeight, 60) + 'px';
+    void x.offsetHeight;
+    x.style.transition = '';
+  }, 390);
 }
 function toggleSettingsSub(id) {
   var names = { limitSub:'Daily Study Limit', orderSub:'Assignment Order', themeSub:'Theme Color', a11ySub:'Accessibility' };
