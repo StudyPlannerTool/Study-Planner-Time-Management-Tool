@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
+ 
   <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -255,13 +255,13 @@
   var card    = document.getElementById("ageGateCard");
   var blocked = document.getElementById("ageGateBlocked");
  
-  
+ 
   if (localStorage.getItem("ageVerified") === "true") {
     overlay.style.display = "none";
     return;
   }
  
-  
+ 
   document.body.style.overflow = "hidden";
  
   document.getElementById("ageGateYes").addEventListener("click", function() {
@@ -518,7 +518,7 @@
       To use this planner, simply click on the "Start Planning!" button. Then using the controls section, add the required assignments, adjust dropdown values, and click "Calculate". Alternatively, the "Preset Study Plans" provide a faster alternative to creating a schedule.
       </p>
     </div>
-    
+   
   <div style="margin-bottom:20px;">
     <h3 class="FAQtitle" style="color:#4f46e5; font-size:16px; margin-bottom:5px;">3. Can using this tool actually help me improve my grades?</h3>
     <p class="FAQstuff" style="font-size:14px; color:#1e293b; line-height:1.6;">
@@ -706,10 +706,10 @@ body.assignmentslabelslight .assignment label,
 body.assignmentslabelslight .assignment .time-label {
   color: #6366f1 !important;
 }
-body.dropdowndark .subject, 
+body.dropdowndark .subject,
 body.dropdowndark .time,
 body.dropdowndark .difficulty {
-  background-color: #1e2d3d !important; 
+  background-color: #1e2d3d !important;
   border: 1.5px solid rgba(99,102,241,0.25) !important;
   color: #e2e8f0 !important;
 }
@@ -717,8 +717,8 @@ body.dropdowndark .difficulty {
 body.dropdownlight .subject,
 body.dropdownlight .time,
 body.dropdownlight .difficulty {
-  background-color: rgba(248,247,255,0.9) !important; 
-  border: 1.5px solid rgba(99,102,241,0.2) !important; 
+  background-color: rgba(248,247,255,0.9) !important;
+  border: 1.5px solid rgba(99,102,241,0.2) !important;
 }
 body.dropdownlight .assignmentName {
   background-color: rgba(248,247,255,0.9) !important;
@@ -1471,7 +1471,7 @@ body.assignmentsdark .day-label-chip { background:rgba(99,102,241,0.22); color:#
 </div>
 <div class="accordion-item" style="text-align: center;">
       <button id="viewPresetButton" class="accordion-header" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 10px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 8px 30px rgba(99,102,241,0.4); transition: transform 0.2s, box-shadow 0.25s ease; width: 270px; text-align: center; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
-        View Preset Study Plans 
+        View Preset Study Plans
          <span class="icon">+</span>
       </button>
       <div class="accordion-content" id="presetAccordionContent" style="background: transparent !important; border: none !important; border-radius: 0; box-shadow: none;">
@@ -2084,7 +2084,7 @@ div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (wind
 div.querySelector('.assignment-body').addEventListener('change', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
   div.querySelector('.assignment-body').addEventListener('input', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
 
-  
+ 
   div.addEventListener('click', (e) => {
     if (e.target.closest('input, select, button, .custom-select-wrapper')) return;
     const wasCollapsed = div.classList.contains('collapsed');
@@ -2280,7 +2280,7 @@ let dailyLimit = getDailyLimit(schoolLevel.value);
 
   const oldDaysText = document.getElementById("daysText");
   if(oldDaysText) oldDaysText.remove();
-  
+ 
   timelineContainer.parentNode.insertBefore(daysText, timelineContainer);
 
 segmentMap = [];
@@ -2338,7 +2338,7 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
       bar.appendChild(seg);
       segmentMap.push({ start: (cumulative / totalTime) * 100, end: ((cumulative + chunk) / totalTime) * 100, name: a.name || a.subject, subject: a.subject, isBreak: false, durationMinutes: chunk, difficulty: a.difficulty });
       cumulative += chunk;
-      
+     
       dayCumulative += chunk;
       remaining -= chunk;
 
@@ -2351,7 +2351,7 @@ function renderTimeline(assignments, block, dayBoundaries, totalTime, dailyLimit
         bar.appendChild(breakSeg);
         segmentMap.push({ start: (cumulative / totalTime) * 100, end: ((cumulative + 10) / totalTime) * 100, name: "Break", isBreak: true, durationMinutes: 10 });
         cumulative += 10;
-      
+     
         dayCumulative += 10;
       }
 
@@ -2544,7 +2544,7 @@ playhead.style.width = Math.min(progress, 100) + "%";
     const ResumeBtn = document.getElementById("ResumeTimerBtn");
     const currentAssignmentDisplay = document.getElementById("currentAssignmentDisplay");
     if (startBtn) startBtn.onclick = startTimer;
-  
+ 
 startBtn.addEventListener("click", function() {
   (function(){ var _pvb=document.getElementById("viewPresetButton"); if(_pvb&&_pvb.classList.contains('active')){_pvb.classList.remove('active');var _pvc=_pvb.nextElementSibling;if(_pvc)_pvc.style.maxHeight="0";} })();
   window._sessionStudiedSeconds = 0;
@@ -2592,7 +2592,7 @@ document.getElementById("resetTimerBtn").onclick = () => {
   TOTAL_STUDY_SECONDS = 0;
   document.getElementById("calculateBtn").click();
   document.getElementById("countdownDisplay").textContent = "00:00:00";
-  
+ 
 document.getElementById("sessionBar").style.display = 'none';
   document.getElementById("timerInfoBox").style.display = 'none';
   document.getElementById("resetTimerBtn").style.display = 'none';
@@ -3152,11 +3152,11 @@ document.getElementById("showLessBtn").addEventListener("click", function() {
   <style>
  
 body.assignmentslight input::placeholder {
-  color: #555; 
+  color: #555;
 }
 
 body.assignmentsdark input::placeholder {
-  color: #aaa; 
+  color: #aaa;
 }
   .assignment:hover {
     transform: translateY(-3px);
@@ -3401,7 +3401,7 @@ function showCustomConfirm(msg, onYes, onNo) {
     const FAQtitle = document.getElementsByClassName("FAQtitle")
     const FAQstuff = document.getElementsByClassName("FAQstuff")
     const removeBtn = document.getElementsByClassName("removeBtn")
-    
+   
 
     Light.addEventListener("click", function() {
   saveTheme("light");
@@ -3682,7 +3682,7 @@ Dark.addEventListener("click", function() {
   }
 
   document.querySelectorAll('.dayLabel').forEach(el => el.style.color = 'white');
-  
+ 
 
   document.querySelectorAll('.dayLabel').forEach(el => el.style.color = 'white');
 
@@ -3924,7 +3924,7 @@ function scrollWithPause(targetElement) {
 }
 
 document.getElementById("d").addEventListener("click", () => {
-  
+ 
   scrollWithPause(document.getElementById("body"));
 });
 
@@ -4342,7 +4342,7 @@ const ensurePlayhead = () => {
       z-index: 9999; display: none; pointer-events: none;
     `;
     const bar = document.getElementById("timelineBar");
-    bar.style.position = "relative"; 
+    bar.style.position = "relative";
     bar.appendChild(playhead);
   }
 };
@@ -4383,7 +4383,7 @@ ensurePlayhead();
   const _startWallMs = Date.now();
 
   function frame() {
-    
+   
     const elapsed = Math.floor((Date.now() - _startWallMs) / 1000);
     const remaining = Math.max(0, TOTAL_STUDY_SECONDS - elapsed);
 
@@ -4394,10 +4394,10 @@ ensurePlayhead();
       `${h.toString().padStart(2,"0")}:${m.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`;
 
     const progress = (elapsed / TOTAL_STUDY_SECONDS) * 100;
-  
+ 
     if (playhead) {
       playhead.style.width = Math.min(progress, 100) + "%";
-    
+   
       playhead.style.left = '0';
     }
 
@@ -4462,7 +4462,7 @@ document.title = "\u23F8 Session Paused | Study Planner";
 
 document.getElementById("startTimerBtn").onclick = startTimer;
 document.getElementById("startTimerBtn").addEventListener("click", () => {
-  
+ 
   updateStreak();
 });
 
@@ -4629,7 +4629,7 @@ tri.style.top = (_sltTop / _triZoom) + "px";
 } else {
   tri.style.display = "none";
 }
-  
+ 
       const segIndex = segmentMap.findIndex(s => progressPercent >= s.start && progressPercent < s.end);
 
       const prevIdx = (typeof window._prevUpdateSegIndex !== 'undefined') ? window._prevUpdateSegIndex : -1;
@@ -4683,7 +4683,7 @@ if (seg) {
 }
 
     } else {
-      
+     
       const tri = document.getElementById("playhead-triangle");
       if (tri) tri.style.display = "none";
       const _bmOff = document.getElementById("breakMessage");
@@ -4754,7 +4754,7 @@ const assignmentObserver = new MutationObserver((mutations) => {
   const container = document.getElementById("assignmentsContainer");
   const count = container.querySelectorAll(".assignment").length;
 
-  
+ 
   if (count >= 1 && output.textContent.trim() === "Please add at least one assignment.") {
     output.textContent = "";
     output.classList.remove("show");
@@ -4870,7 +4870,7 @@ let dayCumAtSkip = sessionDayCumOffset;
     return;
   }
 
-  
+ 
   let newSegs = [];
   let totalWork = 0;
   let totalBreaks = 0;
@@ -4960,27 +4960,36 @@ ph.style.width = "0%";
 
 }
 
-function updateOutputAfterSkip(segs, totalWork, totalBreaks, label = "⏩ Assignment skipped!", startDayCum = 0) {
+function updateOutputAfterSkip(segs, totalWork, totalBreaks, label, startDayCum) {
+  label = label || "\u23e9 Assignment skipped!";
+  startDayCum = startDayCum || 0;
   const schoolLvl = document.getElementById("schoolLevel").value;
-  const dailyLimitVal = schoolLvl === "middle" ? 90 : schoolLvl === "high" ? 140 : 200;
-  let plan = "<b>Day 1:</b>\n\n";
-  let day = 1;
-  let dayCum = startDayCum;
-  let isFirst = true;
-
-  segs.forEach(s => {
+  const dailyLimitVal = getDailyLimit(schoolLvl);
+  const _dc = {priority:'#7c3aed',hard:'#dc2626',medium:'#b45309',easy:'#059669'};
+  const _db = {priority:'rgba(124,58,237,0.08)',hard:'rgba(220,38,38,0.07)',medium:'rgba(180,83,9,0.07)',easy:'rgba(5,150,105,0.07)'};
+  const _planDays = [{n:1, items:[]}];
+  let day = 1, dayCum = startDayCum;
+  segs.forEach(function(s) {
     if (s.isBreak) {
-      plan += ", <strong>then a 10-minute break</strong>";
+      _planDays[_planDays.length-1].items.push({type:'break', dur:10});
     } else {
-      if (!isFirst) plan += ",\nthen ";
-      plan += `${s.name} — ${minutesToText(s.durationMinutes)}`;
-      isFirst = false;
+      _planDays[_planDays.length-1].items.push({type:'task', name:s.name, dur:s.durationMinutes, diff:s.difficulty||'easy'});
     }
     dayCum += s.durationMinutes;
-    if (dayCum >= dailyLimitVal) { day++; dayCum = 0; plan += `\n\n<b>Day ${day}:</b>\n\n`; isFirst = true; }
+    if (dayCum >= dailyLimitVal) { day++; dayCum = dayCum % dailyLimitVal; _planDays.push({n:day, items:[]}); }
   });
-  output.innerHTML = `<b>${label} Updated plan:</b>\n\nRemaining Work Time: ${minutesToText(totalWork)}\n<strong>Remaining Break Time: ${minutesToText(totalBreaks)}</strong>\nRemaining Time: ${minutesToText(totalWork + totalBreaks)} <span style="color:#6366f1; font-weight:700;">(${day} ${day === 1 ? 'day' : 'days'})</span>\n\n${plan}`;
+  const _planHTML = _planDays.map(function(d) {
+    const rows = d.items.map(function(it) {
+      if (it.type === 'break') return '<div style="display:flex;align-items:center;gap:8px;margin:6px 2px;"><div style="flex:1;height:1px;background:rgba(148,163,184,0.3);"></div><span style="font-size:11.5px;font-weight:600;opacity:0.65;white-space:nowrap;flex-shrink:0;">\u2615 10-min break</span><div style="flex:1;height:1px;background:rgba(148,163,184,0.3);"></div></div>';
+      const c = _dc[it.diff]||_dc.easy, b = _db[it.diff]||_db.easy;
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:'+b+';border-radius:10px;margin-bottom:4px;border-left:3px solid '+c+';gap:10px;"><span style="font-weight:600;font-size:13.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+it.name+'</span><span style="font-weight:700;font-size:12.5px;color:'+c+';white-space:nowrap;flex-shrink:0;">'+minutesToText(it.dur)+'</span></div>';
+    }).join('');
+    return '<div style="margin-bottom:14px;"><div style="display:inline-block;background:rgba(99,102,241,0.1);color:#6366f1;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;padding:3px 10px;border-radius:50px;margin-bottom:8px;">Day '+d.n+'</div>'+rows+'</div>';
+  }).join('');
+  const labelColor = label.indexOf('\u2705') !== -1 ? '#059669' : label.indexOf('\u23f1') !== -1 ? '#7c3aed' : '#6366f1';
+  output.innerHTML = '<div style="font-size:13.5px;line-height:1.65;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(99,102,241,0.12);"><span style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:'+labelColor+';">'+label+'</span><span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;">\ud83d\udcda Work: '+minutesToText(totalWork)+'</span><span style="background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#059669;">\u2615 Breaks: '+minutesToText(totalBreaks)+'</span><span style="background:rgba(139,92,246,0.09);border:1px solid rgba(139,92,246,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#7c3aed;">\u23f1 '+minutesToText(totalWork+totalBreaks)+' \u00b7 '+day+' '+(day===1?'day':'days')+'</span></div>'+_planHTML+'</div>';
 }
+
 function showAssignmentEndPopup(assignmentName) {
   if (window.tutorialActive) return;
   if (timerId) { cancelAnimationFrame(timerId); timerId = null; }
@@ -5009,7 +5018,7 @@ function handleMarkAsDone() {
   const remainingSegs = segmentMap.slice(nextIdx);
   const newTotalMins = remainingSegs.reduce((s, seg) => s + seg.durationMinutes, 0);
 
-  
+ 
   addDoneMarker(window._completedAssignmentName);
   document.getElementById("assignmentEndOverlay").style.display = "none";
 
@@ -5492,7 +5501,7 @@ function launchConfetti(triggerEl) {
 }
 document.addEventListener('DOMContentLoaded', () => {
 
-  
+ 
   function updateAllSliderLabels() {
     document.querySelectorAll('.assignment .time').forEach(slider => {
       const label = slider.parentElement.querySelector('.time-label');
@@ -5811,7 +5820,7 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         text: 'Start by clicking this button to add your first assignment.',
         on: 'click', post: 0 },
       { el: function () { return window._lastAddedCard || null; },
-        text: 'Adjust your assignment — try sliding the time estimator.',
+        text: 'Adjust your assignment \u2014 try sliding the time estimator.',
         on: 'slider', post: 0 },
       { el: function () { return document.getElementById('addAssignmentBtn'); },
         text: 'You can also add multiple assignments.',
@@ -5819,19 +5828,36 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       { el: function () { return document.getElementById('calculateBtn'); },
         text: 'Next, calculate your study plan!',
         on: 'click', post: 0 },
+      { el: function () {
+          var o = document.getElementById('outputWrapper');
+          var tc = document.getElementById('timelineContainer');
+          var els = [o, tc].filter(function(e) { return e && e.offsetParent !== null; });
+          if (!els.length) return null;
+          return { _syntheticBounds: true, _els: els };
+        },
+        text: 'This is your initial plan. Click \u201cNext\u201d to continue building upon it!',
+        on: 'next', post: 0 },
       { el: function () { return document.getElementById('z'); },
-        text: "Want to customize your plan to match your preferences? Change it here!",
+        text: 'Want to customize your plan to match your preferences? Change it here!',
         on: 'click', post: 320 },
       { el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Daily Study Limit')!==-1)return bs[i];} return null; },
+        spotlightEl: function () { return document.getElementById('x'); },
+        tipSide: 'left',
         text: 'You can change the allotted time per day to studying by changing the Daily Study Limit. Try it out!',
         on: 'click', post: 320 },
       { el: function () { return document.getElementById('limitSlider'); },
+        spotlightEl: function () { return document.getElementById('x'); },
+        tipSide: 'left',
         text: 'Drag the slider to adjust your daily study limit.',
         on: 'limitSlider', post: 0 },
       { el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Assignment Order')!==-1)return bs[i];} return null; },
+        spotlightEl: function () { return document.getElementById('x'); },
+        tipSide: 'left',
         text: 'You can also manually re-order assignments to match your preferences, or stick to the automatic sort.',
         on: 'click', post: 320 },
       { el: function () { return document.getElementById('orderManualOpt'); },
+        spotlightEl: function () { return document.getElementById('x'); },
+        tipSide: 'left',
         text: 'Try switching it to manual!',
         on: 'click', post: 0 },
       { el: function () { return document.getElementById('assignmentsContainer'); },
@@ -5841,7 +5867,7 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         text: "It\u2019s that simple! For now, let\u2019s stick to auto sorting while we finish learning how to use this planner. Once you are happy with your plan, simply click this button to begin studying!",
         on: 'click', post: 0 },
       { el: function () { return document.getElementById('doneEarlyBtn'); },
-        text: "Finished early? Click here to skip to the next assignment — or end the session if it\u2019s your last.",
+        text: "Finished early? Click here to skip to the next assignment \u2014 or end the session if it\u2019s your last.",
         on: 'click', post: 0 },
       { el: function () { return document.getElementById('resetTimerBtn'); },
         text: 'All done! Use this button to reset your session.',
@@ -5867,9 +5893,24 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       if (T.timer)  { clearTimeout(T.timer); T.timer = null; }
       if (T.raf)    { cancelAnimationFrame(T.raf); T.raf = null; }
       if (T.posRaf) { cancelAnimationFrame(T.posRaf); T.posRaf = null; }
+      var nb = document.getElementById('tutNextBtn'); if (nb) nb.remove();
     },
 
     _scrollCenter: function (el, cb) {
+      if (el && el._syntheticBounds && el._els && el._els.length) {
+        var ids = ['a','c','e'], best = null, bestDist = Infinity;
+        ids.forEach(function(id) {
+          var p = document.getElementById(id); if (!p) return;
+          var d = Math.abs(p.getBoundingClientRect().left);
+          if (d < bestDist) { bestDist = d; best = p; }
+        });
+        if (best && el._els[0]) {
+          var CONTROLS_H = 110;
+          best.scrollTop = Math.max(0, el._els[0].offsetTop - CONTROLS_H - 12);
+        }
+        setTimeout(function () { requestAnimationFrame(function () { if (cb) cb(); }); }, 80);
+        return;
+      }
       var ids = ['a','c','e'], best = null, bestDist = Infinity;
       ids.forEach(function(id) {
         var p = document.getElementById(id); if (!p) return;
@@ -5878,15 +5919,13 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       });
       if (best) {
         var er = el.getBoundingClientRect(), pr = best.getBoundingClientRect();
-        var CONTROLS_H = 100; 
+        var CONTROLS_H = 100;
         var usable = pr.height - CONTROLS_H;
         var elH = er.height;
         var elTop = er.top - pr.top + best.scrollTop;
         if (elH >= usable) {
-          
           best.scrollTop = elTop - CONTROLS_H - 12;
         } else {
-          
           best.scrollTop = elTop - CONTROLS_H - (usable - elH) / 2;
         }
       }
@@ -5898,7 +5937,13 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       function track() {
         if (!T.active) return;
         var el = step.el();
-        if (el && window.getComputedStyle(el).display !== 'none') { T._panels(el); T._tip(el); }
+        if (!el) { T.posRaf = requestAnimationFrame(track); return; }
+        var spotEl = step.spotlightEl ? step.spotlightEl() : null;
+        var refEl = spotEl || el;
+        var visible = el._syntheticBounds
+          ? el._els.some(function(e) { return e && window.getComputedStyle(e).display !== 'none'; })
+          : (refEl && window.getComputedStyle(refEl).display !== 'none');
+        if (visible) { T._panels(el, step); T._tip(el, step); }
         T.posRaf = requestAnimationFrame(track);
       }
       T.posRaf = requestAnimationFrame(track);
@@ -5909,21 +5954,26 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       if (idx >= T.STEPS.length) { T.end(); return; }
       T.step = idx;
       var step = T.STEPS[idx], tries = 0;
+      function isVisible(el) {
+        if (!el) return false;
+        if (el._syntheticBounds) return el._els.some(function(e) { return e && window.getComputedStyle(e).display !== 'none'; });
+        return window.getComputedStyle(el).display !== 'none';
+      }
       function poll() {
         if (!T.active) return;
         var el = step.el();
-        if (!el || window.getComputedStyle(el).display === 'none') {
+        if (!isVisible(el)) {
           if (++tries < 80) { setTimeout(poll, 150); return; }
           T._show(idx + 1); return;
         }
-        if (el.classList && el.classList.contains('assignment')) el.classList.remove('collapsed');
+        if (!el._syntheticBounds && el.classList && el.classList.contains('assignment')) el.classList.remove('collapsed');
         T._scrollCenter(el, function () {
           if (!T.active) return;
           var el2 = step.el();
-          if (!el2 || window.getComputedStyle(el2).display === 'none') { T._show(idx + 1); return; }
-          if (el2.classList && el2.classList.contains('assignment')) el2.classList.remove('collapsed');
+          if (!isVisible(el2)) { T._show(idx + 1); return; }
+          if (!el2._syntheticBounds && el2.classList && el2.classList.contains('assignment')) el2.classList.remove('collapsed');
           document.getElementById('tutTextEl').textContent = step.text;
-          T._panels(el2); T._tip(el2);
+          T._panels(el2, step); T._tip(el2, step);
           document.getElementById('tutorialOverlay').style.display = 'block';
           T._bar(); T._bind(step, el2);
           T._startPos(step);
@@ -5941,6 +5991,24 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
         }
         el.addEventListener('click', ch, { once: true });
         T.off.push(function () { el.removeEventListener('click', ch); });
+      } else if (step.on === 'next') {
+        var tipEl = document.getElementById('tutTooltip');
+        if (tipEl) {
+          var nextBtn = document.createElement('button');
+          nextBtn.id = 'tutNextBtn';
+          nextBtn.textContent = 'Next \u2192';
+          nextBtn.style.cssText = 'display:block;width:100%;margin-top:10px;padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:50px;color:white;font-family:"Inter",sans-serif;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(99,102,241,0.4);pointer-events:all;';
+          tipEl.appendChild(nextBtn);
+          function nextClick() {
+            T._clean();
+            setTimeout(function () { if (T.active) T._show(T.step + 1); }, 0);
+          }
+          nextBtn.addEventListener('click', nextClick);
+          T.off.push(function () {
+            nextBtn.removeEventListener('click', nextClick);
+            var nb = document.getElementById('tutNextBtn'); if (nb) nb.remove();
+          });
+        }
       } else if (step.on === 'slider') {
         var sl = el.querySelector('.time'); if (!sl) return;
         var _shFired = false;
@@ -6013,9 +6081,11 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       T.timer = setTimeout(function () {
         if (!T.active) return;
         var step = T.STEPS[T.step];
-        if (step.on === 'click') {
+        if (step.on === 'next') {
+          T._show(T.step + 1);
+        } else if (step.on === 'click') {
           var el = step.el();
-          if (el && window.getComputedStyle(el).display !== 'none') { el.click(); }
+          if (el && !el._syntheticBounds && window.getComputedStyle(el).display !== 'none') { el.click(); }
           else { T._show(T.step + 1); }
         } else if (step.on === 'limitSlider') {
           if (typeof closeSettingsSub === 'function') closeSettingsSub();
@@ -6030,24 +6100,66 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
       }, d);
     },
 
-    _panels: function (el) {
-      var r = el.getBoundingClientRect(), p = T.PAD,
-          t  = Math.max(0, r.top - p),
-          b  = Math.min(window.innerHeight, r.bottom + p),
-          l  = Math.max(0, r.left - p),
-          rv = Math.min(window.innerWidth, r.right + p);
-      ['tutPanel-top','tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+    _panels: function (el, step) {
+      var spotEl = (step && step.spotlightEl) ? step.spotlightEl() : null;
       var ring = document.getElementById('tutSpotlightRing');
-      if (ring) { ring.style.display = 'block'; ring.style.top = t + 'px'; ring.style.left = l + 'px'; ring.style.width = (rv - l) + 'px'; ring.style.height = (b - t) + 'px'; }
+      ['tutPanel-top','tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+      var p = T.PAD;
+      /* synthetic bounds: span multiple elements */
+      if (el && el._syntheticBounds && el._els) {
+        var rects = el._els.map(function(e) { return e.getBoundingClientRect(); }).filter(function(r) { return r.width > 0 || r.height > 0; });
+        if (!rects.length) return;
+        var t = Math.max(0, Math.min.apply(null, rects.map(function(r){return r.top;})) - p);
+        var b = Math.min(window.innerHeight, Math.max.apply(null, rects.map(function(r){return r.bottom;})) + p);
+        var l = Math.max(0, Math.min.apply(null, rects.map(function(r){return r.left;})) - p);
+        var rv = Math.min(window.innerWidth, Math.max.apply(null, rects.map(function(r){return r.right;})) + p);
+        if (ring) { ring.style.display='block'; ring.style.top=t+'px'; ring.style.left=l+'px'; ring.style.width=(rv-l)+'px'; ring.style.height=(b-t)+'px'; }
+        return;
+      }
+      var targetEl = spotEl || el;
+      if (!targetEl) return;
+      var r = targetEl.getBoundingClientRect();
+      var tt=Math.max(0,r.top-p), tb=Math.min(window.innerHeight,r.bottom+p);
+      var tl=Math.max(0,r.left-p), trv=Math.min(window.innerWidth,r.right+p);
+      if (ring) { ring.style.display='block'; ring.style.top=tt+'px'; ring.style.left=tl+'px'; ring.style.width=(trv-tl)+'px'; ring.style.height=(tb-tt)+'px'; }
     },
 
-    _tip: function (el) {
+    _tip: function (el, step) {
       var tip = document.getElementById('tutTooltip'), arr = document.getElementById('tutArrow');
       if (!tip) return;
-      var r = el.getBoundingClientRect(), TW = Math.min(260, window.innerWidth - 32);
+      var spotEl = (step && step.spotlightEl) ? step.spotlightEl() : null;
+      var tipSide = (step && step.tipSide) || null;
+      var TW = Math.min(260, window.innerWidth - 32);
       tip.style.width = TW + 'px'; tip.style.visibility = 'hidden'; tip.style.display = 'block';
       var TH = tip.offsetHeight; tip.style.visibility = '';
-      var A = 10, M = 12, p = T.PAD, cx = r.left + r.width / 2;
+      var A = 10, M = 12, p = T.PAD;
+      var r;
+      /* synthetic bounds rect */
+      if (el && el._syntheticBounds && el._els) {
+        var rects = el._els.map(function(e) { return e.getBoundingClientRect(); }).filter(function(rc){ return rc.width > 0 || rc.height > 0; });
+        if (!rects.length) return;
+        r = { top:Math.min.apply(null,rects.map(function(rc){return rc.top;})), bottom:Math.max.apply(null,rects.map(function(rc){return rc.bottom;})), left:Math.min.apply(null,rects.map(function(rc){return rc.left;})), right:Math.max.apply(null,rects.map(function(rc){return rc.right;})) };
+        r.width = r.right - r.left; r.height = r.bottom - r.top;
+      } else {
+        var targetEl = spotEl || el;
+        if (!targetEl) return;
+        r = targetEl.getBoundingClientRect();
+      }
+      /* left-side positioning (for settings panel) */
+      if (tipSide === 'left') {
+        var txL = r.left - TW - M - A;
+        if (txL >= M) {
+          var tyL = Math.max(M, Math.min(window.innerHeight - TH - M, r.top + r.height / 2 - TH / 2));
+          tip.style.left = txL + 'px'; tip.style.top = tyL + 'px';
+          if (arr) {
+            var ayL = Math.max(8, Math.min(TH - A * 2 - 8, (r.top + r.height / 2) - tyL - A));
+            arr.style.cssText = 'position:absolute;top:' + ayL + 'px;right:-' + A + 'px;width:0;height:0;border-top:' + A + 'px solid transparent;border-bottom:' + A + 'px solid transparent;border-left:' + A + 'px solid white;pointer-events:none;';
+          }
+          return;
+        }
+        /* fallback: fall through to standard above/below positioning */
+      }
+      var cx = r.left + r.width / 2;
       var spB = window.innerHeight - r.bottom - p, spA = r.top - p;
       var below = spB >= TH + A + M || spB >= spA;
       var tx = Math.max(M, Math.min(window.innerWidth - TW - M, cx - TW / 2));
@@ -6063,16 +6175,18 @@ document.addEventListener('touchend', function() { isDragging = false; dragPanel
   };
 
   // Block all clicks outside the current tutorial target (capture phase, highest priority)
-document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
     if (!T.active) return;
     if (window._tutorialBypassBlock) return;
-if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
+    if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
+    if (e.target.closest && e.target.closest('#tutNextBtn')) return;
     if (e.target.closest && e.target.closest('#cookieBanner')) return;
     if (e.target.closest && e.target.closest('#ageGateOverlay')) return;
     var step = T.STEPS[T.step];
     if (!step) return;
     var el = step.el();
     if (!el) return;
+    if (el._syntheticBounds) { e.stopImmediatePropagation(); e.preventDefault(); return; }
     if (el === e.target || el.contains(e.target)) return;
     e.stopImmediatePropagation();
     e.preventDefault();
@@ -6087,6 +6201,7 @@ if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
   window.startTutorial = function () { T.start(); };
   window.tutorialActive = false;
 }());
+
   </script>
 <script>
 (function() {
@@ -6353,14 +6468,15 @@ function openSettingsSub(subId, title) {
   mainPanel.style.transform = 'translateX(-102%)';
   subPanel.style.transform = 'translateX(0)';
   x.style.height = Math.max(toH, 60) + 'px';
-  setTimeout(function() {
+   setTimeout(function() {
     x.style.transition = 'none';
     x.style.height = Math.max(subPanel.scrollHeight, 60) + 'px';
     void x.offsetHeight;
-    x.style.transition = '';
+    x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
   }, 390);
 }
 function closeSettingsSub() {
+
   var x = document.getElementById('x');
   var mainPanel = document.getElementById('settingsMainPanel');
   var subPanel = document.getElementById('settingsSubPanel');
@@ -6376,10 +6492,11 @@ function closeSettingsSub() {
     x.style.transition = 'none';
     x.style.height = Math.max(mainPanel.scrollHeight, 60) + 'px';
     void x.offsetHeight;
-    x.style.transition = '';
+    x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
   }, 390);
 }
 function toggleSettingsSub(id) {
+
   var names = { limitSub:'Daily Study Limit', orderSub:'Assignment Order', themeSub:'Theme Color', a11ySub:'Accessibility' };
   openSettingsSub(id, names[id] || '');
 }
@@ -6428,9 +6545,15 @@ function applyTextScale(scale) {
     _tsStyle.id = 'textScaleStyle';
     document.head.appendChild(_tsStyle);
   }
+  // Output box uses inline font-size styles that CSS can't override; zoom handles them all.
+  var _outputEl = document.getElementById('output');
+  if (_outputEl) _outputEl.style.zoom = Math.abs(scale - 1) < 0.01 ? '' : String(scale);
+  var _doneEl = document.getElementById('doneAssignmentsList');
+  if (_doneEl) _doneEl.style.zoom = Math.abs(scale - 1) < 0.01 ? '' : String(scale);
   if (Math.abs(scale - 1) < 0.01) {
     _tsStyle.textContent = '';
   } else {
+
     var _r = function(px) { return Math.round(px * scale) + 'px'; };
     _tsStyle.textContent =
       // ── Tools page (#c) ──
