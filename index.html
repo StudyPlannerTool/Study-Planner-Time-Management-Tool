@@ -5890,7 +5890,7 @@ on: 'click', post: 0 },
         return { _syntheticBounds: true, _els: els };
       },
       text: 'This is your initial plan. Click \u201cNext\u201d to continue building upon it!',
-      on: 'next', post: 0 },
+      on: 'next', post: 0, clampToControls: true },
 { el: function () { return document.getElementById('z'); },
 text: 'Want to customize your plan to match your preferences? Change it here!',
 on: 'click', post: 160 },
@@ -5917,7 +5917,7 @@ text: 'Try switching it to manual!',
 on: 'click', post: 0 },
 { el: function () { return document.getElementById('assignmentsContainer'); },
 text: 'Click and hold on any assignment, then drag it to your preferred location and leave it.',
-on: 'drag', post: 0 },
+on: 'drag', post: 0, clampToControls: true},
 { el: function () { return document.getElementById('startTimerBtn'); },
 text: "It\u2019s that simple! For now, let\u2019s stick to auto sorting while we finish learning how to use this planner. Once you are happy with your plan, simply click this button to begin studying!",
 on: 'click', post: 0 },
@@ -6049,7 +6049,7 @@ if (!el2._syntheticBounds && el2.classList && el2.classList.contains('assignment
 document.getElementById('tutTextEl').textContent = step.text;
 var _animRing = document.getElementById('tutSpotlightRing');
 var _animSec = document.getElementById('tutSecondaryRing');
-var _animCSS = 'top 0.3s cubic-bezier(0.4,0,0.2,1),left 0.3s cubic-bezier(0.4,0,0.2,1),width 0.3s cubic-bezier(0.4,0,0.2,1),height 0.3s cubic-bezier(0.4,0,0.2,1)';
+var _animCSS = 'top 0.18s cubic-bezier(0.16,1,0.3,1),left 0.18s cubic-bezier(0.16,1,0.3,1),width 0.18s cubic-bezier(0.16,1,0.3,1),height 0.18s cubic-bezier(0.16,1,0.3,1)';
 if (_animRing) _animRing.style.transition = _animCSS;
 if (_animSec) _animSec.style.transition = _animCSS;
 T._panels(el2, step); T._tip(el2, step);
@@ -6059,7 +6059,7 @@ T._startPos(step);
 setTimeout(function() {
 if (_animRing) _animRing.style.transition = 'none';
 if (_animSec) _animSec.style.transition = 'none';
-}, 350);
+}, 210);
 });
 }
 poll();
@@ -6180,25 +6180,13 @@ var ring = document.getElementById('tutSpotlightRing');
 var secRing = document.getElementById('tutSecondaryRing');
 ['tutPanel-top','tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
 var p = T.PAD;
-/* Compute fixed-bar bottom — only clamp scrollable panel content, never fixed-position elements */
+/* Clamp spotlight at controls bar only for steps with clampToControls: true */
 var _fixedBarH = 0;
 var _ctrlEl = document.getElementById('controls');
 var _sessEl = document.getElementById('sessionBar');
-var _spotTargetEl = (step && step.spotlightEl ? step.spotlightEl() : null) || el;
-var _spotInBar = _spotTargetEl && !(_spotTargetEl._syntheticBounds) &&
-((_ctrlEl && _ctrlEl.contains(_spotTargetEl)) || (_sessEl && _sessEl.contains(_spotTargetEl)));
-function _isScrollContent(e) {
-if (!e || e._syntheticBounds) return false;
-return ['a','c','e'].some(function(id){ var p=document.getElementById(id); return p && p.contains(e); });
-}
-var _useFixedClamp = !_spotInBar && _isScrollContent(_spotTargetEl);
-if (_useFixedClamp) {
+if (step && step.clampToControls) {
 if (_ctrlEl && _ctrlEl.style.display !== 'none') _fixedBarH = Math.max(_fixedBarH, _ctrlEl.getBoundingClientRect().bottom);
 if (_sessEl && _sessEl.style.display !== 'none') _fixedBarH = Math.max(_fixedBarH, _sessEl.getBoundingClientRect().bottom);
-if (_fixedBarH > 0 && _spotTargetEl && !_spotTargetEl._syntheticBounds) {
-var _tgtR = _spotTargetEl.getBoundingClientRect();
-if (_tgtR.bottom < _fixedBarH) { if (ring) ring.style.display = 'none'; if (secRing) secRing.style.display = 'none'; return; }
-}
 }
 /* synthetic bounds: span multiple elements */
 if (el && el._syntheticBounds && el._els) {
@@ -6208,7 +6196,11 @@ var t = Math.max(_fixedBarH, Math.min.apply(null, rects.map(function(r){return r
 var b = Math.min(window.innerHeight, Math.max.apply(null, rects.map(function(r){return r.bottom;})) + p);
 var l = Math.max(0, Math.min.apply(null, rects.map(function(r){return r.left;})) - p);
 var rv = Math.min(window.innerWidth, Math.max.apply(null, rects.map(function(r){return r.right;})) + p);
-if (ring) { ring.style.display='block'; ring.style.top=t+'px'; ring.style.left=l+'px'; ring.style.width=(rv-l)+'px'; ring.style.height=Math.max(0,b-t)+'px'; }
+/* Clamp synthetic spotlight to always stay within the visible viewport */
+if (b <= _fixedBarH + 2) b = _fixedBarH + 12;
+if (t >= window.innerHeight - 2) t = window.innerHeight - 12;
+if (t >= b) t = Math.max(_fixedBarH, b - 12);
+if (ring) { ring.style.display='block'; ring.style.top=t+'px'; ring.style.left=l+'px'; ring.style.width=Math.max(12,rv-l)+'px'; ring.style.height=Math.max(12,b-t)+'px'; }
 if (secRing) secRing.style.display='none';
 return;
 }
@@ -6217,16 +6209,23 @@ if (!targetEl) return;
 var r = targetEl.getBoundingClientRect();
 var tt=Math.max(_fixedBarH,r.top-p), tb=Math.min(window.innerHeight,r.bottom+p);
 var tl=Math.max(0,r.left-p), trv=Math.min(window.innerWidth,r.right+p);
-if (ring) { if (tt >= tb) { ring.style.display = 'none'; } else { ring.style.display='block'; ring.style.top=tt+'px'; ring.style.left=tl+'px'; ring.style.width=(trv-tl)+'px'; ring.style.height=(tb-tt)+'px'; } }
+/* Clamp non-synthetic spotlight to always stay within the visible viewport */
+if (tb <= _fixedBarH + 2) tb = _fixedBarH + 12;
+if (tt >= window.innerHeight - 2) tt = window.innerHeight - 12;
+if (tt >= tb) tt = Math.max(_fixedBarH, tb - 12);
+if (ring) { ring.style.display='block'; ring.style.top=tt+'px'; ring.style.left=tl+'px'; ring.style.width=Math.max(12,trv-tl)+'px'; ring.style.height=Math.max(12,tb-tt)+'px'; }
 /* Secondary red border ring around the specific clickable element when spotlight covers a wider area */
 if (secRing) {
 if (spotEl && el && spotEl !== el && !(step && step.noSecondaryRing)) {
 var sr2 = el.getBoundingClientRect();
 var srt = Math.max(_fixedBarH, sr2.top - 4), srb = Math.min(window.innerHeight, sr2.bottom + 4);
 var srl = Math.max(0, sr2.left - 4), srrv = Math.min(window.innerWidth, sr2.right + 4);
+if (srb <= _fixedBarH + 2) srb = _fixedBarH + 12;
+if (srt >= window.innerHeight - 2) srt = window.innerHeight - 12;
+if (srt >= srb) srt = Math.max(_fixedBarH, srb - 12);
 secRing.style.display = 'block';
 secRing.style.top = srt + 'px'; secRing.style.left = srl + 'px';
-secRing.style.width = (srrv - srl) + 'px'; secRing.style.height = Math.max(0, srb - srt) + 'px';
+secRing.style.width = Math.max(12, srrv - srl) + 'px'; secRing.style.height = Math.max(12, srb - srt) + 'px';
 } else {
 secRing.style.display = 'none';
 }
@@ -6345,6 +6344,35 @@ setTimeout(function () { _doControlReset(); }, _sessionRunning ? 80 : 0);
 });
 
 
+/* Redirect scroll events to the active panel when tutorial overlay intercepts them */
+(function() {
+function _tutFindPanel() {
+var _ids = ['a','c','e'], best = null, bd = Infinity;
+_ids.forEach(function(id) { var p = document.getElementById(id); if (!p) return; var d = Math.abs(p.getBoundingClientRect().left); if (d < bd) { bd = d; best = p; } });
+return best;
+}
+function _tutInPanel(target) {
+return ['a','c','e'].some(function(id) { var p = document.getElementById(id); return p && p.contains(target); });
+}
+document.addEventListener('wheel', function(e) {
+if (!window.tutorialActive) return;
+if (_tutInPanel(e.target)) return;
+var panel = _tutFindPanel();
+if (panel) panel.scrollTop += e.deltaY;
+}, { passive: true });
+var _tutTY = 0;
+document.addEventListener('touchstart', function(e) {
+if (!window.tutorialActive) return;
+_tutTY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchmove', function(e) {
+if (!window.tutorialActive) return;
+if (_tutInPanel(e.target)) return;
+var dy = _tutTY - e.touches[0].clientY; _tutTY = e.touches[0].clientY;
+var panel = _tutFindPanel();
+if (panel) panel.scrollTop += dy;
+}, { passive: true });
+})();
 window.startTutorial = function () { T.start(); };
 window.tutorialActive = false;
 }());
