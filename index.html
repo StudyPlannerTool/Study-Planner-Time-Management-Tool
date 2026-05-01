@@ -2075,6 +2075,7 @@ getShortestColumn().appendChild(div);
 const slider = div.querySelector('.time');
 const timeLabel = div.querySelector('.time-label');
 if (slider && timeLabel) {
+expandSliderHitArea(slider);
 slider.addEventListener('input', () => {
 timeLabel.textContent = timeValToText(slider.value);
 updateAssignmentSummary(div);
@@ -2913,6 +2914,42 @@ dd._originalParent = null;
 });
 }
 
+function expandSliderHitArea(slider) {
+if (slider._hitExpanded) return;
+slider._hitExpanded = true;
+var EXPAND = 20;
+function _snap(val, min, max, step) { return Math.max(min, Math.min(max, Math.round(val / step) * step)); }
+function _setFromTouch(touch) {
+var rect = slider.getBoundingClientRect();
+var ratio = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+var min = parseFloat(slider.min), max = parseFloat(slider.max), step = parseFloat(slider.step) || 1;
+slider.value = _snap(min + ratio * (max - min), min, max, step);
+slider.dispatchEvent(new Event('input', { bubbles: true }));
+}
+var parent = slider.parentElement;
+parent.addEventListener('touchstart', function(e) {
+var t = e.touches[0];
+var rect = slider.getBoundingClientRect();
+if (t.clientX >= rect.left - 12 && t.clientX <= rect.right + 12 &&
+t.clientY >= rect.top - EXPAND && t.clientY <= rect.bottom + EXPAND) {
+slider._activeTouchId = t.identifier;
+_setFromTouch(t);
+}
+}, { passive: true });
+parent.addEventListener('touchmove', function(e) {
+if (slider._activeTouchId === undefined) return;
+for (var i = 0; i < e.touches.length; i++) {
+if (e.touches[i].identifier === slider._activeTouchId) { _setFromTouch(e.touches[i]); break; }
+}
+}, { passive: true });
+parent.addEventListener('touchend', function() {
+if (slider._activeTouchId !== undefined) {
+slider.dispatchEvent(new Event('change', { bubbles: true }));
+slider._activeTouchId = undefined;
+}
+}, { passive: true });
+}
+
 function syncCustomSelect(select) {
 const wrapper = select.closest('.custom-select-wrapper');
 if (!wrapper) return;
@@ -3168,10 +3205,7 @@ output.scrollIntoView({ behavior: 'smooth', block: 'start' });
 const z = document.getElementById("z")
 const x = document.getElementById("x")
 
-z.addEventListener("click", function(){
-var isOpen = x.style.display !== 'none';
-x.style.display = isOpen ? 'none' : 'block';
-if (!isOpen) {
+function _openSettingsPanel() {
 var _mp = document.getElementById('settingsMainPanel');
 var _sp = document.getElementById('settingsSubPanel');
 if (_mp) _mp.style.transform = '';
@@ -3180,7 +3214,45 @@ x.style.height = '';
 ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
 var s = document.getElementById(id); if(s) s.style.display = 'none';
 });
+x.style.display = 'block';
+x.style.opacity = '0';
+x.style.transform = 'translateY(-10px) scale(0.96)';
+x.style.transition = 'none';
+x.style.pointerEvents = 'none';
+requestAnimationFrame(function() {
+requestAnimationFrame(function() {
+x.style.transition = 'opacity 0.22s ease, transform 0.26s cubic-bezier(0.16,1,0.3,1)';
+x.style.opacity = '1';
+x.style.transform = 'translateY(0) scale(1)';
+x.style.pointerEvents = '';
+});
+});
 }
+function _closeSettingsPanel() {
+if (x._closing) return;
+x._closing = true;
+x.style.transition = 'opacity 0.17s ease, transform 0.17s ease';
+x.style.opacity = '0';
+x.style.transform = 'translateY(-8px) scale(0.96)';
+setTimeout(function() {
+x._closing = false;
+x.style.display = 'none';
+x.style.opacity = '';
+x.style.transform = '';
+x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
+var _mp = document.getElementById('settingsMainPanel');
+var _sp = document.getElementById('settingsSubPanel');
+if (_mp) _mp.style.transform = '';
+if (_sp) _sp.style.transform = 'translateX(102%)';
+x.style.height = '';
+['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
+var s = document.getElementById(id); if(s) s.style.display = 'none';
+});
+}, 190);
+}
+z.addEventListener("click", function(){
+var isOpen = x.style.display !== 'none' && !x._closing;
+if (isOpen) _closeSettingsPanel(); else _openSettingsPanel();
 });
 </script>
 
@@ -4275,15 +4347,7 @@ e.stopPropagation();
 
 document.addEventListener("click", function(e) {
 if (!x.contains(e.target) && e.target !== z) {
-x.style.display = "none";
-var _dmp = document.getElementById('settingsMainPanel');
-var _dsp = document.getElementById('settingsSubPanel');
-if (_dmp) _dmp.style.transform = '';
-if (_dsp) _dsp.style.transform = 'translateX(102%)';
-x.style.height = '';
-['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
-var s = document.getElementById(id); if(s) s.style.display = 'none';
-});
+if (x.style.display !== 'none' && !x._closing) _closeSettingsPanel();
 }
 if (!e.target.closest('.custom-select-wrapper')) {
 closeAllCustomDropdowns();
@@ -5915,7 +5979,9 @@ spotlightEl: function () { return document.getElementById('x'); },
 tipSide: 'left',
 text: 'Try switching it to manual!',
 on: 'click', post: 0 },
-{ el: function () { return document.getElementById('assignmentsContainer'); },
+{ el: function () { var _dc = document.querySelectorAll('#assignmentsContainer .assignment'); return _dc.length ? _dc[0] : document.getElementById('assignmentsContainer'); },
+spotlightEl: function () { return document.getElementById('assignmentsContainer'); },
+noSecondaryRing: true,
 text: 'Click and hold on any assignment, then drag it to your preferred location and leave it.',
 on: 'drag', post: 0, clampToControls: true},
 { el: function () { return document.getElementById('startTimerBtn'); },
@@ -5973,7 +6039,14 @@ if (d < bestDist) { bestDist = d; best = p; }
 });
 if (best && el._els[0]) {
 var CONTROLS_H = 110;
-best.scrollTop = Math.max(0, el._els[0].offsetTop - CONTROLS_H - 12);
+var _pr3 = best.getBoundingClientRect();
+var _fr3 = el._els[0].getBoundingClientRect();
+var _lr3el = el._els[el._els.length - 1];
+var _lr3 = _lr3el.getBoundingClientRect();
+var _ph3 = best.clientHeight;
+var _st3top = best.scrollTop + (_fr3.top - _pr3.top) - CONTROLS_H - 12;
+var _st3bot = best.scrollTop + (_lr3.bottom - _pr3.top) + 24 - _ph3;
+best.scrollTop = Math.max(0, Math.max(_st3top, _st3bot));
 }
 setTimeout(function () { requestAnimationFrame(function () { if (cb) cb(); }); }, 80);
 return;
@@ -6293,8 +6366,13 @@ arr.style.cssText = below
 document.addEventListener('click', function (e) {
 if (!T.active) return;
 if (window._tutorialBypassBlock) return;
-if (e.target.closest && e.target.closest('#tutorialSkipBtn')) return;
-if (e.target.closest && e.target.closest('#tutNextBtn')) return;
+// Use contains() for iOS reliability — closest() can fail on synthesized touch targets
+var _tutTipEl = document.getElementById('tutTooltip');
+if (_tutTipEl && _tutTipEl.contains(e.target)) return;
+var _tutSkipEl = document.getElementById('tutorialSkipBtn');
+if (_tutSkipEl && (_tutSkipEl === e.target || _tutSkipEl.contains(e.target))) return;
+var _tutNextEl = document.getElementById('tutNextBtn');
+if (_tutNextEl && (_tutNextEl === e.target || _tutNextEl.contains(e.target))) return;
 if (e.target.closest && e.target.closest('#cookieBanner')) return;
 if (e.target.closest && e.target.closest('#ageGateOverlay')) return;
 var step = T.STEPS[T.step];
@@ -6640,6 +6718,7 @@ var fromH = x.offsetHeight;
 var toH = subPanel.offsetHeight;
 x.style.height = fromH + 'px';
 x.offsetHeight; // force reflow
+x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
 mainPanel.style.transform = 'translateX(-102%)';
 subPanel.style.transform = 'translateX(0)';
 x.style.height = Math.max(toH, 60) + 'px';
@@ -6688,6 +6767,7 @@ var val = getDailyLimit(document.getElementById('schoolLevel').value);
 if (slider) slider.value = val;
 if (display) display.textContent = formatLimitDisplay(val);
 if (slider) {
+expandSliderHitArea(slider);
 slider.oninput = function() {
 var v = parseInt(this.value);
 if (display) display.textContent = formatLimitDisplay(v);
