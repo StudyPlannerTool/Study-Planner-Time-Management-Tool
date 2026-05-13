@@ -2054,7 +2054,7 @@ saveToLocalStorage();
 });
 sliderPlusBtn.addEventListener('click', (e) => {
 e.stopPropagation();
-const newVal = Math.min(300, parseInt(slider.value) + 5);
+const newVal = Math.min(parseInt(slider.max) || 300, parseInt(slider.value) + 5);
 slider.value = newVal;
 timeLabel.textContent = timeValToText(newVal);
 updateAssignmentSummary(div);
@@ -7749,7 +7749,6 @@ window._checkDailyLimitOverflow = function() {
   var _msg = document.getElementById('limitExceedMsg');
   var _sessionRunning = document.getElementById('resetTimerBtn') && document.getElementById('resetTimerBtn').style.display !== 'none';
   if (_sessionRunning) { if (_box) _box.style.display = 'none'; return; }
-  var iso = window._activeDate || getTodayISO();
   var iso = window._activeDate || getTodayISO();
   var level = document.getElementById('schoolLevel').value;
   var limit = getDailyLimit(level);
