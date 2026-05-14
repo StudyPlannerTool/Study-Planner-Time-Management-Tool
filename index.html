@@ -7234,13 +7234,16 @@ setTimeout(function () { window.setOrderMode('manual'); }, 250);
 
 // ── Persistent past-day message (anchored near button, no auto-dismiss) ──
 function _showPastDayMsg(btnEl) {
-  if (document.getElementById('_calPastDayMsg')) return;
+  var ex = document.getElementById('_calPastDayMsg'); if (ex) { ex.remove(); return; }
   var dk = document.body.classList.contains('assignmentsdark');
   var msgEl = document.createElement('div');
   msgEl.id = '_calPastDayMsg';
-  msgEl.style.cssText = 'position:fixed;z-index:999999;left:50%;transform:translateX(-50%);bottom:28px;max-width:300px;width:calc(100% - 48px);padding:10px 16px;border-radius:12px;font-family:"Inter",sans-serif;font-size:12px;font-weight:600;line-height:1.5;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.18);color:'+(dk?'#94a3b8':'#64748b')+';background:'+(dk?'#1e2d3d':'white')+';border:1px solid '+(dk?'rgba(148,163,184,0.15)':'rgba(148,163,184,0.3)')+';pointer-events:auto;';
+  msgEl.style.cssText = 'position:fixed;z-index:999999;left:50%;transform:translateX(-50%);bottom:28px;max-width:300px;width:calc(100% - 48px);padding:10px 16px;border-radius:12px;font-family:"Inter",sans-serif;font-size:12px;font-weight:600;line-height:1.5;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.18);cursor:pointer;color:'+(dk?'#94a3b8':'#64748b')+';background:'+(dk?'#1e2d3d':'white')+';border:1px solid '+(dk?'rgba(148,163,184,0.15)':'rgba(148,163,184,0.3)')+';pointer-events:auto;transition:opacity 0.25s ease;';
   msgEl.textContent = 'This day has passed. You cannot add any assignments.';
   document.body.appendChild(msgEl);
+  var _hide = function() { msgEl.style.opacity = '0'; setTimeout(function(){ if (msgEl.parentNode) msgEl.remove(); }, 260); };
+  msgEl.addEventListener('click', _hide);
+  setTimeout(_hide, 3500);
 }
 
 
