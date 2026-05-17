@@ -3988,7 +3988,7 @@ document.getElementById('ThemeMidnight') && document.getElementById('ThemeMidnig
       '#assignmentsContainer .assignment{background:linear-gradient(145deg,#060f24 0%,#0c1f52 100%)!important;border-color:rgba(59,130,246,0.28)!important;}',
       '#output{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-left-color:#3b82f6!important;color:#bfdbfe!important;}',
       '#timelineContainer{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-color:rgba(59,130,246,0.22)!important;}',
-      '#controls,#sessionBar{background:rgba(2,11,24,0.88)!important;border-bottom-color:rgba(59,130,246,0.35)!important;box-shadow:0 4px 18px rgba(0,0,0,0.6),0 1px 0 rgba(59,130,246,0.2)!important;}',
+'#controls,#sessionBar{background:rgba(2,11,24,0.15)!important;border-bottom-color:rgba(59,130,246,0.35)!important;box-shadow:0 4px 18px rgba(0,0,0,0.6),0 1px 0 rgba(59,130,246,0.2)!important;}',
       '#x{background:#060f24!important;border-color:rgba(59,130,246,0.3)!important;}',
       '.settings-menu-btn:hover{background:rgba(59,130,246,0.18)!important;color:#93c5fd!important;}',
       'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#3b82f6,#60a5fa)!important;}',
@@ -7046,10 +7046,19 @@ window._startMidnightAnim = function(){
       {x:R*.35,y:-R*.08,r:R*.085,d:0.48},{x:-R*.38,y:R*.08,r:R*.070,d:0.42},
       {x:R*.12,y:-R*.33,r:R*.078,d:0.46},{x:-R*.06,y:-R*.38,r:R*.058,d:0.38},
       {x:R*.42,y:R*.28,r:R*.052,d:0.36},{x:-R*.30,y:-R*.32,r:R*.042,d:0.32},
-      {x:R*.28,y:-R*.30,r:R*.038,d:0.30},{x:-R*.44,y:-R*.18,r:R*.032,d:0.28}
+      {x:R*.28,y:-R*.30,r:R*.038,d:0.30},{x:-R*.44,y:-R*.18,r:R*.032,d:0.28},
+      {x:-R*.58,y:R*.22,r:R*.050,d:0.36},{x:R*.54,y:-R*.26,r:R*.044,d:0.32},
+      {x:R*.30,y:R*.58,r:R*.048,d:0.34},{x:-R*.26,y:-R*.60,r:R*.040,d:0.28},
+      {x:R*.64,y:R*.12,r:R*.038,d:0.28},{x:-R*.62,y:-R*.30,r:R*.036,d:0.26},
+      {x:R*.16,y:-R*.66,r:R*.034,d:0.24},{x:-R*.18,y:R*.65,r:R*.036,d:0.26},
+      {x:R*.68,y:-R*.16,r:R*.032,d:0.22},{x:-R*.70,y:R*.12,r:R*.030,d:0.22},
+      {x:R*.46,y:-R*.54,r:R*.034,d:0.24},{x:-R*.52,y:-R*.48,r:R*.036,d:0.24},
+      {x:R*.72,y:R*.22,r:R*.028,d:0.20},{x:-R*.74,y:-R*.08,r:R*.026,d:0.20},
+      {x:R*.34,y:R*.68,r:R*.030,d:0.22},{x:-R*.36,y:-R*.66,r:R*.028,d:0.20},
+      {x:R*.58,y:R*.46,r:R*.030,d:0.22},{x:-R*.56,y:R*.44,r:R*.028,d:0.20}
     ];
     craters.forEach(function(cr){
-      if(Math.sqrt(cr.x*cr.x+cr.y*cr.y)+cr.r>R*0.90)return;
+      if(Math.sqrt(cr.x*cr.x+cr.y*cr.y)+cr.r>R*0.93)return;
       ctx.save();ctx.translate(cx+cr.x,cy+cr.y);
       // Crater floor (dark radial)
       var cg=ctx.createRadialGradient(cr.r*0.1,cr.r*0.1,0,0,0,cr.r);
@@ -7320,36 +7329,59 @@ window._startRoyalAnim = function(){
     // Buildings with true perspective: drawn back-to-front along road sides.
     // t=depth parameter: 0=near vanishing point (small), 1=near viewer (large).
     // At depth t: ground y = vy+(H-vy)*t, left road edge = vx-roadW*t, right road edge = vx+roadW*t.
-    var depths=[0.06,0.13,0.22,0.33,0.46,0.60,0.75,0.90,1.0];
-    var bSeeds=[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18]];
+    var depths=[0.04,0.07,0.11,0.16,0.22,0.30,0.40,0.54,0.72,0.94];
+    var bSeeds=[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20]];
     depths.forEach(function(t,di){
-      var gy=vy+(H-vy)*t;          // ground y at this depth
-      var lrx=vx-roadW*t;          // left road edge x
-      var rrx=vx+roadW*t;          // right road edge x
-      var bW=Math.max(3,W*0.14*t); // width scales with depth
-      var bH=Math.max(4,H*0.58*t); // height scales with depth
+      var gy=vy+(H-vy)*t;
+      var lrx=vx-roadW*t;
+      var rrx=vx+roadW*t;
+      var margin=Math.max(2,roadW*t*0.10);
+      var bW=Math.max(3,W*0.14*t);
+      var bH=Math.max(4,H*0.58*t);
       var alpha=Math.min(0.90,0.10+t*0.82);
-      // Left building (right edge at left road edge, extends left)
-      // Right building (left edge at right road edge, extends right)
-      [[lrx-bW,lrx,bSeeds[di][0]],[rrx,rrx+bW,bSeeds[di][1]]].forEach(function(b){
-        var bLeft=b[0],bRight=b[1],sd=b[2];
+      var sf=0.085;
+      // Left building offset by margin from road; Right building offset by margin from road
+      [[lrx-margin-bW,lrx-margin,bSeeds[di][0],'L'],[rrx+margin,rrx+margin+bW,bSeeds[di][1],'R']].forEach(function(b){
+        var bLeft=b[0],bRight=b[1],sd=b[2],side=b[3];
         var bTop=gy-bH;
         if(bRight<0||bLeft>W||bTop>H)return;
+        // Road-facing edge and vanishing-point projection for 3-D side face
+        var faceX=side==='L'?bRight:bLeft;
+        var roadEdgeX=side==='L'?lrx:rrx;
+        var backX=faceX+sf*(vx-faceX);
+        backX=side==='L'?Math.min(backX,roadEdgeX-1):Math.max(backX,roadEdgeX+1);
+        var sBackTopY=bTop+sf*(vy-bTop);
+        var sBackBotY=gy+sf*(vy-gy);
+        // Road-facing side face drawn first so front face renders on top
+        var sgFace=ctx.createLinearGradient(faceX,bTop,backX,gy);
+        sgFace.addColorStop(0,'rgba(18,2,44,'+(alpha*0.88)+')');
+        sgFace.addColorStop(1,'rgba(10,1,28,'+(alpha*0.72)+')');
+        ctx.beginPath();
+        ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.lineTo(faceX,gy);
+        ctx.closePath();ctx.fillStyle=sgFace;ctx.fill();
+        // Back edge of side face
+        ctx.strokeStyle='rgba(160,70,220,'+(alpha*0.38)+')';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.stroke();
+        // Front face
         var gb=ctx.createLinearGradient(bLeft,bTop,bRight,gy);
         gb.addColorStop(0,'rgba(26,4,56,'+alpha+')');
         gb.addColorStop(0.45,'rgba(40,8,80,'+(alpha*1.08)+')');
         gb.addColorStop(1,'rgba(16,2,38,'+(alpha*0.92)+')');
         ctx.fillStyle=gb;
         ctx.fillRect(Math.round(bLeft),Math.round(bTop),Math.round(bW),Math.round(bH));
-        // Inner edge highlight (the edge facing the road)
+        // Road-facing edge glow
         ctx.fillStyle='rgba(205,115,255,'+(alpha*0.42)+')';
-        ctx.fillRect(Math.round(b[1]<rrx?bRight-2:bLeft),Math.round(bTop),2,Math.round(bH));
+        ctx.fillRect(Math.round(side==='L'?bRight-2:bLeft),Math.round(bTop),2,Math.round(bH));
         // Outer edge shadow
         ctx.fillStyle='rgba(8,0,20,'+(alpha*0.48)+')';
-        ctx.fillRect(Math.round(b[1]<rrx?bLeft:bRight-2),Math.round(bTop),2,Math.round(bH));
-        // Roofline
+        ctx.fillRect(Math.round(side==='L'?bLeft:bRight-2),Math.round(bTop),2,Math.round(bH));
+        // Roofline (front face)
         ctx.fillStyle='rgba(212,122,255,'+(alpha*0.74)+')';
         ctx.fillRect(Math.round(bLeft-1),Math.round(bTop),Math.round(bW+2),Math.max(1,Math.round(bW*0.05)));
+        // Roofline cap (side face)
+        var roofH=Math.max(1,bW*0.04);
+        ctx.fillStyle='rgba(170,80,230,'+(alpha*0.55)+')';
+        ctx.beginPath();ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackTopY+roofH);ctx.lineTo(faceX,bTop+roofH);ctx.closePath();ctx.fill();
         // Windows
         var wSz=Math.max(1.5,Math.min(5.5,bW*0.14));
         var wGx=wSz*2.1,wGy=wSz*2.6;
