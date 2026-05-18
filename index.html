@@ -357,13 +357,19 @@ blocked.style.display = "block";
 <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
 <button class="settings-menu-btn" onclick="openSettingsSub('limitSub','Daily Study Limit')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="openSettingsSub('orderSub','Assignment Order')">↕&nbsp; Assignment Order <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
-<button class="settings-menu-btn" onclick="_openStatsPage()">📊&nbsp; My Stats <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 
 <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
 <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Display</div>
 <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
 <button class="settings-menu-btn" onclick="openSettingsSub('themeSub','Theme Color')">🎨&nbsp; Theme Color <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="openSettingsSub('a11ySub','Accessibility')">♿&nbsp; Accessibility <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+
+
+<div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
+<div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Other</div>
+<div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+<button class="settings-menu-btn" onclick="_openStatsPage()">📊&nbsp; My Stats <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+<button class="settings-menu-btn" onclick="_openImportExportPage()">📦&nbsp; Import / Export <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="_settingsGoHome()">🏠&nbsp; ←Home Page </button>
 </div>
 <!-- Sub panel (slides in from right) -->
@@ -499,7 +505,7 @@ Start Planning →
 <div style="flex: 1; min-width: 220px; background: white; border-radius: 20px; padding: 28px 24px; border: 1px solid rgba(236,72,153,0.1); box-shadow: 0 4px 24px rgba(236,72,153,0.07); text-align: left;">
 <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px;">☕</div>
 <h4 style="margin: 0 0 8px; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #1e293b;">Smart Breaks</h4>
-<p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">Strategic 10-minute breaks auto-inserted at attention span limits to keep you fresh and focused.</p>
+<p style="margin: 0; font-size: 14px; color: #64748b; line-height: 1.6;">Dynamic breaks auto-inserted at attention span limits — duration adapts to difficulty, so harder work earns longer recovery time.</p>
 </div>
 </div>
 
@@ -514,12 +520,14 @@ Why Use this Study Planner?
 <div class="accordion-content">
 <div class="content-inner" style="color: black;">
 <p>This Study Planner & Time Management Tool is designed to help students of all levels: middle school, high school, and college, organize their homework, assignments, and study sessions efficiently. By using this tool to Visualize tasks, estimated completion times, and breaks, students can manage their workload without feeling overwhelmed.</p>
-<p>The tool uses the <strong>Most Important Task (MIT)</strong> Method to prioritize the most challenging assignments first, helping students make the most of their attention span. It also incorporates strategic 10-minute breaks, proven to improve memory retention and reduce cognitive fatigue, allowing students to study smarter, not longer.</p>
+<p>The tool uses the <strong>Most Important Task (MIT)</strong> Method to prioritize the most challenging assignments first, helping students make the most of their attention span. It also incorporates <strong>dynamic breaks</strong> that automatically adjust in length based on assignment difficulty and are proven to improve memory retention and reduce cognitive fatigue, allowing students to study smarter, not longer.</p>
 <p>With this planner, a student can:</p>
 <ul>
 <li>Track assignments and homework by subject and difficulty level</li>
-<li>Visualize a <strong>multi-day schedule</strong> to balance work and rest</li>
-<li>Boost productivity with scientifically-backed breaks</li>
+<li>Visualize a <strong>multi-day schedule</strong> using the built-in calendar view</li>
+<li>Boost productivity with scientifically-backed, difficulty-adjusted breaks</li>
+<li>Spread large assignments across multiple days to avoid last-minute cramming</li>
+<li>Set up recurring <strong>weekly routines</strong> for classes that repeat</li>
 <li>Manage time effectively and reduce last-minute stress</li>
 </ul>
 <p>Whether you want to plan your entire week of homework or just focus on a single study session, this tool helps you take control of your time and improve your academic performance.</p>
@@ -590,9 +598,13 @@ Research & References
 <div class="content-inner">
 <div id="references" style="margin-bottom:20px; color: black;">
 <ul>
-<li>Connolly, Austin. “Mastering the MIT Method: How to Identify and Prioritize Your Most Important Tasks.” Hubstaff, 7 August 2024, <a href="https://hubstaff.com/blog/most-important-task-mit/" target="_blank">https://hubstaff.com/blog/most-important-task-mit/</a>. Accessed 11 January 2026.</li>
-<li>“What is Attention Span?” HappyNeuron Pro, <a href="https://www.happyneuronpro.com/en/info/what-is-attention-span/" target="_blank">https://www.happyneuronpro.com/en/info/what-is-attention-span/</a>. Accessed 11 January 2026.</li>
-<li>White, Martha C. “The Exact Perfect Amount of Time to Take a Break, According to Data.” Time Magazine, 20 October 2014, <a href="https://time.com/3518053/perfect-break/" target="_blank">https://time.com/3518053/perfect-break/</a>. Accessed 11 January 2026.</li>
+<li>Connolly, Austin. "Mastering the MIT Method: How to Identify and Prioritize Your Most Important Tasks." Hubstaff, 7 August 2024, <a href="https://hubstaff.com/blog/most-important-task-mit/" target="_blank">https://hubstaff.com/blog/most-important-task-mit/</a>. Accessed 11 January 2026.</li>
+<li>"What is Attention Span?" HappyNeuron Pro, <a href="https://www.happyneuronpro.com/en/info/what-is-attention-span/" target="_blank">https://www.happyneuronpro.com/en/info/what-is-attention-span/</a>. Accessed 11 January 2026.</li>
+<li>White, Martha C. "The Exact Perfect Amount of Time to Take a Break, According to Data." Time Magazine, 20 October 2014, <a href="https://time.com/3518053/perfect-break/" target="_blank">https://time.com/3518053/perfect-break/</a>. Accessed 11 January 2026.</li>
+<li>Carey, Benedict. <em>How We Learn: The Surprising Truth About When, Where, and Why It Happens.</em> Random House, 2014.</li>
+<li>American Psychological Association. "Multitasking: Switching Costs." APA, March 2006, <a href="https://www.apa.org/topics/research/multitasking" target="_blank">https://www.apa.org/topics/research/multitasking</a>. Accessed 11 January 2026.</li>
+<li>Karpicke, Jeffrey D., and Henry L. Roediger. "The Critical Importance of Retrieval for Learning." <em>Science</em>, vol. 319, no. 5865, 2008, pp. 966–968.</li>
+<li>Stafford, Tom, and Michael Dewar. "Tracing the Trajectory of Skill Learning With a Very Large Sample of Online Game Players." <em>Psychological Science</em>, vol. 25, no. 2, 2014, pp. 511–518.</li>
 </ul>
 
 
@@ -2734,9 +2746,12 @@ ResumeBtn.style.display = 'none';
 window._openStatsPage = function() {
   var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
   var ex = document.getElementById('spStatsPage'); if (ex) {
-  var _exBg = document.body.style.backgroundColor || (document.body.classList.contains('assignmentsdark') ? '#0d0d1a' : '#f0f0ff');
+  var _exDk = document.body.classList.contains('assignmentsdark');
+  var _exBg = document.body.style.backgroundColor || (_exDk ? '#0d0d1a' : '#f0f0ff');
   var _exBgImg = document.body.style.backgroundImage || 'none';
   ex.style.background = _exBg; ex.style.backgroundImage = _exBgImg;
+  var _exTitle = document.getElementById('spStatsTitle');
+  if (_exTitle) _exTitle.style.color = _exDk ? '#e2e8f0' : '#0f172a';
   ex.style.display = 'flex';
   ex.style.transform = 'translateY(-30px)'; ex.style.opacity = '0';
   ex.style.transition = 'transform 0.38s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease';
@@ -2753,7 +2768,7 @@ page.innerHTML = '<style>#spStatsPage::-webkit-scrollbar{width:6px;}#spStatsPage
   // Header
   var hdr = document.createElement('div');
   hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
-  hdr.innerHTML = '<button id="spStatsBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;transition:color 0.2s;">← Calendar</button><span style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:#e2e8f0;letter-spacing:-0.3px;">📊 My Stats</span><div style="width:80px;"></div>';
+hdr.innerHTML = '<button id="spStatsBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;transition:color 0.2s;">← Calendar</button><span id="spStatsTitle" style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:'+(dk?'#e2e8f0':'#0f172a')+';letter-spacing:-0.3px;">📊 My Stats</span><div style="width:80px;"></div>';
   page.appendChild(hdr);
   var body = document.createElement('div');
   body.id = 'spStatsBody';
@@ -2912,6 +2927,134 @@ function _buildStatsContent() {
     ], '#ec4899') +
     graphSection;
 }
+
+window._openImportExportPage = function() {
+  var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
+  var dk = document.body.classList.contains('assignmentsdark');
+  var _bg = document.body.style.backgroundColor || (dk ? '#0d0d1a' : '#f0f0ff');
+  var _bgImg = document.body.style.backgroundImage || 'none';
+  var ex = document.getElementById('spIEPage');
+  if (ex) {
+    ex.style.background = _bg; ex.style.backgroundImage = _bgImg;
+    ex.style.display = 'flex'; ex.style.opacity = '0'; ex.style.transform = 'translateY(-20px)';
+    ex.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ ex.style.transform='translateY(0)'; ex.style.opacity='1'; }); });
+    return;
+  }
+  var page = document.createElement('div');
+  page.id = 'spIEPage';
+  page.style.cssText = 'position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;overflow-y:auto;font-family:"Inter",sans-serif;background:'+_bg+';background-image:'+_bgImg+';';
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
+  hdr.innerHTML = '<button id="spIEBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;">← Back</button><span style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:'+(dk?'#e2e8f0':'#0f172a')+';letter-spacing:-0.3px;">📦 Import / Export</span><div style="width:80px;"></div>';
+  page.appendChild(hdr);
+  var body = document.createElement('div');
+  body.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;box-sizing:border-box;';
+  body.innerHTML =
+    '<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;max-width:700px;width:100%;">' +
+    '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
+    '<div style="font-size:40px;margin-bottom:14px;">📤</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Export</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Download a complete backup of all your assignments, routines, stats, and settings. You can use this file to restore your data on any device.</p>' +
+    '<button id="spExportBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);width:100%;">⬇ Download Backup</button></div>' +
+    '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
+    '<div style="font-size:40px;margin-bottom:14px;">📥</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Import</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Restore a backup file previously exported from this planner. Only valid backup files are accepted — other files will be rejected.</p>' +
+    '<input type="file" id="spImportFile" accept=".json" style="display:none;">' +
+    '<button id="spImportBtn" style="background:'+(dk?'rgba(99,102,241,0.15)':'rgba(99,102,241,0.08)')+';border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 24px;color:#6366f1;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;">⬆ Choose Backup File</button></div>' +
+    '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
+    '<div style="font-size:40px;margin-bottom:14px;">🖨️</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Print / PDF</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Generate a clean, human-readable summary of all your scheduled assignments. Save it as a PDF using your browser\'s print dialog — no code required.</p>' +
+    '<button id="spPrintBtn" style="background:linear-gradient(135deg,#059669,#10b981);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,0.35);width:100%;">🖨️ Print / Save as PDF</button></div>' +
+    '</div>';
+  page.appendChild(body);
+  document.body.appendChild(page);
+  page.style.opacity = '0'; page.style.transform = 'translateY(-20px)';
+  page.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ page.style.transform='translateY(0)'; page.style.opacity='1'; }); });
+  document.getElementById('spIEBackBtn').addEventListener('click', function() {
+    page.style.transition = 'transform 0.3s ease,opacity 0.25s ease';
+    page.style.transform = 'translateY(-20px)'; page.style.opacity = '0';
+    setTimeout(function(){ page.style.display='none'; page.style.transform=''; page.style.opacity=''; page.style.transition=''; }, 320);
+  });
+  document.getElementById('spExportBtn').addEventListener('click', function() {
+    var _ed = { _type: 'study-planner-backup', _version: 2, _exported: new Date().toISOString(), days: {}, routines: [], settings: {}, stats: {} };
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('sp_day_') || k.startsWith('sp_done_')) { try { _ed.days[k] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
+    });
+    var _rts = localStorage.getItem('sp_routines'); if (_rts) { try { _ed.routines = JSON.parse(_rts); } catch(e){} }
+    ['studyPlanner_level','studyPlanner_theme','studyPlanner_dailyLimit','studyPlanner_orderMode','studyPlanner_textScale','studyPlanner_colorblind'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.settings[k]=v; });
+    ['studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history','sp_ext_stats'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.stats[k]=v; });
+    var _blob = new Blob([JSON.stringify(_ed, null, 2)], { type: 'application/json' });
+    var _url = URL.createObjectURL(_blob);
+    var _a = document.createElement('a'); _a.href = _url;
+    _a.download = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
+    setTimeout(function(){ URL.revokeObjectURL(_url); }, 1000);
+    window._showToast('\u2713 Backup downloaded! Keep this file safe.', false, 'exportDone', 6000);
+  });
+  document.getElementById('spImportBtn').addEventListener('click', function() { document.getElementById('spImportFile').click(); });
+  document.getElementById('spImportFile').addEventListener('change', function() {
+    var file = this.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e2) {
+      try {
+        var data = JSON.parse(e2.target.result);
+        if (!data._type || data._type !== 'study-planner-backup') {
+          showCustomAlert('This file is not a valid Study Planner backup. Please select a file that was exported from this planner.');
+          return;
+        }
+        showCustomConfirm('Restore this backup? All current assignments, routines, and settings will be replaced.', function() {
+          Object.keys(localStorage).forEach(function(k) {
+            if (k.startsWith('sp_day_') || k.startsWith('sp_done_') || k === 'sp_routines' || k === 'studyPlanner_tasks') localStorage.removeItem(k);
+          });
+          if (data.days) { Object.keys(data.days).forEach(function(k) { try { localStorage.setItem(k, JSON.stringify(data.days[k])); } catch(e3){} }); }
+          if (data.routines) { try { localStorage.setItem('sp_routines', JSON.stringify(data.routines)); } catch(e4){} }
+          if (data.settings) { Object.keys(data.settings).forEach(function(k) { localStorage.setItem(k, data.settings[k]); }); }
+          if (data.stats) { Object.keys(data.stats).forEach(function(k) { localStorage.setItem(k, data.stats[k]); }); }
+          window._showToast('\u2713 Backup restored! Reloading\u2026', false, 'importDone', 3000);
+          setTimeout(function() { window.location.reload(); }, 1800);
+        });
+      } catch(parseErr) {
+        showCustomAlert('Could not read this file. Make sure it is an unmodified backup exported from this planner.');
+      }
+    };
+    reader.readAsText(file);
+    this.value = '';
+  });
+  document.getElementById('spPrintBtn').addEventListener('click', function() {
+    var _lvl = localStorage.getItem('studyPlanner_level') || 'high';
+    var _lvlNames = { middle: 'Middle School', high: 'High School', college: 'College' };
+    var _days = {};
+    Object.keys(localStorage).forEach(function(k) {
+      if (!k.startsWith('sp_day_')) return;
+      try { var _t = JSON.parse(localStorage.getItem(k) || '[]'); if (_t.length > 0) _days[k.slice(7)] = _t; } catch(e) {}
+    });
+    var _sorted = Object.keys(_days).sort();
+    if (!_sorted.length) { showCustomAlert('No assignments found to print. Add some assignments first!'); return; }
+    var _html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Study Plan</title><style>*{box-sizing:border-box;}body{font-family:Arial,sans-serif;margin:30px auto;color:#1e293b;max-width:800px;}h1{color:#6366f1;font-size:26px;margin-bottom:4px;}h2{color:#475569;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-top:26px;font-size:15px;}.task{padding:9px 13px;margin:5px 0;border-radius:6px;border-left:4px solid #6366f1;background:#f8f7ff;page-break-inside:avoid;}.diff-easy{border-left-color:#16a34a;background:#f0fdf4;}.diff-medium{border-left-color:#d97706;background:#fffbeb;}.diff-hard{border-left-color:#dc2626;background:#fef2f2;}.diff-priority{border-left-color:#7c3aed;background:#faf5ff;}.task-name{font-weight:bold;font-size:13px;}.task-detail{font-size:11px;color:#64748b;margin-top:2px;}.day-total{font-size:12px;color:#6366f1;font-weight:700;margin-top:5px;margin-bottom:14px;}.meta{font-size:13px;color:#64748b;margin-bottom:18px;}hr{border:none;border-top:1px solid #e2e8f0;margin-bottom:8px;}@media print{body{margin:15px;}}</style></head><body>';
+    _html += '<h1>\uD83D\uDCDA Study Plan</h1><div class="meta">School Level: <strong>' + (_lvlNames[_lvl]||_lvl) + '</strong>&nbsp;&nbsp;·&nbsp;&nbsp;Generated: <strong>' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) + '</strong></div><hr>';
+    _sorted.forEach(function(iso) {
+      var _d = new Date(iso+'T00:00:00');
+      _html += '<h2>' + _d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + '</h2>';
+      var _total = 0;
+      _days[iso].forEach(function(t) {
+        var _m = parseInt(t.time)||0; _total += _m;
+        var _h = Math.floor(_m/60), _mn = _m%60;
+        var _ts = _h>0?(_mn>0?_h+'h '+_mn+'m':_h+'h'):_mn+'m';
+        _html += '<div class="task diff-'+( t.difficulty||'easy')+'"><div class="task-name">'+(t.name||t.subject||'Assignment')+'</div><div class="task-detail">Subject: '+(t.subject||'\u2014')+' \u00b7 Time: '+_ts+' \u00b7 Difficulty: '+(t.difficulty||'easy')+'</div></div>';
+      });
+      var _th=Math.floor(_total/60),_tm=_total%60;
+      _html += '<div class="day-total">Total study time: '+(_th>0?(_tm>0?_th+'h '+_tm+'m':_th+'h'):_tm+'m')+'</div>';
+    });
+    _html += '<scr'+'ipt>window.onload=function(){window.print();};<\/script></body></html>';
+    var _w = window.open('','_blank');
+    if (_w) { _w.document.write(_html); _w.document.close(); }
+    else { showCustomAlert('Please allow pop-ups in your browser to use Print / Save as PDF, then try again.'); }
+  });
+};
 
 window.addPresetTask = function(subj, timeVal, diffVal) {
 
@@ -6461,9 +6604,16 @@ spotlightEl: function () {
 var _s = document.getElementById('g');
 return (_s && _s.querySelector('div[style*="sticky"]')) || _s;
 },
-text: '"Reset All" clears every assignment and routine across all days. And that marks the end of the tour — happy studying! \uD83C\uDF89',
-on: 'next', post: 0 }
+text: '"Reset All" clears every assignment and routine across all days.',
+on: 'next', post: 0 },
+{ el: function () { return { _centered: true }; },
+text: 'IMPORTANT NOTE: this planner uses local storage to save your data onto your device, and clearing your cache, browser data, or using this planner in a private browsing page will result in the loss of any assignments and other data added (though closing the tab or window that the planner is on will not result in any loss of data). If you want to save your data, simply export your study plan using the \u201cImport/Export\u201d option in the settings menu.',
+on: 'next', post: 0 },
+{ el: function () { return { _centered: true }; },
+text: 'This marks the end of the tutorial! Happy studying \uD83C\uDF89',
+on: 'next', nextLabel: 'End Tutorial \uD83C\uDF89', post: 0 }
 ],
+
 
 start: function () { T.active = true; window.tutorialActive = true; T._show(0); },
 
@@ -6495,14 +6645,17 @@ var _cleanSR = document.getElementById('tutSecondaryRing'); if (_cleanSR) _clean
 
 
 _scrollCenter: function (el, cb) {
+if (el && el._centered) { requestAnimationFrame(function () { if (cb) cb(); }); return; }
 if (el && el._syntheticBounds && el._els && el._els.length) {
-var ids = ['a','c','e'], best = null, bestDist = Infinity;
+var ids = ['a','c','e','g'];
+var best = null, bestDist = Infinity;
 ids.forEach(function(id) {
 var p = document.getElementById(id); if (!p) return;
 var d = Math.abs(p.getBoundingClientRect().left);
 if (d < bestDist) { bestDist = d; best = p; }
 });
-if (best && el._els[0]) {
+var rects = el._els.map(function(e) { return e.getBoundingClientRect(); }).filter(function(r) { return r.width > 0 || r.height > 0; });
+if (!rects.length || !best) { requestAnimationFrame(function () { if (cb) cb(); }); return; }
 var CONTROLS_H = 110;
 var _pr3 = best.getBoundingClientRect();
 var _fr3 = el._els[0].getBoundingClientRect();
@@ -6511,12 +6664,24 @@ var _lr3 = _lr3el.getBoundingClientRect();
 var _ph3 = best.clientHeight;
 var _st3top = best.scrollTop + (_fr3.top - _pr3.top) - CONTROLS_H - 12;
 var _st3bot = best.scrollTop + (_lr3.bottom - _pr3.top) + 24 - _ph3;
-best.scrollTop = Math.max(0, Math.max(_st3top, _st3bot));
+var _st3target = Math.max(0, Math.max(_st3top, _st3bot));
+var _st3start = best.scrollTop, _st3dist = _st3target - _st3start;
+if (Math.abs(_st3dist) > 4) {
+var _st3dur = Math.min(520, Math.max(180, Math.abs(_st3dist) * 0.55));
+var _st3t0 = performance.now();
+(function _ss3(now) {
+var _sp3 = Math.min((now - _st3t0) / _st3dur, 1);
+var _se3 = _sp3 < 0.5 ? 2*_sp3*_sp3 : -1+(4-2*_sp3)*_sp3;
+best.scrollTop = _st3start + _st3dist * _se3;
+if (_sp3 < 1) { requestAnimationFrame(_ss3); }
+else { setTimeout(function () { requestAnimationFrame(function () { if (cb) cb(); }); }, 20); }
+})(performance.now());
+return;
 }
 setTimeout(function () { requestAnimationFrame(function () { if (cb) cb(); }); }, 80);
 return;
 }
-var ids = ['a','c','e'], best = null, bestDist = Infinity;
+var ids = ['a','c','e','g'], best = null, bestDist = Infinity;
 ids.forEach(function(id) {
 var p = document.getElementById(id); if (!p) return;
 var d = Math.abs(p.getBoundingClientRect().left);
@@ -6530,17 +6695,33 @@ var elTop = er.top - pr.top + best.scrollTop;
 var elBottom = elTop + er.height;
 var panelH = best.clientHeight;
 var usable = panelH - CONTROLS_H;
+var targetScrollTop;
 if (er.height <= usable) {
 var scrollForBottom = elBottom - panelH + 20;
 var scrollForTop = elTop - CONTROLS_H - 12;
-best.scrollTop = Math.max(scrollForTop, scrollForBottom);
+targetScrollTop = Math.max(scrollForTop, scrollForBottom);
 } else {
-best.scrollTop = elTop - CONTROLS_H - 12;
+targetScrollTop = elTop - CONTROLS_H - 12;
+}
+var startScrollTop = best.scrollTop;
+var scrollDist = targetScrollTop - startScrollTop;
+if (Math.abs(scrollDist) > 4) {
+var _sdur = Math.min(520, Math.max(180, Math.abs(scrollDist) * 0.55));
+var _st0 = performance.now();
+(function _smoothScroll(now) {
+var _sp = Math.min((now - _st0) / _sdur, 1);
+var _se = _sp < 0.5 ? 2*_sp*_sp : -1+(4-2*_sp)*_sp;
+best.scrollTop = startScrollTop + scrollDist * _se;
+if (_sp < 1) { requestAnimationFrame(_smoothScroll); }
+else { requestAnimationFrame(function () { if (cb) cb(); }); }
+})(performance.now());
+return;
 }
 }
 requestAnimationFrame(function () { if (cb) cb(); });
 }, 50);
 },
+
 
 
 
@@ -6552,9 +6733,10 @@ var el = step.el();
 if (!el) { T.posRaf = requestAnimationFrame(track); return; }
 var spotEl = step.spotlightEl ? step.spotlightEl() : null;
 var refEl = spotEl || el;
-var visible = el._syntheticBounds
-? el._els.some(function(e) { return e && window.getComputedStyle(e).display !== 'none'; })
-: (refEl && window.getComputedStyle(refEl).display !== 'none');
+var visible;
+if (el._centered) { visible = true; }
+else if (el._syntheticBounds) { visible = el._els.some(function(e) { return e && window.getComputedStyle(e).display !== 'none'; }); }
+else { visible = refEl && window.getComputedStyle(refEl).display !== 'none'; }
 if (visible) { T._panels(el, step); T._tip(el, step); }
 T.posRaf = requestAnimationFrame(track);
 }
@@ -6568,9 +6750,11 @@ T.step = idx;
 var step = T.STEPS[idx], tries = 0;
 function isVisible(el) {
 if (!el) return false;
+if (el._centered) return true;
 if (el._syntheticBounds) return el._els.some(function(e) { return e && window.getComputedStyle(e).display !== 'none'; });
 return window.getComputedStyle(el).display !== 'none';
 }
+
 function poll() {
 if (!T.active) return;
 var el = step.el();
@@ -6623,7 +6807,8 @@ var tipEl = document.getElementById('tutTooltip');
 if (tipEl) {
 var nextBtn = document.createElement('button');
 nextBtn.id = 'tutNextBtn';
-nextBtn.textContent = 'Next \u2192';
+nextBtn.textContent = step.nextLabel || 'Next \u2192';
+
 nextBtn.style.cssText = 'display:block;width:100%;margin-top:10px;padding:8px 16px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:50px;color:white;font-family:"Inter",sans-serif;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(99,102,241,0.4);pointer-events:all;';
 tipEl.appendChild(nextBtn);
 function nextClick() {
@@ -6724,11 +6909,22 @@ if (T.active) T._show(T.step + 1);
 },
 
 _panels: function (el, step) {
+if (el && el._centered) {
+var _cTopP = document.getElementById('tutPanel-top');
+if (_cTopP) { _cTopP.style.display='block'; _cTopP.style.top='0'; _cTopP.style.height='100vh'; _cTopP.style.pointerEvents='all'; }
+['tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
+var _cRing = document.getElementById('tutSpotlightRing');
+var _cSec = document.getElementById('tutSecondaryRing');
+if (_cRing) _cRing.style.display = 'none';
+if (_cSec) _cSec.style.display = 'none';
+return;
+}
 var spotEl = (step && step.spotlightEl) ? step.spotlightEl() : null;
 var ring = document.getElementById('tutSpotlightRing');
 var secRing = document.getElementById('tutSecondaryRing');
 ['tutPanel-top','tutPanel-bottom','tutPanel-left','tutPanel-right'].forEach(function(id){ var e=document.getElementById(id); if(e) e.style.display='none'; });
 var p = T.PAD;
+
 /* Clamp spotlight at controls bar only for steps with clampToControls: true */
 var _fixedBarH = 0;
 var _ctrlEl = document.getElementById('controls');
@@ -6786,9 +6982,19 @@ secRing.style.display = 'none';
 _tip: function (el, step) {
 var tip = document.getElementById('tutTooltip'), arr = document.getElementById('tutArrow');
 if (!tip) return;
+if (el && el._centered) {
+var TW_c = Math.min(360, window.innerWidth - 32);
+tip.style.width = TW_c + 'px'; tip.style.display = 'block';
+var TH_c = tip.offsetHeight;
+tip.style.left = Math.max(8, (window.innerWidth - TW_c) / 2) + 'px';
+tip.style.top = Math.max(8, (window.innerHeight - TH_c) / 2) + 'px';
+if (arr) arr.style.cssText = '';
+return;
+}
 var spotEl = (step && step.spotlightEl) ? step.spotlightEl() : null;
 var tipSide = (step && step.tipSide) || null;
 var TW = Math.min(260, window.innerWidth - 32);
+
 tip.style.width = TW + 'px'; tip.style.visibility = 'hidden'; tip.style.display = 'block';
 var TH = tip.offsetHeight; tip.style.visibility = '';
 var A = 10, M = 12, p = T.PAD;
@@ -6856,11 +7062,13 @@ var step = T.STEPS[T.step];
 if (!step) return;
 var el = step.el();
 if (!el) return;
+if (el && el._centered) { e.stopImmediatePropagation(); e.preventDefault(); return; }
 if (el._syntheticBounds) { e.stopImmediatePropagation(); e.preventDefault(); return; }
 if (step.on !== 'next' && (el === e.target || el.contains(e.target))) return;
 e.stopImmediatePropagation();
 e.preventDefault();
 }, true);
+
 
 var skp = document.getElementById('tutorialSkipBtn');
 if (skp) skp.addEventListener('touchend', function(_ste) {
@@ -6873,7 +7081,9 @@ var _sr0 = document.getElementById('tutSpotlightRing'); if (_sr0) _sr0.style.dis
 var _sr1 = document.getElementById('tutSecondaryRing'); if (_sr1) _sr1.style.display = 'none';
 var _ov0 = document.getElementById('tutorialOverlay'); if (_ov0) _ov0.style.display = 'none';
 document.getElementById('assignmentError').style.display = 'none';
+showCustomAlert('IMPORTANT NOTE: this planner uses local storage to save your data onto your device, and clearing your cache, browser data, or using this planner in a private browsing page will result in the loss of any assignments and other data added (though closing the tab or window that the planner is on will not result in any loss of data). If you want to save your data, simply export your study plan using the \u201cImport/Export\u201d option in the settings menu.');
 var _rBtn = document.getElementById('resetTimerBtn');
+
 var _sessionRunning = _rBtn && _rBtn.style.display !== 'none';
 function _doControlReset() {
 if (typeof doReset === 'function') doReset();
@@ -6906,13 +7116,14 @@ setTimeout(function () { _doControlReset(); }, _sessionRunning ? 80 : 0);
 /* Redirect scroll events to the active panel when tutorial overlay intercepts them */
 (function() {
 function _tutFindPanel() {
-var _ids = ['a','c','e'], best = null, bd = Infinity;
+var _ids = ['a','c','e','g'], best = null, bd = Infinity;
 _ids.forEach(function(id) { var p = document.getElementById(id); if (!p) return; var d = Math.abs(p.getBoundingClientRect().left); if (d < bd) { bd = d; best = p; } });
 return best;
 }
 function _tutInPanel(target) {
-return ['a','c','e'].some(function(id) { var p = document.getElementById(id); return p && p.contains(target); });
+return ['a','c','e','g'].some(function(id) { var p = document.getElementById(id); return p && p.contains(target); });
 }
+
 document.addEventListener('wheel', function(e) {
 if (!window.tutorialActive) return;
 if (_tutInPanel(e.target)) return;
@@ -7239,11 +7450,11 @@ window._startForestAnim = function(){
   }
 
   var trees=[
-    {xF:.04,hF:.34,tp:1,sd:1},{xF:.13,hF:.43,tp:0,sd:2},
-    {xF:.21,hF:.29,tp:0,sd:3},{xF:.30,hF:.38,tp:1,sd:4},
-    {xF:.40,hF:.24,tp:0,sd:5},{xF:.60,hF:.24,tp:1,sd:6},
-    {xF:.70,hF:.38,tp:0,sd:7},{xF:.79,hF:.29,tp:1,sd:8},
-    {xF:.87,hF:.43,tp:0,sd:9},{xF:.96,hF:.34,tp:1,sd:10}
+    {xF:.04,hF:.34,tp:1,sd:1},{xF:.13,hF:.43,tp:1,sd:2},
+    {xF:.21,hF:.29,tp:1,sd:3},{xF:.30,hF:.38,tp:1,sd:4},
+    {xF:.40,hF:.24,tp:1,sd:5},{xF:.60,hF:.24,tp:1,sd:6},
+    {xF:.70,hF:.38,tp:1,sd:7},{xF:.79,hF:.29,tp:1,sd:8},
+    {xF:.87,hF:.43,tp:1,sd:9},{xF:.96,hF:.34,tp:1,sd:10}
   ];
 
   function draw(ts){
@@ -7279,24 +7490,38 @@ window._startFieryAnim = function(){
     ctx.clearRect(0,0,c.width,c.height);
     var cx=c.width/2,cy=c.height,R=Math.min(c.width,c.height)*0.20;
     // Broad atmospheric sunset haze
+    // Sky gradient bands (horizon glow)
+    var skyGr=ctx.createLinearGradient(0,cy-R*3,0,cy);
+    skyGr.addColorStop(0,'rgba(180,0,40,0.0)');
+    skyGr.addColorStop(0.3,'rgba(220,30,10,0.10)');
+    skyGr.addColorStop(0.65,'rgba(255,80,0,0.22)');
+    skyGr.addColorStop(0.85,'rgba(255,140,0,0.30)');
+    skyGr.addColorStop(1,'rgba(255,200,20,0.38)');
+    ctx.fillStyle=skyGr;ctx.fillRect(0,0,c.width,cy);
     var gr=ctx.createRadialGradient(cx,cy,R*.18,cx,cy,R*5.0);
-    gr.addColorStop(0,'rgba(255,242,110,0.30)');gr.addColorStop(.18,'rgba(255,198,70,0.20)');gr.addColorStop(.40,'rgba(255,140,38,0.12)');gr.addColorStop(.65,'rgba(235,80,18,0.06)');gr.addColorStop(1,'rgba(180,35,0,0)');
+    gr.addColorStop(0,'rgba(255,230,80,0.55)');gr.addColorStop(.12,'rgba(255,140,20,0.42)');gr.addColorStop(.30,'rgba(255,60,0,0.28)');gr.addColorStop(.55,'rgba(220,10,10,0.14)');gr.addColorStop(.80,'rgba(160,0,30,0.06)');gr.addColorStop(1,'rgba(120,0,20,0)');
     ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,R*5.0,Math.PI,0);ctx.fill();
     // Sun rays
-    for(var i=0;i<20;i++){
-      var ang=-Math.PI+(i/20)*Math.PI,pulse=.82+.20*Math.sin(t*0.82+i*.72);
+    for(var i=0;i<24;i++){
+      var ang=-Math.PI+(i/24)*Math.PI,pulse=.80+.28*Math.sin(t*0.75+i*.65);
       var x1=cx+Math.cos(ang)*R*1.02,y1=cy+Math.sin(ang)*R*1.02;
-      var x2=cx+Math.cos(ang)*R*(2.6+pulse),y2=cy+Math.sin(ang)*R*(2.6+pulse);
-      ctx.strokeStyle='rgba(255,215,80,'+(0.11+0.06*Math.abs(Math.sin(i*.7)))+')';
-      ctx.lineWidth=1.8+1.4*Math.abs(Math.sin(i*.65));
+      var x2=cx+Math.cos(ang)*R*(2.8+pulse),y2=cy+Math.sin(ang)*R*(2.8+pulse);
+      var rayAlpha=(0.18+0.10*Math.abs(Math.sin(i*.6)));
+      ctx.strokeStyle=i<8?'rgba(255,80,0,'+rayAlpha+')':i<16?'rgba(255,160,0,'+rayAlpha+')':'rgba(255,220,60,'+rayAlpha+')';
+      ctx.lineWidth=2.0+1.8*Math.abs(Math.sin(i*.70));
       ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
     }
-    // Sun disc
-    ctx.fillStyle='rgba(255,240,105,0.38)';ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.fill();
-    ctx.strokeStyle='rgba(255,222,95,0.62)';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.stroke();
+    // Sun disc — deep orange-red core
+    var sunGr=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+    sunGr.addColorStop(0,'rgba(255,255,180,0.90)');
+    sunGr.addColorStop(0.30,'rgba(255,200,40,0.80)');
+    sunGr.addColorStop(0.65,'rgba(255,90,0,0.65)');
+    sunGr.addColorStop(1,'rgba(220,20,0,0.45)');
+    ctx.fillStyle=sunGr;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.fill();
+    ctx.strokeStyle='rgba(255,100,0,0.80)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.stroke();
     // Inner bright core
-    ctx.fillStyle='rgba(255,255,190,0.24)';ctx.beginPath();ctx.arc(cx,cy,R*.50,Math.PI,0);ctx.fill();
-    ctx.fillStyle='rgba(255,255,230,0.12)';ctx.beginPath();ctx.arc(cx,cy,R*.22,Math.PI,0);ctx.fill();
+    ctx.fillStyle='rgba(255,255,210,0.55)';ctx.beginPath();ctx.arc(cx,cy,R*.40,Math.PI,0);ctx.fill();
+    ctx.fillStyle='rgba(255,255,240,0.28)';ctx.beginPath();ctx.arc(cx,cy,R*.18,Math.PI,0);ctx.fill();
     window._themeAnimFrame2=requestAnimationFrame(draw);
   }
   window._themeAnimFrame2=requestAnimationFrame(draw);
@@ -8564,6 +8789,10 @@ window._closePlannerToCalendar = function() {
 
 var cDiv = document.getElementById('c');
 var gDiv = document.getElementById('g');
+// Ensure calendar is at its on-screen position before measuring the date button rect
+gDiv.style.transition = 'none';
+gDiv.style.transform = 'translateX(0%)';
+gDiv.style.opacity = '0';
 // Reverse circle: full-screen → collapses back to calendar date button
 (function() {
 var _iso = window._activeDate || getTodayISO();
@@ -8883,7 +9112,7 @@ section.innerHTML =
 '<div style="position:absolute;top:2px;left:2px;width:14px;height:14px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div></div>' +
 '<span style="font-size:12px;font-weight:600;color:#475569;font-family:\'Inter\',sans-serif;">Spread work across multiple days</span></div>' +
 '<div class="sp-opts" style="display:none;">' +
-'<label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Min per day: <span class="sp-min-lbl">30 min</span></label>' +
+'<label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Time: <span class="sp-min-lbl">30 min</span></label>' +
 '<input type="range" class="sp-slider" min="10" max="120" step="5" value="30" style="width:100%;accent-color:#6366f1;margin-bottom:4px;">' +
 '<div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">≈ <span class="sp-days">—</span> days</div>' +
 '<div style="display:flex;gap:12px;margin-bottom:10px;font-size:12px;font-weight:600;color:#475569;">' +
@@ -9262,6 +9491,7 @@ wrapper.appendChild(trigger);
 container.appendChild(wrapper);
 }
 window._currentEditRoutineId = null;
+function _fmtRoutineTime(mins) { mins=parseInt(mins); var h=Math.floor(mins/60),m=mins%60; if(h>0&&m>0)return h+' hr '+m+' min'; if(h>0)return h+' hr'; return m+' min'; }
 window._closeRoutinePanel = function() {
 var panel = document.getElementById('spRoutinePanel');
 if (!panel || panel.style.display === 'none' || panel._rpClosing) { _cancelRoutineForm(); window._currentEditRoutineId = null; return; }
@@ -9312,8 +9542,9 @@ panel.innerHTML =
 '<option value="easy">🟢 Easy</option><option value="medium">🟡 Medium</option><option value="hard">🔴 Hard</option><option value="priority">🟣 Priority</option>' +
 '</select></div></div>' +
 
-'<div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Time: <span id="spRTimeVal">30</span> min</label>' +
-'<input type="range" id="spRTime" min="10" max="180" step="5" value="30" style="width:100%;accent-color:#6366f1;"></div>' +
+'<div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Time: <span id="spRTimeVal">30 min</span></label>' +
+'<input type="range" id="spRTime" min="10" max="300" step="5" value="30" style="width:100%;accent-color:#6366f1;"></div>' +
+
 '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px;">' +
 '<div><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Start Date (optional)</label>' +
 '<div id="spRStartDatePicker"></div><input id="spRStartDate" type="text" style="display:none;"></div>' +
@@ -9341,7 +9572,7 @@ _initRoutineDatePicker('spREndDate', 'spREndDatePicker');
 var subj = panel.querySelector('#spRSubject');
 var lvl = document.getElementById('schoolLevel').value;
 subjects[lvl].forEach(function(s) { var o = document.createElement('option'); o.textContent = s; subj.appendChild(o); });
-panel.querySelector('#spRTime').addEventListener('input', function() { panel.querySelector('#spRTimeVal').textContent = this.value; });
+panel.querySelector('#spRTime').addEventListener('input', function() { panel.querySelector('#spRTimeVal').textContent = _fmtRoutineTime(parseInt(this.value)); });
 
 if (typeof makeCustomSelects === 'function') makeCustomSelects(panel.querySelector('#spRoutineForm'));
 
@@ -9366,7 +9597,7 @@ if (f) f.style.display = 'none';
 if (ab) ab.style.display = 'block';
 var _rn = document.getElementById('spRName'); if (_rn) _rn.value = '';
 var _rt = document.getElementById('spRTime'); if (_rt) { _rt.value = 30; }
-var _rv = document.getElementById('spRTimeVal'); if (_rv) _rv.textContent = '30';
+var _rv = document.getElementById('spRTimeVal'); if (_rv) _rv.textContent = '30 min';
 var _rsd = document.getElementById('spRStartDate'); if (_rsd) { _rsd.value = ''; if (_rsd._updateTrigger) _rsd._updateTrigger(); }
 var _red = document.getElementById('spREndDate'); if (_red) { _red.value = ''; if (_red._updateTrigger) _red._updateTrigger(); }
 document.querySelectorAll('#spRDays button').forEach(function(b) {
@@ -9465,7 +9696,7 @@ var _rn = document.getElementById('spRName'); if (_rn) _rn.value = r.name || '';
 var _rsd = document.getElementById('spRStartDate'); if (_rsd) { _rsd.value = r.startDate || ''; if (_rsd._updateTrigger) _rsd._updateTrigger(); }
 var _red = document.getElementById('spREndDate'); if (_red) { _red.value = r.endDate || ''; if (_red._updateTrigger) _red._updateTrigger(); }
 var _rt = document.getElementById('spRTime'); if (_rt) { _rt.value = r.time || 30; }
-var _rv = document.getElementById('spRTimeVal'); if (_rv) _rv.textContent = r.time || 30;
+var _rv = document.getElementById('spRTimeVal'); if (_rv) _rv.textContent = _fmtRoutineTime(r.time || 30);
 var _spRDiff = document.getElementById('spRDiff'); if (_spRDiff) { _spRDiff.value = r.difficulty || 'easy'; if (typeof syncCustomSelect === 'function') syncCustomSelect(_spRDiff); }
 var _spRSubj = document.getElementById('spRSubject'); if (_spRSubj) { _spRSubj.value = r.subject || ''; if (typeof syncCustomSelect === 'function') syncCustomSelect(_spRSubj); }
 document.querySelectorAll('#spRDays button').forEach(function(b) {
@@ -9505,7 +9736,12 @@ window._manageExceptions = function(id, _isRefresh) {
 var _erR = _getRoutines().find(function(x) { return x.id === id; });
 if (!_erR) return;
 var _erExist = document.getElementById('spExceptionsOverlay');
-if (_erExist) _erExist.remove();
+var _savedScroll = 0;
+if (_erExist) {
+  var _scrollCont = _erExist.querySelector('div[style*="max-height:55vh"]');
+  if (_scrollCont) _savedScroll = _scrollCont.scrollTop;
+  _erExist.remove();
+}
 if (!_isRefresh) { var _rpForEx = document.getElementById('spRoutinePanel'); if (_rpForEx) _rpForEx.style.zIndex = '350000'; }
 var _erTD = new Date(); var _erMaxD = new Date(); _erMaxD.setMonth(_erMaxD.getMonth() + 13);
 var _DOW2 = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -9538,6 +9774,10 @@ _erOv.innerHTML = '<div style="background:' + (_erDkM ? '#1a2236' : 'white') + '
 var _erClose = function() { _erOv.remove(); var _rpR = document.getElementById('spRoutinePanel'); if (_rpR) _rpR.style.zIndex = '300000'; };
 _erOv.addEventListener('click', function(e) { if (e.target === _erOv) _erClose(); });
 document.body.appendChild(_erOv);
+if (_savedScroll > 0) {
+  var _newScrollCont = _erOv.querySelector('div[style*="max-height:55vh"]');
+  if (_newScrollCont) setTimeout(function(){ _newScrollCont.scrollTop = _savedScroll; }, 0);
+}
 var _erCloseBtn = document.getElementById('spExCloseBtn'); if (_erCloseBtn) _erCloseBtn.addEventListener('click', _erClose);
 };
 
