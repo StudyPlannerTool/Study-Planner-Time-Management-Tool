@@ -2953,10 +2953,10 @@ window._openImportExportPage = function() {
   body.innerHTML =
     '<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;max-width:700px;width:100%;">' +
     '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
-    '<div style="font-size:40px;margin-bottom:14px;">📤</div>' +
-    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Export</h3>' +
-    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Download a complete backup of all your assignments, routines, stats, and settings. You can use this file to restore your data on any device.</p>' +
-    '<button id="spExportBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);width:100%;">⬇ Download Backup</button></div>' +
+    '<div style="font-size:40px;margin-bottom:14px;">📄</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Export as PDF</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Generate a complete schedule of all your assignments across every day, including routines. Opens in a new tab — click the save button inside to download as PDF.</p>' +
+    '<button id="spExportBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);width:100%;">📄 Export as PDF</button></div>' +
     '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
     '<div style="font-size:40px;margin-bottom:14px;">📥</div>' +
     '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Import</h3>' +
@@ -2964,10 +2964,10 @@ window._openImportExportPage = function() {
     '<input type="file" id="spImportFile" accept=".json" style="display:none;">' +
     '<button id="spImportBtn" style="background:'+(dk?'rgba(99,102,241,0.15)':'rgba(99,102,241,0.08)')+';border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 24px;color:#6366f1;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;">⬆ Choose Backup File</button></div>' +
     '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
-    '<div style="font-size:40px;margin-bottom:14px;">🖨️</div>' +
-    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Print / PDF</h3>' +
-    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Generate a clean, human-readable summary of all your scheduled assignments. Save it as a PDF using your browser\'s print dialog — no code required.</p>' +
-    '<button id="spPrintBtn" style="background:linear-gradient(135deg,#059669,#10b981);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,0.35);width:100%;">🖨️ Print / Save as PDF</button></div>' +
+    '<div style="font-size:40px;margin-bottom:14px;">💾</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Backup Data</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Download a complete backup of all your assignments, routines, stats, and settings. Use this file to restore your data on any device.</p>' +
+    '<button id="spPrintBtn" style="background:linear-gradient(135deg,#059669,#10b981);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,0.35);width:100%;">⬇ Download Backup</button></div>' +
     '</div>';
   page.appendChild(body);
   document.body.appendChild(page);
@@ -2980,20 +2980,58 @@ window._openImportExportPage = function() {
     setTimeout(function(){ page.style.display='none'; page.style.transform=''; page.style.opacity=''; page.style.transition=''; }, 320);
   });
   document.getElementById('spExportBtn').addEventListener('click', function() {
-    var _ed = { _type: 'study-planner-backup', _version: 2, _exported: new Date().toISOString(), days: {}, routines: [], settings: {}, stats: {} };
+    var _lvl = localStorage.getItem('studyPlanner_level') || 'high';
+    var _lvlNames = { middle: 'Middle School', high: 'High School', college: 'College' };
+    var _days = {};
     Object.keys(localStorage).forEach(function(k) {
-      if (k.startsWith('sp_day_') || k.startsWith('sp_done_')) { try { _ed.days[k] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
+      if (!k.startsWith('sp_day_')) return;
+      try { var _t = JSON.parse(localStorage.getItem(k) || '[]'); if (_t.length > 0) _days[k.slice(7)] = _t.slice(); } catch(e) {}
     });
-    var _rts = localStorage.getItem('sp_routines'); if (_rts) { try { _ed.routines = JSON.parse(_rts); } catch(e){} }
-    ['studyPlanner_level','studyPlanner_theme','studyPlanner_dailyLimit','studyPlanner_orderMode','studyPlanner_textScale','studyPlanner_colorblind'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.settings[k]=v; });
-    ['studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history','sp_ext_stats'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.stats[k]=v; });
-    var _blob = new Blob([JSON.stringify(_ed, null, 2)], { type: 'application/json' });
-    var _url = URL.createObjectURL(_blob);
-    var _a = document.createElement('a'); _a.href = _url;
-    _a.download = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.json';
-    document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
-    setTimeout(function(){ URL.revokeObjectURL(_url); }, 1000);
-    window._showToast('\u2713 Backup downloaded! Keep this file safe.', false, 'exportDone', 6000);
+    var _routines = [];
+    try { _routines = JSON.parse(localStorage.getItem('sp_routines') || '[]'); } catch(e) {}
+    var _todayStr = (function(){ var d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+    var _maxRD = new Date(); _maxRD.setMonth(_maxRD.getMonth() + 13);
+    var _maxRISO = _maxRD.getFullYear()+'-'+String(_maxRD.getMonth()+1).padStart(2,'0')+'-'+String(_maxRD.getDate()).padStart(2,'0');
+    _routines.forEach(function(r) {
+      if (!r.days || !r.days.length) return;
+      var _d = new Date(_todayStr + 'T00:00:00');
+      while (true) {
+        var _rIso = _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');
+        if (_rIso > _maxRISO) break;
+        if (r.days.includes(_d.getDay())) {
+          if ((!r.startDate||_rIso>=r.startDate)&&(!r.endDate||_rIso<=r.endDate)&&(!r.exceptions||!r.exceptions.includes(_rIso))) {
+            if (!_days[_rIso]) _days[_rIso] = [];
+            if (!_days[_rIso].some(function(t){return t.routineId===r.id;})) {
+              _days[_rIso] = _days[_rIso].concat([{name:r.name||r.subject,subject:r.subject,time:r.time,difficulty:r.difficulty,routineId:r.id}]);
+            }
+          }
+        }
+        _d.setDate(_d.getDate() + 1);
+      }
+    });
+    var _sorted = Object.keys(_days).sort();
+    if (!_sorted.length) { showCustomAlert('No assignments found to export. Add some assignments first!'); return; }
+    var _html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Study Plan</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;color:#1e293b;background:#fff;}@media print{.no-print{display:none!important;}.main{padding:16px;}}.toolbar{position:sticky;top:0;background:#fff;border-bottom:2px solid #e2e8f0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.08);}.toolbar-title{font-size:18px;font-weight:800;color:#6366f1;}.btn-save{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:10px 22px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(99,102,241,0.35);transition:transform 0.15s,box-shadow 0.15s;}.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(99,102,241,0.45);}.main{max-width:820px;margin:0 auto;padding:32px 24px 60px;}h1{font-size:26px;color:#1e293b;margin-bottom:8px;}h2{font-size:15px;color:#4f46e5;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:10px;margin-top:0;}.meta{font-size:13px;color:#64748b;margin-bottom:20px;padding:10px 16px;background:#f8f7ff;border-radius:8px;border-left:4px solid #6366f1;}.day-section{margin-bottom:28px;page-break-inside:avoid;}.task{padding:9px 13px;margin:5px 0;border-radius:6px;border-left:4px solid #6366f1;background:#f8f7ff;page-break-inside:avoid;}.diff-easy{border-left-color:#16a34a;background:#f0fdf4;}.diff-medium{border-left-color:#d97706;background:#fffbeb;}.diff-hard{border-left-color:#dc2626;background:#fef2f2;}.diff-priority{border-left-color:#7c3aed;background:#faf5ff;}.task-name{font-weight:700;font-size:13px;}.task-detail{font-size:11px;color:#64748b;margin-top:2px;}.day-total{font-size:12px;color:#6366f1;font-weight:700;margin-top:5px;text-align:right;}.footer{text-align:center;font-size:11px;color:#94a3b8;margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;}</style></head><body>';
+    _html += '<div class="toolbar no-print"><span class="toolbar-title">&#128218; Study Plan</span><button class="btn-save" onclick="window.print()">&#8659; Save as PDF</button></div>';
+    _html += '<div class="main"><h1>Study Plan</h1><div class="meta">School Level: <strong>'+(_lvlNames[_lvl]||_lvl)+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Generated: <strong>'+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;'+_sorted.length+' day(s) scheduled</div>';
+    _sorted.forEach(function(iso) {
+      var _d = new Date(iso+'T00:00:00');
+      _html += '<div class="day-section"><h2>'+_d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+'</h2>';
+      var _total = 0;
+      _days[iso].forEach(function(t) {
+        var _m = parseInt(t.time)||0; _total += _m;
+        var _h = Math.floor(_m/60), _mn = _m%60;
+        var _ts = _h>0?(_mn>0?_h+'h '+_mn+'m':_h+'h'):_mn+'m';
+        var _dc = (t.difficulty||'easy').toLowerCase();
+        _html += '<div class="task diff-'+_dc+'"><div class="task-name">'+(t.name||t.subject||'Assignment')+'</div><div class="task-detail">Subject: '+(t.subject||'\u2014')+' \u00b7 Time: '+_ts+' \u00b7 Difficulty: '+(t.difficulty||'easy')+(t.routineId?' \u00b7 Routine':'')+(t.isSpreadPart?' (spread)':'')+'</div></div>';
+      });
+      var _th=Math.floor(_total/60),_tm=_total%60;
+      _html += '<div class="day-total">Total: '+(_th>0?(_tm>0?_th+'h '+_tm+'m':_th+'h'):_tm+'m')+'</div></div>';
+    });
+    _html += '<div class="footer">Generated by Study Planner &amp; Time Management Tool</div></div></body></html>';
+    var _w = window.open('', '_blank');
+    if (_w) { _w.document.write(_html); _w.document.close(); }
+    else { showCustomAlert('Please allow pop-ups in your browser to use Export as PDF, then try again.'); }
   });
   document.getElementById('spImportBtn').addEventListener('click', function() { document.getElementById('spImportFile').click(); });
   document.getElementById('spImportFile').addEventListener('change', function() {
@@ -3024,35 +3062,21 @@ window._openImportExportPage = function() {
     reader.readAsText(file);
     this.value = '';
   });
-  document.getElementById('spPrintBtn').addEventListener('click', function() {
-    var _lvl = localStorage.getItem('studyPlanner_level') || 'high';
-    var _lvlNames = { middle: 'Middle School', high: 'High School', college: 'College' };
-    var _days = {};
+ document.getElementById('spPrintBtn').addEventListener('click', function() {
+    var _ed = { _type: 'study-planner-backup', _version: 2, _exported: new Date().toISOString(), days: {}, routines: [], settings: {}, stats: {} };
     Object.keys(localStorage).forEach(function(k) {
-      if (!k.startsWith('sp_day_')) return;
-      try { var _t = JSON.parse(localStorage.getItem(k) || '[]'); if (_t.length > 0) _days[k.slice(7)] = _t; } catch(e) {}
+      if (k.startsWith('sp_day_') || k.startsWith('sp_done_')) { try { _ed.days[k] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
     });
-    var _sorted = Object.keys(_days).sort();
-    if (!_sorted.length) { showCustomAlert('No assignments found to print. Add some assignments first!'); return; }
-    var _html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Study Plan</title><style>*{box-sizing:border-box;}body{font-family:Arial,sans-serif;margin:30px auto;color:#1e293b;max-width:800px;}h1{color:#6366f1;font-size:26px;margin-bottom:4px;}h2{color:#475569;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-top:26px;font-size:15px;}.task{padding:9px 13px;margin:5px 0;border-radius:6px;border-left:4px solid #6366f1;background:#f8f7ff;page-break-inside:avoid;}.diff-easy{border-left-color:#16a34a;background:#f0fdf4;}.diff-medium{border-left-color:#d97706;background:#fffbeb;}.diff-hard{border-left-color:#dc2626;background:#fef2f2;}.diff-priority{border-left-color:#7c3aed;background:#faf5ff;}.task-name{font-weight:bold;font-size:13px;}.task-detail{font-size:11px;color:#64748b;margin-top:2px;}.day-total{font-size:12px;color:#6366f1;font-weight:700;margin-top:5px;margin-bottom:14px;}.meta{font-size:13px;color:#64748b;margin-bottom:18px;}hr{border:none;border-top:1px solid #e2e8f0;margin-bottom:8px;}@media print{body{margin:15px;}}</style></head><body>';
-    _html += '<h1>\uD83D\uDCDA Study Plan</h1><div class="meta">School Level: <strong>' + (_lvlNames[_lvl]||_lvl) + '</strong>&nbsp;&nbsp;·&nbsp;&nbsp;Generated: <strong>' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) + '</strong></div><hr>';
-    _sorted.forEach(function(iso) {
-      var _d = new Date(iso+'T00:00:00');
-      _html += '<h2>' + _d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + '</h2>';
-      var _total = 0;
-      _days[iso].forEach(function(t) {
-        var _m = parseInt(t.time)||0; _total += _m;
-        var _h = Math.floor(_m/60), _mn = _m%60;
-        var _ts = _h>0?(_mn>0?_h+'h '+_mn+'m':_h+'h'):_mn+'m';
-        _html += '<div class="task diff-'+( t.difficulty||'easy')+'"><div class="task-name">'+(t.name||t.subject||'Assignment')+'</div><div class="task-detail">Subject: '+(t.subject||'\u2014')+' \u00b7 Time: '+_ts+' \u00b7 Difficulty: '+(t.difficulty||'easy')+'</div></div>';
-      });
-      var _th=Math.floor(_total/60),_tm=_total%60;
-      _html += '<div class="day-total">Total study time: '+(_th>0?(_tm>0?_th+'h '+_tm+'m':_th+'h'):_tm+'m')+'</div>';
-    });
-    _html += '<scr'+'ipt>window.onload=function(){window.print();};<\/script></body></html>';
-    var _w = window.open('','_blank');
-    if (_w) { _w.document.write(_html); _w.document.close(); }
-    else { showCustomAlert('Please allow pop-ups in your browser to use Print / Save as PDF, then try again.'); }
+    var _rts = localStorage.getItem('sp_routines'); if (_rts) { try { _ed.routines = JSON.parse(_rts); } catch(e){} }
+    ['studyPlanner_level','studyPlanner_theme','studyPlanner_dailyLimit','studyPlanner_orderMode','studyPlanner_textScale','studyPlanner_colorblind'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.settings[k]=v; });
+    ['studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history','sp_ext_stats'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.stats[k]=v; });
+    var _blob = new Blob([JSON.stringify(_ed, null, 2)], { type: 'application/json' });
+    var _url = URL.createObjectURL(_blob);
+    var _a = document.createElement('a'); _a.href = _url;
+    _a.download = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
+    setTimeout(function(){ URL.revokeObjectURL(_url); }, 1000);
+    window._showToast('\u2713 Backup downloaded! Keep this file safe.', false, 'backupDone', 6000);
   });
 };
 
@@ -7871,8 +7895,10 @@ if (el) el.style.display = (id === subId) ? 'block' : 'none';
 if (titleEl) titleEl.textContent = title || '';
 if (subId === 'limitSub') initLimitSlider();
 if (subId === 'a11ySub') initA11yUI();
+var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
-var toH = subPanel.offsetHeight;
+var rawToH = subPanel.scrollHeight || subPanel.offsetHeight || 200;
+var toH = Math.min(rawToH, _maxPanelH);
 x.style.height = fromH + 'px';
 x.offsetHeight; // force reflow
 x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
@@ -7881,7 +7907,7 @@ subPanel.style.transform = 'translateX(0)';
 x.style.height = Math.max(toH, 60) + 'px';
 setTimeout(function() {
 x.style.transition = 'none';
-x.style.height = Math.max(subPanel.scrollHeight, 60) + 'px';
+x.style.height = '';
 void x.offsetHeight;
 x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
 }, 390);
@@ -7892,8 +7918,10 @@ var x = document.getElementById('x');
 var mainPanel = document.getElementById('settingsMainPanel');
 var subPanel = document.getElementById('settingsSubPanel');
 if (!x || !mainPanel || !subPanel) return;
+var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
-var toH = mainPanel.offsetHeight;
+var rawToH = mainPanel.scrollHeight || mainPanel.offsetHeight || 200;
+var toH = Math.min(rawToH, _maxPanelH);
 x.style.height = fromH + 'px';
 x.offsetHeight;
 mainPanel.style.transform = '';
