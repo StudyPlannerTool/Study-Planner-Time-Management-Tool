@@ -1574,34 +1574,34 @@ var stopTimer = function() {};
 var launchMilestoneConfetti = function() {};
 /* ── Global toast system ── */
 window._showToast = function(msg, isError, id, duration) {
-  if (duration === undefined) duration = 10000;
-  if (window.tutorialActive && isError) return;
-  if (id && document.getElementById('_spToast_'+id)) return;
-  var existing = document.querySelectorAll('._spToastEl:not([data-hiding])');
-  var topOffset = 18;
-  existing.forEach(function(t){ topOffset += (t.offsetHeight||44)+8; });
-  var dk = document.body.classList.contains('assignmentsdark');
-  var toast = document.createElement('div'); toast.className = '_spToastEl';
-  if (id) toast.id = '_spToast_'+id;
-  toast.style.cssText = 'position:fixed;top:'+topOffset+'px;left:50%;transform:translateX(-50%) translateY(-10px);z-index:999999;padding:10px 16px 10px 20px;border-radius:12px;font-family:"Inter",sans-serif;font-size:13px;font-weight:600;pointer-events:all;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 8px 28px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.28s ease,transform 0.28s cubic-bezier(0.16,1,0.3,1);display:inline-flex;align-items:center;gap:10px;color:'+(dk?'#e2e8f0':'#1e293b')+';background:'+(dk?'#1e2d3d':'white')+';border:1.5px solid '+(isError?'rgba(239,68,68,0.35)':'rgba(5,150,105,0.35)')+';';
-  var sp = document.createElement('span'); sp.innerHTML = msg; toast.appendChild(sp);
-  var xb = document.createElement('button'); xb.innerHTML = '&#x2715;'; xb.title = 'Dismiss';
-  xb.style.cssText = 'background:transparent;border:none;cursor:pointer;padding:0;color:inherit;opacity:0.55;font-size:13px;line-height:1;flex-shrink:0;margin-left:4px;font-family:inherit;';
-  xb.addEventListener('click', function(){ window._hideToast(toast); }); toast.appendChild(xb);
-  document.body.appendChild(toast);
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ toast.style.opacity='1'; toast.style.transform='translateX(-50%) translateY(0)'; }); });
-  if (duration>0) { toast._autoTimer = setTimeout(function(){ window._hideToast(toast); }, duration); }
-  return toast;
+if (duration === undefined) duration = 10000;
+if (window.tutorialActive && isError) return;
+if (id && document.getElementById('_spToast_'+id)) return;
+var existing = document.querySelectorAll('._spToastEl:not([data-hiding])');
+var topOffset = 18;
+existing.forEach(function(t){ topOffset += (t.offsetHeight||44)+8; });
+var dk = document.body.classList.contains('assignmentsdark');
+var toast = document.createElement('div'); toast.className = '_spToastEl';
+if (id) toast.id = '_spToast_'+id;
+toast.style.cssText = 'position:fixed;top:'+topOffset+'px;left:50%;transform:translateX(-50%) translateY(-10px);z-index:999999;padding:10px 16px 10px 20px;border-radius:12px;font-family:"Inter",sans-serif;font-size:13px;font-weight:600;pointer-events:all;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 8px 28px rgba(0,0,0,0.15);opacity:0;transition:opacity 0.28s ease,transform 0.28s cubic-bezier(0.16,1,0.3,1);display:inline-flex;align-items:center;gap:10px;color:'+(dk?'#e2e8f0':'#1e293b')+';background:'+(dk?'#1e2d3d':'white')+';border:1.5px solid '+(isError?'rgba(239,68,68,0.35)':'rgba(5,150,105,0.35)')+';';
+var sp = document.createElement('span'); sp.innerHTML = msg; toast.appendChild(sp);
+var xb = document.createElement('button'); xb.innerHTML = '&#x2715;'; xb.title = 'Dismiss';
+xb.style.cssText = 'background:transparent;border:none;cursor:pointer;padding:0;color:inherit;opacity:0.55;font-size:13px;line-height:1;flex-shrink:0;margin-left:4px;font-family:inherit;';
+xb.addEventListener('click', function(){ window._hideToast(toast); }); toast.appendChild(xb);
+document.body.appendChild(toast);
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ toast.style.opacity='1'; toast.style.transform='translateX(-50%) translateY(0)'; }); });
+if (duration>0) { toast._autoTimer = setTimeout(function(){ window._hideToast(toast); }, duration); }
+return toast;
 };
 window._hideToast = function(el) {
-  if (!el||el.dataset.hiding) return; el.dataset.hiding='1';
-  if (el._autoTimer) clearTimeout(el._autoTimer);
-  el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(-10px)';
-  setTimeout(function(){ if(el.parentNode)el.remove(); window._repositionToasts(); },320);
+if (!el||el.dataset.hiding) return; el.dataset.hiding='1';
+if (el._autoTimer) clearTimeout(el._autoTimer);
+el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(-10px)';
+setTimeout(function(){ if(el.parentNode)el.remove(); window._repositionToasts(); },320);
 };
 window._repositionToasts = function() {
-  var ts = document.querySelectorAll('._spToastEl:not([data-hiding])'), top=18;
-  ts.forEach(function(t){ t.style.top=top+'px'; top+=(t.offsetHeight||44)+8; });
+var ts = document.querySelectorAll('._spToastEl:not([data-hiding])'), top=18;
+ts.forEach(function(t){ t.style.top=top+'px'; top+=(t.offsetHeight||44)+8; });
 };
 /* ─────────────────────────── */
 
@@ -1882,75 +1882,75 @@ renderStudyStats();
 }
 
 function renderStudyStats() {
-  const today = getLocalDateStr();
-  const weekStart = getWeekStartStr();
-  const savedDate = localStorage.getItem("studyTime_today_date");
-  const todaySec = (savedDate === today) ? parseInt(localStorage.getItem("studyTime_today") || "0") : 0;
-  const savedWeekStart = localStorage.getItem("studyTime_week_start");
-  const weekSec = (savedWeekStart === weekStart) ? parseInt(localStorage.getItem("studyTime_week") || "0") : 0;
-  const totalSec = parseInt(localStorage.getItem("studyTime_total") || "0");
-  const todayEl = document.getElementById("statToday");
-  const weekEl = document.getElementById("statWeek");
-  const totalEl = document.getElementById("statTotal");
-  if (todayEl) todayEl.innerHTML = formatStudyTime(todaySec);
-  if (weekEl) weekEl.innerHTML = formatStudyTime(weekSec);
-  if (totalEl) totalEl.innerHTML = formatStudyTime(totalSec);
+const today = getLocalDateStr();
+const weekStart = getWeekStartStr();
+const savedDate = localStorage.getItem("studyTime_today_date");
+const todaySec = (savedDate === today) ? parseInt(localStorage.getItem("studyTime_today") || "0") : 0;
+const savedWeekStart = localStorage.getItem("studyTime_week_start");
+const weekSec = (savedWeekStart === weekStart) ? parseInt(localStorage.getItem("studyTime_week") || "0") : 0;
+const totalSec = parseInt(localStorage.getItem("studyTime_total") || "0");
+const todayEl = document.getElementById("statToday");
+const weekEl = document.getElementById("statWeek");
+const totalEl = document.getElementById("statTotal");
+if (todayEl) todayEl.innerHTML = formatStudyTime(todaySec);
+if (weekEl) weekEl.innerHTML = formatStudyTime(weekSec);
+if (totalEl) totalEl.innerHTML = formatStudyTime(totalSec);
 }
 
 /* ── Extended Stats System ── */
 function _getExtStats() { try { return JSON.parse(localStorage.getItem('sp_ext_stats') || '{}'); } catch(e) { return {}; } }
 function _saveExtStats(s) { try { localStorage.setItem('sp_ext_stats', JSON.stringify(s)); } catch(e) {} }
 function _pruneStatObj(obj, days) {
-  var cut = new Date(); cut.setDate(cut.getDate() - (days||90));
-  var cutISO = cut.getFullYear()+'-'+String(cut.getMonth()+1).padStart(2,'0')+'-'+String(cut.getDate()).padStart(2,'0');
-  Object.keys(obj).forEach(function(k){ if(k < cutISO) delete obj[k]; });
+var cut = new Date(); cut.setDate(cut.getDate() - (days||90));
+var cutISO = cut.getFullYear()+'-'+String(cut.getMonth()+1).padStart(2,'0')+'-'+String(cut.getDate()).padStart(2,'0');
+Object.keys(obj).forEach(function(k){ if(k < cutISO) delete obj[k]; });
 }
 function _recordStatsSessionStart() {
-  var now = Date.now();
-  var s = _getExtStats();
-  if (!s.sessionStarts) s.sessionStarts = [];
-  s.sessionStarts.push(now);
-  if (s.sessionStarts.length > 60) s.sessionStarts = s.sessionStarts.slice(-60);
-  // planning time
-  if (window._plannerEntryTime) {
-    var planSecs = Math.round((now - window._plannerEntryTime) / 1000);
-    if (planSecs > 0 && planSecs < 7200) {
-      var iso = window._activeDate || getLocalDateStr();
-      if (!s.planningPerDay) s.planningPerDay = {};
-      s.planningPerDay[iso] = (s.planningPerDay[iso] || 0) + planSecs;
-      _pruneStatObj(s.planningPerDay);
-    }
-    window._plannerEntryTime = null;
-  }
-  // max streak update
-  var curStreak = parseInt(localStorage.getItem('streak_count') || '0');
-  if (curStreak > (s.maxStreak || 0)) s.maxStreak = curStreak;
-  _saveExtStats(s);
+var now = Date.now();
+var s = _getExtStats();
+if (!s.sessionStarts) s.sessionStarts = [];
+s.sessionStarts.push(now);
+if (s.sessionStarts.length > 60) s.sessionStarts = s.sessionStarts.slice(-60);
+// planning time
+if (window._plannerEntryTime) {
+var planSecs = Math.round((now - window._plannerEntryTime) / 1000);
+if (planSecs > 0 && planSecs < 7200) {
+var iso = window._activeDate || getLocalDateStr();
+if (!s.planningPerDay) s.planningPerDay = {};
+s.planningPerDay[iso] = (s.planningPerDay[iso] || 0) + planSecs;
+_pruneStatObj(s.planningPerDay);
+}
+window._plannerEntryTime = null;
+}
+// max streak update
+var curStreak = parseInt(localStorage.getItem('streak_count') || '0');
+if (curStreak > (s.maxStreak || 0)) s.maxStreak = curStreak;
+_saveExtStats(s);
 }
 function _saveFinalExtStats() {
-  if (window._inBreakSince) {
-    window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
-    window._inBreakSince = null;
-  }
-  if (window._pauseStartTime) {
-    window._sessionPauseSecs = (window._sessionPauseSecs || 0) + (Date.now() - window._pauseStartTime) / 1000;
-    window._pauseStartTime = null;
-  }
-  var s = _getExtStats();
-  var iso = window._activeDate || getLocalDateStr();
-  // daily secs for graph
-  if (!s.dailySecs) s.dailySecs = {};
-  var studyAdded = Math.round(window._sessionStudiedSeconds || 0);
-  if (studyAdded > 0) { s.dailySecs[iso] = (s.dailySecs[iso] || 0) + studyAdded; _pruneStatObj(s.dailySecs); }
-  // totals
-  s.totalBreakSecs = (s.totalBreakSecs || 0) + Math.round(window._sessionBreakSecs || 0);
-  s.totalPauseSecs = (s.totalPauseSecs || 0) + Math.round(window._sessionPauseSecs || 0);
-  // max streak
-  var cs2 = parseInt(localStorage.getItem('streak_count') || '0');
-  if (cs2 > (s.maxStreak || 0)) s.maxStreak = cs2;
-  _saveExtStats(s);
-  window._sessionBreakSecs = 0;
-  window._sessionPauseSecs = 0;
+if (window._inBreakSince) {
+window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
+window._inBreakSince = null;
+}
+if (window._pauseStartTime) {
+window._sessionPauseSecs = (window._sessionPauseSecs || 0) + (Date.now() - window._pauseStartTime) / 1000;
+window._pauseStartTime = null;
+}
+var s = _getExtStats();
+var iso = window._activeDate || getLocalDateStr();
+// daily secs for graph
+if (!s.dailySecs) s.dailySecs = {};
+var studyAdded = Math.round(window._sessionStudiedSeconds || 0);
+if (studyAdded > 0) { s.dailySecs[iso] = (s.dailySecs[iso] || 0) + studyAdded; _pruneStatObj(s.dailySecs); }
+// totals
+s.totalBreakSecs = (s.totalBreakSecs || 0) + Math.round(window._sessionBreakSecs || 0);
+s.totalPauseSecs = (s.totalPauseSecs || 0) + Math.round(window._sessionPauseSecs || 0);
+// max streak
+var cs2 = parseInt(localStorage.getItem('streak_count') || '0');
+if (cs2 > (s.maxStreak || 0)) s.maxStreak = cs2;
+_saveExtStats(s);
+window._sessionBreakSecs = 0;
+window._sessionPauseSecs = 0;
 }
 
 
@@ -1962,18 +1962,18 @@ window._sessionStudiedSeconds = (window._sessionStudiedSeconds || 0) + elapsed;
 }
 
 function finalizeSession() {
-  const total = Math.round(window._sessionStudiedSeconds || 0);
-  if (total >= 1) { saveStudiedTime(total); updateStreak(); }
-  _saveFinalExtStats();
-  window._sessionStudiedSeconds = 0;
-  window._timerActualStart = null;
-  localStorage.removeItem("studyTime_session_pending");
-  document.title = 'Study Planner & Time Management Tool';
-  releaseWakeLock();
-  const _fsTR = document.getElementById("sessionTimeRow");
-  if (_fsTR) _fsTR.style.display = "none";
-  const _fsBM = document.getElementById("breakMessage");
-  if (_fsBM) _fsBM.style.display = "none";
+const total = Math.round(window._sessionStudiedSeconds || 0);
+if (total >= 1) { saveStudiedTime(total); updateStreak(); }
+_saveFinalExtStats();
+window._sessionStudiedSeconds = 0;
+window._timerActualStart = null;
+localStorage.removeItem("studyTime_session_pending");
+document.title = 'Study Planner & Time Management Tool';
+releaseWakeLock();
+const _fsTR = document.getElementById("sessionTimeRow");
+if (_fsTR) _fsTR.style.display = "none";
+const _fsBM = document.getElementById("breakMessage");
+if (_fsBM) _fsBM.style.display = "none";
 }
 
 function renderStreakMessage(count) {
@@ -2160,26 +2160,26 @@ if (slider && timeLabel) {
 if (window._futureDateMode) { slider.max = 3000; }
 expandSliderHitArea(slider);
 slider.addEventListener('input', () => {
-  timeLabel.textContent = timeValToText(slider.value);
-  updateAssignmentSummary(div);
-  if (window._futureDateMode) {
-    var _spSec = div.querySelector('.spread-section'), _spTog = _spSec&&_spSec.querySelector('.sp-tog'), _spOpts = _spSec&&_spSec.querySelector('.sp-opts');
-    if (parseInt(slider.value) > 300) {
-      if (_spTog && _spTog.dataset.on !== '1') {
-        _spTog.dataset.on='1'; _spTog.dataset.manualOn='0'; _spTog.style.background='#6366f1';
-        var _spTh=_spTog.querySelector('div'); if(_spTh)_spTh.style.left='16px';
-        if(_spOpts)_spOpts.style.display='block';
-        var _ate=document.getElementById('_spToast_autoSpread'); if(_ate) window._hideToast(_ate);
-        window._showToast('Large tasks are automatically queued for spreading \u2014 adjust options below.', false, 'autoSpread', 8000);
-      }
-    } else {
-      if (_spTog && _spTog.dataset.on === '1' && _spTog.dataset.manualOn !== '1') {
-        _spTog.dataset.on='0'; _spTog.style.background='#cbd5e1';
-        var _spTh2=_spTog.querySelector('div'); if(_spTh2)_spTh2.style.left='2px';
-        if(_spOpts)_spOpts.style.display='none';
-      }
-    }
-  }
+timeLabel.textContent = timeValToText(slider.value);
+updateAssignmentSummary(div);
+if (window._futureDateMode) {
+var _spSec = div.querySelector('.spread-section'), _spTog = _spSec&&_spSec.querySelector('.sp-tog'), _spOpts = _spSec&&_spSec.querySelector('.sp-opts');
+if (parseInt(slider.value) > 300) {
+if (_spTog && _spTog.dataset.on !== '1') {
+_spTog.dataset.on='1'; _spTog.dataset.manualOn='0'; _spTog.style.background='#6366f1';
+var _spTh=_spTog.querySelector('div'); if(_spTh)_spTh.style.left='16px';
+if(_spOpts)_spOpts.style.display='block';
+var _ate=document.getElementById('_spToast_autoSpread'); if(_ate) window._hideToast(_ate);
+window._showToast('Large tasks are automatically queued for spreading \u2014 adjust options below.', false, 'autoSpread', 8000);
+}
+} else {
+if (_spTog && _spTog.dataset.on === '1' && _spTog.dataset.manualOn !== '1') {
+_spTog.dataset.on='0'; _spTog.style.background='#cbd5e1';
+var _spTh2=_spTog.querySelector('div'); if(_spTh2)_spTh2.style.left='2px';
+if(_spOpts)_spOpts.style.display='none';
+}
+}
+}
 });
 
 }
@@ -2189,45 +2189,45 @@ const sliderMinusBtn = div.querySelector('.slider-minus');
 const sliderPlusBtn = div.querySelector('.slider-plus');
 if (sliderMinusBtn && sliderPlusBtn) {
 sliderMinusBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const newVal = Math.max(10, parseInt(slider.value) - 5);
-  slider.value = newVal;
-  timeLabel.textContent = timeValToText(newVal);
-  updateAssignmentSummary(div);
-  saveToLocalStorage();
-  if (window._futureDateMode && newVal <= 300) {
-    var _spSecM=div.querySelector('.spread-section'),_spTogM=_spSecM&&_spSecM.querySelector('.sp-tog'),_spOptsM=_spSecM&&_spSecM.querySelector('.sp-opts');
-    if (_spTogM&&_spTogM.dataset.on==='1'&&_spTogM.dataset.manualOn!=='1') {
-      _spTogM.dataset.on='0';_spTogM.style.background='#cbd5e1';
-      var _spThM=_spTogM.querySelector('div');if(_spThM)_spThM.style.left='2px';
-      if(_spOptsM)_spOptsM.style.display='none';
-    }
-  }
+e.stopPropagation();
+const newVal = Math.max(10, parseInt(slider.value) - 5);
+slider.value = newVal;
+timeLabel.textContent = timeValToText(newVal);
+updateAssignmentSummary(div);
+saveToLocalStorage();
+if (window._futureDateMode && newVal <= 300) {
+var _spSecM=div.querySelector('.spread-section'),_spTogM=_spSecM&&_spSecM.querySelector('.sp-tog'),_spOptsM=_spSecM&&_spSecM.querySelector('.sp-opts');
+if (_spTogM&&_spTogM.dataset.on==='1'&&_spTogM.dataset.manualOn!=='1') {
+_spTogM.dataset.on='0';_spTogM.style.background='#cbd5e1';
+var _spThM=_spTogM.querySelector('div');if(_spThM)_spThM.style.left='2px';
+if(_spOptsM)_spOptsM.style.display='none';
+}
+}
 });
 
 sliderPlusBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const newVal = Math.min(parseInt(slider.max) || 300, parseInt(slider.value) + 5);
-  slider.value = newVal;
-  timeLabel.textContent = timeValToText(newVal);
-  updateAssignmentSummary(div);
-  saveToLocalStorage();
-  if (window._futureDateMode) {
-    var _spSec2=div.querySelector('.spread-section'),_spTog2=_spSec2&&_spSec2.querySelector('.sp-tog'),_spOpts2=_spSec2&&_spSec2.querySelector('.sp-opts');
-    if (newVal > 300) {
-      if (_spTog2&&_spTog2.dataset.on!=='1') {
-        _spTog2.dataset.on='1';_spTog2.dataset.manualOn='0';_spTog2.style.background='#6366f1';
-        var _spTh2b=_spTog2.querySelector('div');if(_spTh2b)_spTh2b.style.left='16px';
-        if(_spOpts2)_spOpts2.style.display='block';
-        var _ate2=document.getElementById('_spToast_autoSpread');if(_ate2)window._hideToast(_ate2);
-        window._showToast('Large tasks are automatically queued for spreading \u2014 adjust options below.',false,'autoSpread',8000);
-      }
-    } else if (_spTog2&&_spTog2.dataset.on==='1'&&_spTog2.dataset.manualOn!=='1') {
-      _spTog2.dataset.on='0';_spTog2.style.background='#cbd5e1';
-      var _spTh3=_spTog2.querySelector('div');if(_spTh3)_spTh3.style.left='2px';
-      if(_spOpts2)_spOpts2.style.display='none';
-    }
-  }
+e.stopPropagation();
+const newVal = Math.min(parseInt(slider.max) || 300, parseInt(slider.value) + 5);
+slider.value = newVal;
+timeLabel.textContent = timeValToText(newVal);
+updateAssignmentSummary(div);
+saveToLocalStorage();
+if (window._futureDateMode) {
+var _spSec2=div.querySelector('.spread-section'),_spTog2=_spSec2&&_spSec2.querySelector('.sp-tog'),_spOpts2=_spSec2&&_spSec2.querySelector('.sp-opts');
+if (newVal > 300) {
+if (_spTog2&&_spTog2.dataset.on!=='1') {
+_spTog2.dataset.on='1';_spTog2.dataset.manualOn='0';_spTog2.style.background='#6366f1';
+var _spTh2b=_spTog2.querySelector('div');if(_spTh2b)_spTh2b.style.left='16px';
+if(_spOpts2)_spOpts2.style.display='block';
+var _ate2=document.getElementById('_spToast_autoSpread');if(_ate2)window._hideToast(_ate2);
+window._showToast('Large tasks are automatically queued for spreading \u2014 adjust options below.',false,'autoSpread',8000);
+}
+} else if (_spTog2&&_spTog2.dataset.on==='1'&&_spTog2.dataset.manualOn!=='1') {
+_spTog2.dataset.on='0';_spTog2.style.background='#cbd5e1';
+var _spTh3=_spTog2.querySelector('div');if(_spTh3)_spTh3.style.left='2px';
+if(_spOpts2)_spOpts2.style.display='none';
+}
+}
 });
 
 
@@ -2744,219 +2744,219 @@ ResumeBtn.style.display = 'none';
 
 /* ── Stats Page ── */
 window._openStatsPage = function() {
-  var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
-  var ex = document.getElementById('spStatsPage'); if (ex) {
-  var _exDk = document.body.classList.contains('assignmentsdark');
-  var _exBg = document.body.style.backgroundColor || (_exDk ? '#0d0d1a' : '#f0f0ff');
-  var _exBgImg = document.body.style.backgroundImage || 'none';
-  ex.style.background = _exBg; ex.style.backgroundImage = _exBgImg;
-  var _exTitle = document.getElementById('spStatsTitle');
-  if (_exTitle) _exTitle.style.color = _exDk ? '#e2e8f0' : '#0f172a';
-  ex.style.display = 'flex';
-  ex.style.transform = 'translateY(-30px)'; ex.style.opacity = '0';
-  ex.style.transition = 'transform 0.38s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease';
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ ex.style.transform='translateY(0)'; ex.style.opacity='1'; }); });
-  _buildStatsContent(); return;
+var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
+var ex = document.getElementById('spStatsPage'); if (ex) {
+var _exDk = document.body.classList.contains('assignmentsdark');
+var _exBg = document.body.style.backgroundColor || (_exDk ? '#0d0d1a' : '#f0f0ff');
+var _exBgImg = document.body.style.backgroundImage || 'none';
+ex.style.background = _exBg; ex.style.backgroundImage = _exBgImg;
+var _exTitle = document.getElementById('spStatsTitle');
+if (_exTitle) _exTitle.style.color = _exDk ? '#e2e8f0' : '#0f172a';
+ex.style.display = 'flex';
+ex.style.transform = 'translateY(-30px)'; ex.style.opacity = '0';
+ex.style.transition = 'transform 0.38s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease';
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ ex.style.transform='translateY(0)'; ex.style.opacity='1'; }); });
+_buildStatsContent(); return;
 }
-  var dk = document.body.classList.contains('assignmentsdark');
-  var page = document.createElement('div');
-  page.id = 'spStatsPage';
- var _spBg = document.body.style.backgroundColor || (document.body.classList.contains('assignmentsdark') ? '#0d0d1a' : '#f0f0ff');
+var dk = document.body.classList.contains('assignmentsdark');
+var page = document.createElement('div');
+page.id = 'spStatsPage';
+var _spBg = document.body.style.backgroundColor || (document.body.classList.contains('assignmentsdark') ? '#0d0d1a' : '#f0f0ff');
 var _spBgImg = document.body.style.backgroundImage || 'none';
 page.style.cssText = 'position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(99,102,241,0.25) transparent;font-family:"Inter",sans-serif;background:' + _spBg + ';background-image:' + _spBgImg + ';';
 page.innerHTML = '<style>#spStatsPage::-webkit-scrollbar{width:6px;}#spStatsPage::-webkit-scrollbar-track{background:rgba(99,102,241,0.05);}#spStatsPage::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.25);border-radius:100px;}#spStatsPage::-webkit-scrollbar-thumb:hover{background:rgba(99,102,241,0.45);}body.assignmentsdark #spStatsPage::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.4);}body.assignmentsdark #spStatsPage::-webkit-scrollbar-thumb:hover{background:rgba(139,92,246,0.65);}</style>';
-  // Header
-  var hdr = document.createElement('div');
-  hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
+// Header
+var hdr = document.createElement('div');
+hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
 hdr.innerHTML = '<button id="spStatsBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;transition:color 0.2s;">← Calendar</button><span id="spStatsTitle" style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:'+(dk?'#e2e8f0':'#0f172a')+';letter-spacing:-0.3px;">📊 My Stats</span><div style="width:80px;"></div>';
-  page.appendChild(hdr);
-  var body = document.createElement('div');
-  body.id = 'spStatsBody';
-  body.style.cssText = 'flex:1;max-width:760px;width:100%;margin:0 auto;padding:28px 20px 60px;box-sizing:border-box;';
-  page.appendChild(body);
-  // Reset button at bottom
-  var resetRow = document.createElement('div');
-  resetRow.style.cssText = 'max-width:760px;width:100%;margin:0 auto;padding:0 20px 40px;box-sizing:border-box;text-align:center;';
-  resetRow.innerHTML = '<button id="spStatsResetBtn" style="background:transparent;border:1.5px solid rgba(239,68,68,0.4);border-radius:10px;padding:10px 22px;color:#ef4444;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:background 0.15s,border-color 0.15s;">🗑 Reset All Stats</button>';
-  page.appendChild(resetRow);
-  document.body.appendChild(page);
-  // animate in
-  page.style.transform = 'translateY(-30px)'; page.style.opacity = '0';
-  page.style.transition = 'transform 0.38s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease';
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ page.style.transform = 'translateY(0)'; page.style.opacity = '1'; }); });
-  _buildStatsContent();
-  document.getElementById('spStatsBackBtn').addEventListener('click', function() {
-    page.style.transition = 'transform 0.3s ease,opacity 0.25s ease';
-    page.style.transform = 'translateY(-20px)'; page.style.opacity = '0';
-    setTimeout(function(){ page.style.display = 'none'; page.style.transform = ''; page.style.opacity = ''; page.style.transition = ''; }, 320);
-  });
-  document.getElementById('spStatsResetBtn').addEventListener('click', function() {
-    var _rMsg = document.getElementById('customModalMsg'), _rOk = document.getElementById('customModalOk'), _rCan = document.getElementById('customModalCancel');
-    _rMsg.innerHTML = 'Type <strong style="color:#ef4444;">reset-stats</strong> to confirm. This clears all your stat history permanently.';
-    var _rInp = document.createElement('input'); _rInp.type='text'; _rInp.placeholder='Type reset-stats here'; _rInp.autocomplete='off';
-    var _rDk = document.body.classList.contains('assignmentsdark');
-    _rInp.style.cssText = 'width:100%;padding:9px 12px;font-size:0.9rem;border:1.5px solid rgba(99,102,241,0.22);border-radius:10px;box-sizing:border-box;margin:12px 0 4px;font-family:\'Inter\',sans-serif;background:'+(_rDk?'#1e2d3d':'white')+';color:'+(_rDk?'#e2e8f0':'#1e293b')+';outline:none;';
-    _rMsg.insertAdjacentElement('afterend', _rInp);
-    _rCan.style.display='block'; _rCan.textContent='Cancel'; _rOk.textContent='Confirm';
-    _openCustomModal();
-    setTimeout(function(){ _rInp.focus(); }, 200);
-    function _rClean(){ _rOk.removeEventListener('click',_rY); _rCan.removeEventListener('click',_rN); if(_rInp.parentNode)_rInp.remove(); }
-    var _rY = function(){
-      if (_rInp.value.trim().toLowerCase() !== 'reset-stats') { _rInp.style.borderColor='#ef4444'; _rInp.focus(); return; }
-      _rClean(); _closeCustomModal(function(){
-        ['sp_ext_stats','studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history'].forEach(function(k){ localStorage.removeItem(k); });
-        renderStudyStats(); _buildStatsContent();
-      });
-    };
-    var _rN = function(){ _rClean(); _closeCustomModal(); };
-    _rOk.addEventListener('click',_rY); _rCan.addEventListener('click',_rN);
-    _rInp.addEventListener('keydown', function(e){ if(e.key==='Enter') _rY(); });
-  });
+page.appendChild(hdr);
+var body = document.createElement('div');
+body.id = 'spStatsBody';
+body.style.cssText = 'flex:1;max-width:760px;width:100%;margin:0 auto;padding:28px 20px 60px;box-sizing:border-box;';
+page.appendChild(body);
+// Reset button at bottom
+var resetRow = document.createElement('div');
+resetRow.style.cssText = 'max-width:760px;width:100%;margin:0 auto;padding:0 20px 40px;box-sizing:border-box;text-align:center;';
+resetRow.innerHTML = '<button id="spStatsResetBtn" style="background:transparent;border:1.5px solid rgba(239,68,68,0.4);border-radius:10px;padding:10px 22px;color:#ef4444;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:background 0.15s,border-color 0.15s;">🗑 Reset All Stats</button>';
+page.appendChild(resetRow);
+document.body.appendChild(page);
+// animate in
+page.style.transform = 'translateY(-30px)'; page.style.opacity = '0';
+page.style.transition = 'transform 0.38s cubic-bezier(0.16,1,0.3,1),opacity 0.3s ease';
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ page.style.transform = 'translateY(0)'; page.style.opacity = '1'; }); });
+_buildStatsContent();
+document.getElementById('spStatsBackBtn').addEventListener('click', function() {
+page.style.transition = 'transform 0.3s ease,opacity 0.25s ease';
+page.style.transform = 'translateY(-20px)'; page.style.opacity = '0';
+setTimeout(function(){ page.style.display = 'none'; page.style.transform = ''; page.style.opacity = ''; page.style.transition = ''; }, 320);
+});
+document.getElementById('spStatsResetBtn').addEventListener('click', function() {
+var _rMsg = document.getElementById('customModalMsg'), _rOk = document.getElementById('customModalOk'), _rCan = document.getElementById('customModalCancel');
+_rMsg.innerHTML = 'Type <strong style="color:#ef4444;">reset-stats</strong> to confirm. This clears all your stat history permanently.';
+var _rInp = document.createElement('input'); _rInp.type='text'; _rInp.placeholder='Type reset-stats here'; _rInp.autocomplete='off';
+var _rDk = document.body.classList.contains('assignmentsdark');
+_rInp.style.cssText = 'width:100%;padding:9px 12px;font-size:0.9rem;border:1.5px solid rgba(99,102,241,0.22);border-radius:10px;box-sizing:border-box;margin:12px 0 4px;font-family:\'Inter\',sans-serif;background:'+(_rDk?'#1e2d3d':'white')+';color:'+(_rDk?'#e2e8f0':'#1e293b')+';outline:none;';
+_rMsg.insertAdjacentElement('afterend', _rInp);
+_rCan.style.display='block'; _rCan.textContent='Cancel'; _rOk.textContent='Confirm';
+_openCustomModal();
+setTimeout(function(){ _rInp.focus(); }, 200);
+function _rClean(){ _rOk.removeEventListener('click',_rY); _rCan.removeEventListener('click',_rN); if(_rInp.parentNode)_rInp.remove(); }
+var _rY = function(){
+if (_rInp.value.trim().toLowerCase() !== 'reset-stats') { _rInp.style.borderColor='#ef4444'; _rInp.focus(); return; }
+_rClean(); _closeCustomModal(function(){
+['sp_ext_stats','studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history'].forEach(function(k){ localStorage.removeItem(k); });
+renderStudyStats(); _buildStatsContent();
+});
+};
+var _rN = function(){ _rClean(); _closeCustomModal(); };
+_rOk.addEventListener('click',_rY); _rCan.addEventListener('click',_rN);
+_rInp.addEventListener('keydown', function(e){ if(e.key==='Enter') _rY(); });
+});
 };
 
 function _buildStatsContent() {
-  var body = document.getElementById('spStatsBody'); if (!body) return;
-  var dk = document.body.classList.contains('assignmentsdark');
-  var s = _getExtStats();
-  var totalStudySec = parseInt(localStorage.getItem('studyTime_total') || '0');
-  var todaySec = (localStorage.getItem('studyTime_today_date') === getLocalDateStr()) ? parseInt(localStorage.getItem('studyTime_today') || '0') : 0;
-  var streak = parseInt(localStorage.getItem('streak_count') || '0');
-  var maxStreak = Math.max(streak, s.maxStreak || 0);
-  var history = [];
-  try { history = JSON.parse(localStorage.getItem('study_history') || '[]'); } catch(e) {}
-  var activeDays = history.length || 1;
-  var avgSec = Math.round(totalStudySec / activeDays);
-  var totalBreak = s.totalBreakSecs || 0;
-  var totalPause = s.totalPauseSecs || 0;
-  var dailySecs = s.dailySecs || {};
-  var planningPerDay = s.planningPerDay || {};
-  var sessionStarts = s.sessionStarts || [];
-  // most common hours
-  var hourBuckets = {};
-  sessionStarts.forEach(function(ts){ var h = new Date(ts).getHours(); hourBuckets[h] = (hourBuckets[h]||0)+1; });
-  var recentStarts = sessionStarts.slice(-30);
-  var quarterBuckets = {};
-  recentStarts.forEach(function(ts){ var d=new Date(ts), qKey=d.getHours()+':'+String(Math.floor(d.getMinutes()/15)*15).padStart(2,'0'); quarterBuckets[qKey]=(quarterBuckets[qKey]||0)+1; });
-  var topHours = Object.keys(quarterBuckets).sort(function(a,b){return quarterBuckets[b]-quarterBuckets[a];}).slice(0,3).map(function(slot){
-    var parts=slot.split(':'), hh=parseInt(parts[0]), mm=parseInt(parts[1]), ap=hh>=12?'PM':'AM', dh=hh%12||12;
-    var curQ=Math.floor(new Date().getMinutes()/15)*15;
-    var isNow=(hh===new Date().getHours()&&curQ===mm);
-    return dh+':'+String(mm).padStart(2,'0')+' '+ap+(isNow?' (now)':'');
-  });
-  // avg planning time
-  var planVals = Object.values(planningPerDay);
-  var avgPlanSec = planVals.length ? Math.round(planVals.reduce(function(a,b){return a+b;},0)/planVals.length) : 0;
-  function fmtHMS(sec) {
-    if (sec < 60) return sec + 's';
-    var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s2=sec%60;
-    if (h>0) return h+'h '+(m>0?m+'m':'');
-    return m+'m '+(s2>0?s2+'s':'');
-  }
-  function fmtHours(sec){ return (sec/3600).toFixed(1)+' hrs'; }
-  var cardBg = dk ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.7)';
-  var cardBorder = dk ? 'rgba(99,102,241,0.18)' : 'rgba(99,102,241,0.12)';
-  var textMain = dk ? '#e2e8f0' : '#1e293b';
-  var textSub = dk ? '#64748b' : '#94a3b8';
-  var accColor = '#6366f1';
-  function card(title, items, accentColor) {
-    var ic = accentColor || accColor;
-    var rows = items.map(function(it){ return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid '+(dk?'rgba(99,102,241,0.1)':'rgba(99,102,241,0.07)')+'"><span style="font-size:13px;color:'+textSub+';font-weight:500;">'+it[0]+'</span><span style="font-size:15px;font-weight:800;color:'+textMain+';">'+it[1]+'</span></div>'; }).join('');
-    return '<div style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:18px;padding:20px 20px 8px;margin-bottom:16px;box-shadow:0 4px 20px rgba(99,102,241,0.07);">'+
-      '<div style="font-size:11px;font-weight:700;color:'+ic+';text-transform:uppercase;letter-spacing:1.3px;margin-bottom:12px;">'+title+'</div>'+rows+'</div>';
-  }
-  // build graph
-  var graphDays = []; var gNow = new Date();
-  for (var gi=89;gi>=0;gi--){ var gd=new Date(gNow); gd.setDate(gNow.getDate()-gi); var giso=gd.getFullYear()+'-'+String(gd.getMonth()+1).padStart(2,'0')+'-'+String(gd.getDate()).padStart(2,'0'); graphDays.push({iso:giso,secs:dailySecs[giso]||0}); }
-  // trim leading zeros
-  var firstNonZero = graphDays.findIndex(function(d){return d.secs>0;});
-  if (firstNonZero > 0) graphDays = graphDays.slice(firstNonZero);
-  var maxSec = Math.max(1, Math.max.apply(null, graphDays.map(function(d){return d.secs;})));
-  var yMax = maxSec * 1.1;
-  var yLabel = fmtHMS(Math.round(yMax));
-  var barCount = graphDays.length;
-  var svgW = 700, svgH = 160, padL = 44, padB = 28, padT = 10, padR = 12;
-  var chartW = svgW - padL - padR, chartH = svgH - padB - padT;
-  var barW = Math.max(2, Math.min(18, chartW / barCount - 2));
-  var barStroke = dk ? 'rgba(99,102,241,0.5)' : 'rgba(99,102,241,0.7)';
-  var bars = graphDays.map(function(d, i) {
-    var x = padL + (i / barCount) * chartW + (chartW / barCount - barW) / 2;
-    var bh = d.secs > 0 ? Math.max(3, (d.secs / yMax) * chartH) : 0;
-    var y = padT + chartH - bh;
-    var isToday = d.iso === getLocalDateStr();
-    var fill = isToday ? '#f0ad4e' : (dk ? 'rgba(99,102,241,0.55)' : 'rgba(99,102,241,0.65)');
-    return '<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" fill="'+fill+'" rx="2"/>';
-  }).join('');
-  var gridLines = [0,0.25,0.5,0.75,1].map(function(f){
-    var y = padT + chartH * (1-f);
-    var lbl = f===0?'0':f===1?yLabel:fmtHMS(Math.round(yMax*f));
-    return '<line x1="'+padL+'" y1="'+y+'" x2="'+(svgW-padR)+'" y2="'+y+'" stroke="'+(dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)')+'" stroke-width="1"/>'+
-      '<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" font-family="Inter,sans-serif" fill="'+textSub+'">'+lbl+'</text>';
-  }).join('');
-  // x-axis labels (every ~15 days)
-  var xLabels = graphDays.filter(function(d,i){ return i===0 || i===Math.floor(barCount/2) || i===barCount-1; }).map(function(d,i){
-    var idx = graphDays.indexOf(d);
-    var x = padL + (idx/barCount)*chartW + barW/2;
-    var dd = new Date(d.iso+'T00:00:00');
-    var lbl = (dd.getMonth()+1)+'/'+dd.getDate();
-    return '<text x="'+x+'" y="'+(svgH-8)+'" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="'+textSub+'">'+lbl+'</text>';
-  }).join('');
-  var graphSVG = '<svg viewBox="0 0 '+svgW+' '+svgH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">'+gridLines+bars+xLabels+'</svg>';
-  var graphSection = '<div style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(99,102,241,0.07);">'+
-    '<div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:14px;">Study History (last '+barCount+' days)</div>'+
-    graphSVG+
-    '<div style="font-size:10px;color:'+textSub+';text-align:center;margin-top:6px;">🟡 = today</div></div>';
-  body.innerHTML =
-    card('🔥 Streaks', [
-      ['Longest streak ever', maxStreak + ' day' + (maxStreak===1?'':'s')],
-      ['Current streak', streak + ' day' + (streak===1?'':'s')]
-    ], '#f97316') +
-    card('📚 All-Time Studying', [
-      ['Total time studied', totalStudySec >= 3600 ? fmtHours(totalStudySec) : fmtHMS(totalStudySec)],
-      ['Active study days', activeDays + ' day' + (activeDays===1?'':'s')],
-      ['Average per active day', fmtHMS(avgSec)],
-      ['Total break time', fmtHMS(Math.round(totalBreak))],
-      ['Total time paused', fmtHMS(Math.round(totalPause))]
-    ], '#6366f1') +
-    card('📅 Today', [
-      ['Studied today', todaySec > 0 ? fmtHMS(todaySec) : '—'],
-      ['Session starts today', sessionStarts.filter(function(ts){ return new Date(ts).toDateString() === new Date().toDateString(); }).length + ' session(s)']
-    ], '#8b5cf6') +
-    card('🕐 Usage Patterns', [
-      ['Most common study hours', topHours.length ? topHours.join(', ') : '—'],
-      ['Avg. planning time per day', avgPlanSec > 0 ? fmtHMS(avgPlanSec) : '—']
-    ], '#ec4899') +
-    graphSection;
+var body = document.getElementById('spStatsBody'); if (!body) return;
+var dk = document.body.classList.contains('assignmentsdark');
+var s = _getExtStats();
+var totalStudySec = parseInt(localStorage.getItem('studyTime_total') || '0');
+var todaySec = (localStorage.getItem('studyTime_today_date') === getLocalDateStr()) ? parseInt(localStorage.getItem('studyTime_today') || '0') : 0;
+var streak = parseInt(localStorage.getItem('streak_count') || '0');
+var maxStreak = Math.max(streak, s.maxStreak || 0);
+var history = [];
+try { history = JSON.parse(localStorage.getItem('study_history') || '[]'); } catch(e) {}
+var activeDays = history.length || 1;
+var avgSec = Math.round(totalStudySec / activeDays);
+var totalBreak = s.totalBreakSecs || 0;
+var totalPause = s.totalPauseSecs || 0;
+var dailySecs = s.dailySecs || {};
+var planningPerDay = s.planningPerDay || {};
+var sessionStarts = s.sessionStarts || [];
+// most common hours
+var hourBuckets = {};
+sessionStarts.forEach(function(ts){ var h = new Date(ts).getHours(); hourBuckets[h] = (hourBuckets[h]||0)+1; });
+var recentStarts = sessionStarts.slice(-30);
+var quarterBuckets = {};
+recentStarts.forEach(function(ts){ var d=new Date(ts), qKey=d.getHours()+':'+String(Math.floor(d.getMinutes()/15)*15).padStart(2,'0'); quarterBuckets[qKey]=(quarterBuckets[qKey]||0)+1; });
+var topHours = Object.keys(quarterBuckets).sort(function(a,b){return quarterBuckets[b]-quarterBuckets[a];}).slice(0,3).map(function(slot){
+var parts=slot.split(':'), hh=parseInt(parts[0]), mm=parseInt(parts[1]), ap=hh>=12?'PM':'AM', dh=hh%12||12;
+var curQ=Math.floor(new Date().getMinutes()/15)*15;
+var isNow=(hh===new Date().getHours()&&curQ===mm);
+return dh+':'+String(mm).padStart(2,'0')+' '+ap+(isNow?' (now)':'');
+});
+// avg planning time
+var planVals = Object.values(planningPerDay);
+var avgPlanSec = planVals.length ? Math.round(planVals.reduce(function(a,b){return a+b;},0)/planVals.length) : 0;
+function fmtHMS(sec) {
+if (sec < 60) return sec + 's';
+var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s2=sec%60;
+if (h>0) return h+'h '+(m>0?m+'m':'');
+return m+'m '+(s2>0?s2+'s':'');
+}
+function fmtHours(sec){ return (sec/3600).toFixed(1)+' hrs'; }
+var cardBg = dk ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.7)';
+var cardBorder = dk ? 'rgba(99,102,241,0.18)' : 'rgba(99,102,241,0.12)';
+var textMain = dk ? '#e2e8f0' : '#1e293b';
+var textSub = dk ? '#64748b' : '#94a3b8';
+var accColor = '#6366f1';
+function card(title, items, accentColor) {
+var ic = accentColor || accColor;
+var rows = items.map(function(it){ return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid '+(dk?'rgba(99,102,241,0.1)':'rgba(99,102,241,0.07)')+'"><span style="font-size:13px;color:'+textSub+';font-weight:500;">'+it[0]+'</span><span style="font-size:15px;font-weight:800;color:'+textMain+';">'+it[1]+'</span></div>'; }).join('');
+return '<div style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:18px;padding:20px 20px 8px;margin-bottom:16px;box-shadow:0 4px 20px rgba(99,102,241,0.07);">'+
+'<div style="font-size:11px;font-weight:700;color:'+ic+';text-transform:uppercase;letter-spacing:1.3px;margin-bottom:12px;">'+title+'</div>'+rows+'</div>';
+}
+// build graph
+var graphDays = []; var gNow = new Date();
+for (var gi=89;gi>=0;gi--){ var gd=new Date(gNow); gd.setDate(gNow.getDate()-gi); var giso=gd.getFullYear()+'-'+String(gd.getMonth()+1).padStart(2,'0')+'-'+String(gd.getDate()).padStart(2,'0'); graphDays.push({iso:giso,secs:dailySecs[giso]||0}); }
+// trim leading zeros
+var firstNonZero = graphDays.findIndex(function(d){return d.secs>0;});
+if (firstNonZero > 0) graphDays = graphDays.slice(firstNonZero);
+var maxSec = Math.max(1, Math.max.apply(null, graphDays.map(function(d){return d.secs;})));
+var yMax = maxSec * 1.1;
+var yLabel = fmtHMS(Math.round(yMax));
+var barCount = graphDays.length;
+var svgW = 700, svgH = 160, padL = 44, padB = 28, padT = 10, padR = 12;
+var chartW = svgW - padL - padR, chartH = svgH - padB - padT;
+var barW = Math.max(2, Math.min(18, chartW / barCount - 2));
+var barStroke = dk ? 'rgba(99,102,241,0.5)' : 'rgba(99,102,241,0.7)';
+var bars = graphDays.map(function(d, i) {
+var x = padL + (i / barCount) * chartW + (chartW / barCount - barW) / 2;
+var bh = d.secs > 0 ? Math.max(3, (d.secs / yMax) * chartH) : 0;
+var y = padT + chartH - bh;
+var isToday = d.iso === getLocalDateStr();
+var fill = isToday ? '#f0ad4e' : (dk ? 'rgba(99,102,241,0.55)' : 'rgba(99,102,241,0.65)');
+return '<rect x="'+x+'" y="'+y+'" width="'+barW+'" height="'+bh+'" fill="'+fill+'" rx="2"/>';
+}).join('');
+var gridLines = [0,0.25,0.5,0.75,1].map(function(f){
+var y = padT + chartH * (1-f);
+var lbl = f===0?'0':f===1?yLabel:fmtHMS(Math.round(yMax*f));
+return '<line x1="'+padL+'" y1="'+y+'" x2="'+(svgW-padR)+'" y2="'+y+'" stroke="'+(dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)')+'" stroke-width="1"/>'+
+'<text x="'+(padL-6)+'" y="'+(y+4)+'" text-anchor="end" font-size="9" font-family="Inter,sans-serif" fill="'+textSub+'">'+lbl+'</text>';
+}).join('');
+// x-axis labels (every ~15 days)
+var xLabels = graphDays.filter(function(d,i){ return i===0 || i===Math.floor(barCount/2) || i===barCount-1; }).map(function(d,i){
+var idx = graphDays.indexOf(d);
+var x = padL + (idx/barCount)*chartW + barW/2;
+var dd = new Date(d.iso+'T00:00:00');
+var lbl = (dd.getMonth()+1)+'/'+dd.getDate();
+return '<text x="'+x+'" y="'+(svgH-8)+'" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="'+textSub+'">'+lbl+'</text>';
+}).join('');
+var graphSVG = '<svg viewBox="0 0 '+svgW+' '+svgH+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">'+gridLines+bars+xLabels+'</svg>';
+var graphSection = '<div style="background:'+cardBg+';border:1px solid '+cardBorder+';border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(99,102,241,0.07);">'+
+'<div style="font-size:11px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:14px;">Study History (last '+barCount+' days)</div>'+
+graphSVG+
+'<div style="font-size:10px;color:'+textSub+';text-align:center;margin-top:6px;">🟡 = today</div></div>';
+body.innerHTML =
+card('🔥 Streaks', [
+['Longest streak ever', maxStreak + ' day' + (maxStreak===1?'':'s')],
+['Current streak', streak + ' day' + (streak===1?'':'s')]
+], '#f97316') +
+card('📚 All-Time Studying', [
+['Total time studied', totalStudySec >= 3600 ? fmtHours(totalStudySec) : fmtHMS(totalStudySec)],
+['Active study days', activeDays + ' day' + (activeDays===1?'':'s')],
+['Average per active day', fmtHMS(avgSec)],
+['Total break time', fmtHMS(Math.round(totalBreak))],
+['Total time paused', fmtHMS(Math.round(totalPause))]
+], '#6366f1') +
+card('📅 Today', [
+['Studied today', todaySec > 0 ? fmtHMS(todaySec) : '—'],
+['Session starts today', sessionStarts.filter(function(ts){ return new Date(ts).toDateString() === new Date().toDateString(); }).length + ' session(s)']
+], '#8b5cf6') +
+card('🕐 Usage Patterns', [
+['Most common study hours', topHours.length ? topHours.join(', ') : '—'],
+['Avg. planning time per day', avgPlanSec > 0 ? fmtHMS(avgPlanSec) : '—']
+], '#ec4899') +
+graphSection;
 }
 
 window._openImportExportPage = function() {
-  var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
-  var dk = document.body.classList.contains('assignmentsdark');
-  var _bg = document.body.style.backgroundColor || (dk ? '#0d0d1a' : '#f0f0ff');
-  var _bgImg = document.body.style.backgroundImage || 'none';
-  var ex = document.getElementById('spIEPage');
-  if (ex) {
-    ex.style.background = _bg; ex.style.backgroundImage = _bgImg;
-    ex.style.display = 'flex'; ex.style.opacity = '0'; ex.style.transform = 'translateY(-20px)';
-    ex.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
-    requestAnimationFrame(function(){ requestAnimationFrame(function(){ ex.style.transform='translateY(0)'; ex.style.opacity='1'; }); });
-    return;
-  }
-  var page = document.createElement('div');
-  page.id = 'spIEPage';
-  page.style.cssText = 'position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;overflow-y:auto;font-family:"Inter",sans-serif;background:'+_bg+';background-image:'+_bgImg+';';
-  var hdr = document.createElement('div');
-  hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
-  hdr.innerHTML = '<button id="spIEBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;">← Back</button><span style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:'+(dk?'#e2e8f0':'#0f172a')+';letter-spacing:-0.3px;">📦 Import / Export</span><div style="width:80px;"></div>';
-  page.appendChild(hdr);
-  var body = document.createElement('div');
-  body.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;box-sizing:border-box;';
-  body.innerHTML =
-    '<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;max-width:700px;width:100%;">' +
-    '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
-    '<div style="font-size:40px;margin-bottom:14px;">📄</div>' +
-    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Export as PDF</h3>' +
-    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Generate a complete schedule of all your assignments across every day, including routines. Opens in a new tab — click the save button inside to download as PDF.</p>' +
-    '<button id="spExportBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);width:100%;">📄 Export as PDF</button></div>' +
+var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
+var dk = document.body.classList.contains('assignmentsdark');
+var _bg = document.body.style.backgroundColor || (dk ? '#0d0d1a' : '#f0f0ff');
+var _bgImg = document.body.style.backgroundImage || 'none';
+var ex = document.getElementById('spIEPage');
+if (ex) {
+ex.style.background = _bg; ex.style.backgroundImage = _bgImg;
+ex.style.display = 'flex'; ex.style.opacity = '0'; ex.style.transform = 'translateY(-20px)';
+ex.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ ex.style.transform='translateY(0)'; ex.style.opacity='1'; }); });
+return;
+}
+var page = document.createElement('div');
+page.id = 'spIEPage';
+page.style.cssText = 'position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;overflow-y:auto;font-family:"Inter",sans-serif;background:'+_bg+';background-image:'+_bgImg+';';
+var hdr = document.createElement('div');
+hdr.style.cssText = 'position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(99,102,241,0.2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,0.2);';
+hdr.innerHTML = '<button id="spIEBackBtn" style="background:transparent;border:none;color:#94a3b8;font-family:\'Inter\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;padding:6px 10px;border-radius:8px;">← Back</button><span style="font-family:\'Syne\',sans-serif;font-size:16px;font-weight:800;color:'+(dk?'#e2e8f0':'#0f172a')+';letter-spacing:-0.3px;">📦 Import / Export</span><div style="width:80px;"></div>';
+page.appendChild(hdr);
+var body = document.createElement('div');
+body.style.cssText = 'flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;box-sizing:border-box;';
+body.innerHTML =
+'<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;max-width:700px;width:100%;">' +
+'<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
+'<div style="font-size:40px;margin-bottom:14px;">💾</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Backup Data</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Download a complete backup of all your assignments, routines, stats, and settings. Use this file to restore your data on any device.</p>' +
+    '<button id="spPrintBtn" style="background:linear-gradient(135deg,#059669,#10b981);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,0.35);width:100%;">⬇ Download Backup</button></div>' +
     '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
     '<div style="font-size:40px;margin-bottom:14px;">📥</div>' +
     '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Import</h3>' +
@@ -2964,105 +2964,112 @@ window._openImportExportPage = function() {
     '<input type="file" id="spImportFile" accept=".json" style="display:none;">' +
     '<button id="spImportBtn" style="background:'+(dk?'rgba(99,102,241,0.15)':'rgba(99,102,241,0.08)')+';border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 24px;color:#6366f1;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;">⬆ Choose Backup File</button></div>' +
     '<div style="flex:1;min-width:240px;max-width:320px;background:'+(dk?'rgba(255,255,255,0.04)':'white')+';border:1px solid rgba(99,102,241,'+(dk?'0.22':'0.12')+');border-radius:20px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(99,102,241,0.09);">' +
-    '<div style="font-size:40px;margin-bottom:14px;">💾</div>' +
-    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Backup Data</h3>' +
-    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Download a complete backup of all your assignments, routines, stats, and settings. Use this file to restore your data on any device.</p>' +
-    '<button id="spPrintBtn" style="background:linear-gradient(135deg,#059669,#10b981);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(5,150,105,0.35);width:100%;">⬇ Download Backup</button></div>' +
+    '<div style="font-size:40px;margin-bottom:14px;">📄</div>' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+(dk?'#e2e8f0':'#1e293b')+';margin:0 0 10px;">Export as PDF</h3>' +
+    '<p style="font-size:13px;color:'+(dk?'#94a3b8':'#64748b')+';margin:0 0 20px;line-height:1.65;">Generate a printable PDF of your complete schedule. <strong style="color:'+(dk?'#fca5a5':'#dc2626')+';">Cannot restore data</strong> \u2014 use Download Backup for that.</p>' +
+    '<button id="spExportBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px 24px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.35);width:100%;">📄 Export as PDF</button></div>' +
     '</div>';
-  page.appendChild(body);
-  document.body.appendChild(page);
-  page.style.opacity = '0'; page.style.transform = 'translateY(-20px)';
-  page.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ page.style.transform='translateY(0)'; page.style.opacity='1'; }); });
-  document.getElementById('spIEBackBtn').addEventListener('click', function() {
-    page.style.transition = 'transform 0.3s ease,opacity 0.25s ease';
-    page.style.transform = 'translateY(-20px)'; page.style.opacity = '0';
-    setTimeout(function(){ page.style.display='none'; page.style.transform=''; page.style.opacity=''; page.style.transition=''; }, 320);
-  });
-  document.getElementById('spExportBtn').addEventListener('click', function() {
-    var _lvl = localStorage.getItem('studyPlanner_level') || 'high';
-    var _lvlNames = { middle: 'Middle School', high: 'High School', college: 'College' };
-    var _days = {};
-    Object.keys(localStorage).forEach(function(k) {
-      if (!k.startsWith('sp_day_')) return;
-      try { var _t = JSON.parse(localStorage.getItem(k) || '[]'); if (_t.length > 0) _days[k.slice(7)] = _t.slice(); } catch(e) {}
-    });
-    var _routines = [];
-    try { _routines = JSON.parse(localStorage.getItem('sp_routines') || '[]'); } catch(e) {}
-    var _todayStr = (function(){ var d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
-    var _maxRD = new Date(); _maxRD.setMonth(_maxRD.getMonth() + 13);
-    var _maxRISO = _maxRD.getFullYear()+'-'+String(_maxRD.getMonth()+1).padStart(2,'0')+'-'+String(_maxRD.getDate()).padStart(2,'0');
-    _routines.forEach(function(r) {
-      if (!r.days || !r.days.length) return;
-      var _d = new Date(_todayStr + 'T00:00:00');
-      while (true) {
-        var _rIso = _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');
-        if (_rIso > _maxRISO) break;
-        if (r.days.includes(_d.getDay())) {
-          if ((!r.startDate||_rIso>=r.startDate)&&(!r.endDate||_rIso<=r.endDate)&&(!r.exceptions||!r.exceptions.includes(_rIso))) {
-            if (!_days[_rIso]) _days[_rIso] = [];
-            if (!_days[_rIso].some(function(t){return t.routineId===r.id;})) {
-              _days[_rIso] = _days[_rIso].concat([{name:r.name||r.subject,subject:r.subject,time:r.time,difficulty:r.difficulty,routineId:r.id}]);
+
+page.appendChild(body);
+document.body.appendChild(page);
+page.style.opacity = '0'; page.style.transform = 'translateY(-20px)';
+page.style.transition = 'transform 0.35s cubic-bezier(0.16,1,0.3,1),opacity 0.28s ease';
+requestAnimationFrame(function(){ requestAnimationFrame(function(){ page.style.transform='translateY(0)'; page.style.opacity='1'; }); });
+document.getElementById('spIEBackBtn').addEventListener('click', function() {
+page.style.transition = 'transform 0.3s ease,opacity 0.25s ease';
+page.style.transform = 'translateY(-20px)'; page.style.opacity = '0';
+setTimeout(function(){ page.style.display='none'; page.style.transform=''; page.style.opacity=''; page.style.transition=''; }, 320);
+});
+document.getElementById('spExportBtn').addEventListener('click', function() {
+    showCustomAlert('This file CANNOT be used to restore your plan, and is simply a downloadable PDF. If you wish to save a back up, click the \u201cDownload Backup\u201d button instead.', function() {
+      var _lvl = localStorage.getItem('studyPlanner_level') || 'high';
+      var _lvlNames = { middle: 'Middle School', high: 'High School', college: 'College' };
+      var _days = {};
+      Object.keys(localStorage).forEach(function(k) {
+        if (!k.startsWith('sp_day_')) return;
+        try { var _t = JSON.parse(localStorage.getItem(k) || '[]'); if (_t.length > 0) _days[k.slice(7)] = _t.slice(); } catch(e) {}
+      });
+      var _routines = [];
+      try { _routines = JSON.parse(localStorage.getItem('sp_routines') || '[]'); } catch(e) {}
+      var _todayStr = (function(){ var d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+      var _maxRD = new Date(); _maxRD.setMonth(_maxRD.getMonth() + 13);
+      var _maxRISO = _maxRD.getFullYear()+'-'+String(_maxRD.getMonth()+1).padStart(2,'0')+'-'+String(_maxRD.getDate()).padStart(2,'0');
+      _routines.forEach(function(r) {
+        if (!r.days || !r.days.length) return;
+        var _d = new Date(_todayStr + 'T00:00:00');
+        while (true) {
+          var _rIso = _d.getFullYear()+'-'+String(_d.getMonth()+1).padStart(2,'0')+'-'+String(_d.getDate()).padStart(2,'0');
+          if (_rIso > _maxRISO) break;
+          if (r.days.includes(_d.getDay())) {
+            if ((!r.startDate||_rIso>=r.startDate)&&(!r.endDate||_rIso<=r.endDate)&&(!r.exceptions||!r.exceptions.includes(_rIso))) {
+              if (!_days[_rIso]) _days[_rIso] = [];
+              if (!_days[_rIso].some(function(t){return t.routineId===r.id;})) {
+                _days[_rIso] = _days[_rIso].concat([{name:r.name||r.subject,subject:r.subject,time:r.time,difficulty:r.difficulty,routineId:r.id}]);
+              }
             }
           }
+          _d.setDate(_d.getDate() + 1);
         }
-        _d.setDate(_d.getDate() + 1);
-      }
-    });
-    var _sorted = Object.keys(_days).sort();
-    if (!_sorted.length) { showCustomAlert('No assignments found to export. Add some assignments first!'); return; }
-    var _html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Study Plan</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;color:#1e293b;background:#fff;}@media print{.no-print{display:none!important;}.main{padding:16px;}}.toolbar{position:sticky;top:0;background:#fff;border-bottom:2px solid #e2e8f0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.08);}.toolbar-title{font-size:18px;font-weight:800;color:#6366f1;}.btn-save{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:10px 22px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(99,102,241,0.35);transition:transform 0.15s,box-shadow 0.15s;}.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(99,102,241,0.45);}.main{max-width:820px;margin:0 auto;padding:32px 24px 60px;}h1{font-size:26px;color:#1e293b;margin-bottom:8px;}h2{font-size:15px;color:#4f46e5;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:10px;margin-top:0;}.meta{font-size:13px;color:#64748b;margin-bottom:20px;padding:10px 16px;background:#f8f7ff;border-radius:8px;border-left:4px solid #6366f1;}.day-section{margin-bottom:28px;page-break-inside:avoid;}.task{padding:9px 13px;margin:5px 0;border-radius:6px;border-left:4px solid #6366f1;background:#f8f7ff;page-break-inside:avoid;}.diff-easy{border-left-color:#16a34a;background:#f0fdf4;}.diff-medium{border-left-color:#d97706;background:#fffbeb;}.diff-hard{border-left-color:#dc2626;background:#fef2f2;}.diff-priority{border-left-color:#7c3aed;background:#faf5ff;}.task-name{font-weight:700;font-size:13px;}.task-detail{font-size:11px;color:#64748b;margin-top:2px;}.day-total{font-size:12px;color:#6366f1;font-weight:700;margin-top:5px;text-align:right;}.footer{text-align:center;font-size:11px;color:#94a3b8;margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;}</style></head><body>';
-    _html += '<div class="toolbar no-print"><span class="toolbar-title">&#128218; Study Plan</span><button class="btn-save" onclick="window.print()">&#8659; Save as PDF</button></div>';
-    _html += '<div class="main"><h1>Study Plan</h1><div class="meta">School Level: <strong>'+(_lvlNames[_lvl]||_lvl)+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Generated: <strong>'+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;'+_sorted.length+' day(s) scheduled</div>';
-    _sorted.forEach(function(iso) {
-      var _d = new Date(iso+'T00:00:00');
-      _html += '<div class="day-section"><h2>'+_d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+'</h2>';
-      var _total = 0;
-      _days[iso].forEach(function(t) {
-        var _m = parseInt(t.time)||0; _total += _m;
-        var _h = Math.floor(_m/60), _mn = _m%60;
-        var _ts = _h>0?(_mn>0?_h+'h '+_mn+'m':_h+'h'):_mn+'m';
-        var _dc = (t.difficulty||'easy').toLowerCase();
-        _html += '<div class="task diff-'+_dc+'"><div class="task-name">'+(t.name||t.subject||'Assignment')+'</div><div class="task-detail">Subject: '+(t.subject||'\u2014')+' \u00b7 Time: '+_ts+' \u00b7 Difficulty: '+(t.difficulty||'easy')+(t.routineId?' \u00b7 Routine':'')+(t.isSpreadPart?' (spread)':'')+'</div></div>';
       });
-      var _th=Math.floor(_total/60),_tm=_total%60;
-      _html += '<div class="day-total">Total: '+(_th>0?(_tm>0?_th+'h '+_tm+'m':_th+'h'):_tm+'m')+'</div></div>';
-    });
-    _html += '<div class="footer">Generated by Study Planner &amp; Time Management Tool</div></div></body></html>';
-    var _w = window.open('', '_blank');
-    if (_w) { _w.document.write(_html); _w.document.close(); }
-    else { showCustomAlert('Please allow pop-ups in your browser to use Export as PDF, then try again.'); }
-  });
-  document.getElementById('spImportBtn').addEventListener('click', function() { document.getElementById('spImportFile').click(); });
-  document.getElementById('spImportFile').addEventListener('change', function() {
-    var file = this.files[0]; if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e2) {
-      try {
-        var data = JSON.parse(e2.target.result);
-        if (!data._type || data._type !== 'study-planner-backup') {
-          showCustomAlert('This file is not a valid Study Planner backup. Please select a file that was exported from this planner.');
-          return;
-        }
-        showCustomConfirm('Restore this backup? All current assignments, routines, and settings will be replaced.', function() {
-          Object.keys(localStorage).forEach(function(k) {
-            if (k.startsWith('sp_day_') || k.startsWith('sp_done_') || k === 'sp_routines' || k === 'studyPlanner_tasks') localStorage.removeItem(k);
-          });
-          if (data.days) { Object.keys(data.days).forEach(function(k) { try { localStorage.setItem(k, JSON.stringify(data.days[k])); } catch(e3){} }); }
-          if (data.routines) { try { localStorage.setItem('sp_routines', JSON.stringify(data.routines)); } catch(e4){} }
-          if (data.settings) { Object.keys(data.settings).forEach(function(k) { localStorage.setItem(k, data.settings[k]); }); }
-          if (data.stats) { Object.keys(data.stats).forEach(function(k) { localStorage.setItem(k, data.stats[k]); }); }
-          window._showToast('\u2713 Backup restored! Reloading\u2026', false, 'importDone', 3000);
-          setTimeout(function() { window.location.reload(); }, 1800);
+      var _sorted = Object.keys(_days).sort();
+      if (!_sorted.length) { showCustomAlert('No assignments found to export. Add some assignments first!'); return; }
+      function _escPdf(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+      var _html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Study Plan</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;color:#1e293b;background:#fff;}@page{size:A4;margin:15mm 15mm 20mm;}@media print{.no-print{display:none!important;}body{margin:0;}h1{page-break-after:avoid;}h2{page-break-after:avoid;}.day-section{page-break-inside:avoid;break-inside:avoid;}.task{page-break-inside:avoid;break-inside:avoid;}.meta{page-break-after:avoid;}.main{padding:0;}}.toolbar{position:sticky;top:0;background:#fff;border-bottom:2px solid #e2e8f0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.08);}.toolbar-title{font-size:18px;font-weight:800;color:#6366f1;}.toolbar-hint{font-size:11px;color:#64748b;font-style:italic;max-width:340px;}.btn-save{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:10px 22px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(99,102,241,0.35);transition:transform 0.15s,box-shadow 0.15s;white-space:nowrap;flex-shrink:0;}.btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(99,102,241,0.45);}.main{max-width:820px;margin:0 auto;padding:32px 24px 60px;}h1{font-size:26px;color:#1e293b;margin-bottom:8px;}h2{font-size:15px;color:#4f46e5;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:10px;margin-top:0;}.meta{font-size:13px;color:#64748b;margin-bottom:20px;padding:10px 16px;background:#f8f7ff;border-radius:8px;border-left:4px solid #6366f1;}.day-section{margin-bottom:28px;page-break-inside:avoid;break-inside:avoid;}.task{padding:9px 13px;margin:5px 0;border-radius:6px;border-left:4px solid #6366f1;background:#f8f7ff;page-break-inside:avoid;break-inside:avoid;}.diff-easy{border-left-color:#16a34a;background:#f0fdf4;}.diff-medium{border-left-color:#d97706;background:#fffbeb;}.diff-hard{border-left-color:#dc2626;background:#fef2f2;}.diff-priority{border-left-color:#7c3aed;background:#faf5ff;}.task-name{font-weight:700;font-size:13px;}.task-detail{font-size:11px;color:#64748b;margin-top:2px;}.day-total{font-size:12px;color:#6366f1;font-weight:700;margin-top:5px;text-align:right;}.footer{text-align:center;font-size:11px;color:#94a3b8;margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;}</style></head><body>';
+      _html += '<div class="toolbar no-print"><span class="toolbar-title">&#128218; Study Plan</span><span class="toolbar-hint">Click \u201cSave as PDF\u201d, then in the print dialog select \u201cSave as PDF\u201d as the destination to download.</span><button class="btn-save" onclick="window.print()">&#8659; Save as PDF</button></div>';
+      _html += '<div class="main"><h1>Study Plan</h1><div class="meta">School Level: <strong>'+_escPdf(_lvlNames[_lvl]||_lvl)+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Generated: <strong>'+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</strong>&nbsp;&nbsp;&middot;&nbsp;&nbsp;'+_sorted.length+' day(s) scheduled</div>';
+      _sorted.forEach(function(iso) {
+        var _d = new Date(iso+'T00:00:00');
+        _html += '<div class="day-section"><h2>'+_d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})+'</h2>';
+        var _total = 0;
+        _days[iso].forEach(function(t) {
+          var _m = parseInt(t.time)||0; _total += _m;
+          var _h = Math.floor(_m/60), _mn = _m%60;
+          var _ts = _h>0?(_mn>0?_h+'h '+_mn+'m':_h+'h'):_mn+'m';
+          var _dc = _escPdf((t.difficulty||'easy').toLowerCase().replace(/[^a-z]/g,''));
+          _html += '<div class="task diff-'+_dc+'"><div class="task-name">'+_escPdf(t.name||t.subject||'Assignment')+'</div><div class="task-detail">Subject: '+_escPdf(t.subject||'\u2014')+' \u00b7 Time: '+_ts+' \u00b7 Difficulty: '+_escPdf(t.difficulty||'easy')+(t.routineId?' \u00b7 Routine':'')+(t.isSpreadPart?' (spread)':'')+'</div></div>';
         });
-      } catch(parseErr) {
-        showCustomAlert('Could not read this file. Make sure it is an unmodified backup exported from this planner.');
-      }
-    };
-    reader.readAsText(file);
-    this.value = '';
+        var _th=Math.floor(_total/60),_tm=_total%60;
+        _html += '<div class="day-total">Total: '+(_th>0?(_tm>0?_th+'h '+_tm+'m':_th+'h'):_tm+'m')+'</div></div>';
+      });
+      _html += '<div class="footer">Generated by Study Planner &amp; Time Management Tool</div></div>';
+      _html += '<'+'script>window.addEventListener("load",function(){setTimeout(function(){window.print();},700);});<'+'/script>';
+      _html += '</body></html>';
+      var _w = window.open('', '_blank');
+      if (_w) { _w.document.write(_html); _w.document.close(); }
+      else { showCustomAlert('Please allow pop-ups in your browser to use Export as PDF, then try again.'); }
+    });
   });
- document.getElementById('spPrintBtn').addEventListener('click', function() {
+
+document.getElementById('spImportBtn').addEventListener('click', function() { document.getElementById('spImportFile').click(); });
+document.getElementById('spImportFile').addEventListener('change', function() {
+var file = this.files[0]; if (!file) return;
+var reader = new FileReader();
+reader.onload = function(e2) {
+try {
+var data = JSON.parse(e2.target.result);
+if (!data._type || data._type !== 'study-planner-backup') {
+showCustomAlert('This file is not a valid Study Planner backup. Please select a file that was exported from this planner.');
+return;
+}
+showCustomConfirm('Restore this backup? All current assignments, routines, and settings will be replaced.', function() {
+Object.keys(localStorage).forEach(function(k) {
+if (k.startsWith('sp_day_') || k.startsWith('sp_done_') || k === 'sp_routines' || k === 'studyPlanner_tasks') localStorage.removeItem(k);
+});
+if (data.days) { Object.keys(data.days).forEach(function(k) { try { localStorage.setItem(k, JSON.stringify(data.days[k])); } catch(e3){} }); }
+if (data.routines) { try { localStorage.setItem('sp_routines', JSON.stringify(data.routines)); } catch(e4){} }
+if (data.settings) { Object.keys(data.settings).forEach(function(k) { localStorage.setItem(k, data.settings[k]); }); }
+if (data.stats) { Object.keys(data.stats).forEach(function(k) { localStorage.setItem(k, data.stats[k]); }); }
+window._showToast('\u2713 Backup restored! Reloading\u2026', false, 'importDone', 3000);
+setTimeout(function() { window.location.reload(); }, 1800);
+});
+} catch(parseErr) {
+showCustomAlert('Could not read this file. Make sure it is an unmodified backup exported from this planner.');
+}
+};
+reader.readAsText(file);
+this.value = '';
+});
+document.getElementById('spPrintBtn').addEventListener('click', function() {
     var _ed = { _type: 'study-planner-backup', _version: 2, _exported: new Date().toISOString(), days: {}, routines: [], settings: {}, stats: {} };
     Object.keys(localStorage).forEach(function(k) {
       if (k.startsWith('sp_day_') || k.startsWith('sp_done_')) { try { _ed.days[k] = JSON.parse(localStorage.getItem(k)); } catch(e){} }
@@ -3070,14 +3077,35 @@ window._openImportExportPage = function() {
     var _rts = localStorage.getItem('sp_routines'); if (_rts) { try { _ed.routines = JSON.parse(_rts); } catch(e){} }
     ['studyPlanner_level','studyPlanner_theme','studyPlanner_dailyLimit','studyPlanner_orderMode','studyPlanner_textScale','studyPlanner_colorblind'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.settings[k]=v; });
     ['studyTime_today','studyTime_today_date','studyTime_week','studyTime_week_start','studyTime_total','streak_count','streak_lastDate','study_history','sp_ext_stats'].forEach(function(k){ var v=localStorage.getItem(k); if(v!==null)_ed.stats[k]=v; });
-    var _blob = new Blob([JSON.stringify(_ed, null, 2)], { type: 'application/json' });
-    var _url = URL.createObjectURL(_blob);
-    var _a = document.createElement('a'); _a.href = _url;
-    _a.download = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.json';
-    document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
-    setTimeout(function(){ URL.revokeObjectURL(_url); }, 1000);
+    function _sanitizeBackup(val) {
+      if (typeof val === 'string') return val.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/javascript\s*:/gi,'javascript_').replace(/on\w+\s*=/gi,'on_=');
+      if (Array.isArray(val)) return val.map(_sanitizeBackup);
+      if (val && typeof val === 'object') { var _so={}; Object.keys(val).forEach(function(k2){ _so[k2]=_sanitizeBackup(val[k2]); }); return _so; }
+      return val;
+    }
+    _ed = _sanitizeBackup(_ed);
+    var _jsonStr = JSON.stringify(_ed, null, 2);
+    var _filename = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    var _a = document.createElement('a');
+    _a.download = _filename;
+    var _didDownload = false;
+    if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+      try {
+        var _blob = new Blob([_jsonStr], { type: 'application/octet-stream' });
+        var _url = URL.createObjectURL(_blob);
+        _a.href = _url;
+        document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
+        setTimeout(function(){ URL.revokeObjectURL(_url); }, 2000);
+        _didDownload = true;
+      } catch(e) { _didDownload = false; }
+    }
+    if (!_didDownload) {
+      _a.href = 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent(_jsonStr);
+      document.body.appendChild(_a); _a.click(); document.body.removeChild(_a);
+    }
     window._showToast('\u2713 Backup downloaded! Keep this file safe.', false, 'backupDone', 6000);
   });
+
 };
 
 window.addPresetTask = function(subj, timeVal, diffVal) {
@@ -3283,8 +3311,8 @@ syncCustomSelect(document.getElementById("schoolLevelOnboarding"));
 var _themeMap = {dark:'Dark',midnight:'ThemeMidnight',forest:'ThemeForest',fiery:'ThemeFiery',royal:'ThemeRoyal'};
 
 if (_themeMap[savedTheme]) {
-  var _tbLoad = document.getElementById(_themeMap[savedTheme]);
-  if (_tbLoad) setTimeout(function(){ _tbLoad.click(); }, 60); else document.getElementById("Light").click();
+var _tbLoad = document.getElementById(_themeMap[savedTheme]);
+if (_tbLoad) setTimeout(function(){ _tbLoad.click(); }, 60); else document.getElementById("Light").click();
 } else {
 document.getElementById("Light").click();
 }
@@ -4128,17 +4156,17 @@ if (typeof window._forceCalendarRerender === 'function') window._forceCalendarRe
 });
 
 function _applyCustomTheme(themeId, cfg) {
-  if(typeof window._stopThemeAnim==='function')window._stopThemeAnim();
-  document.getElementById('Dark').click();
-  saveTheme(themeId);
-  document.body.style.backgroundColor = cfg.bg;
-  document.body.style.backgroundImage = cfg.bgImg;
-  window._themeParticleColors = cfg.particles;
-  var _ms = document.getElementById('_customThemeStyle') || document.createElement('style');
-  _ms.id = '_customThemeStyle';
-  _ms.textContent = cfg.css;
-  document.head.appendChild(_ms);
-  document.querySelectorAll('.assignment').forEach(updateAssignmentSummary);
+if(typeof window._stopThemeAnim==='function')window._stopThemeAnim();
+document.getElementById('Dark').click();
+saveTheme(themeId);
+document.body.style.backgroundColor = cfg.bg;
+document.body.style.backgroundImage = cfg.bgImg;
+window._themeParticleColors = cfg.particles;
+var _ms = document.getElementById('_customThemeStyle') || document.createElement('style');
+_ms.id = '_customThemeStyle';
+_ms.textContent = cfg.css;
+document.head.appendChild(_ms);
+document.querySelectorAll('.assignment').forEach(updateAssignmentSummary);
 if (typeof window._forceCalendarRerender === 'function') window._forceCalendarRerender();
 if(themeId==='midnight'&&typeof window._startMidnightAnim==='function')window._startMidnightAnim();
 else if(themeId==='forest'&&typeof window._startForestAnim==='function')window._startForestAnim();
@@ -4147,178 +4175,178 @@ else if(themeId==='royal'&&typeof window._startRoyalAnim==='function')window._st
 }
 
 document.getElementById('ThemeMidnight') && document.getElementById('ThemeMidnight').addEventListener('click', function() {
-  _applyCustomTheme('midnight', {
-    bg: '#020b18',
-    bgImg: 'radial-gradient(ellipse at 15% 5%,rgba(23,66,165,0.45) 0%,transparent 55%),radial-gradient(ellipse at 85% 90%,rgba(14,41,120,0.3) 0%,transparent 55%)',
-    particles: [[147,197,253],[96,165,250],[59,130,246],[219,234,254],[255,255,255]],
-    css: [
-      '#assignmentsContainer .assignment{background:linear-gradient(145deg,#060f24 0%,#0c1f52 100%)!important;border-color:rgba(59,130,246,0.28)!important;}',
-      '#output{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-left-color:#3b82f6!important;color:#bfdbfe!important;}',
-      '#timelineContainer{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-color:rgba(59,130,246,0.22)!important;}',
+_applyCustomTheme('midnight', {
+bg: '#020b18',
+bgImg: 'radial-gradient(ellipse at 15% 5%,rgba(23,66,165,0.45) 0%,transparent 55%),radial-gradient(ellipse at 85% 90%,rgba(14,41,120,0.3) 0%,transparent 55%)',
+particles: [[147,197,253],[96,165,250],[59,130,246],[219,234,254],[255,255,255]],
+css: [
+'#assignmentsContainer .assignment{background:linear-gradient(145deg,#060f24 0%,#0c1f52 100%)!important;border-color:rgba(59,130,246,0.28)!important;}',
+'#output{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-left-color:#3b82f6!important;color:#bfdbfe!important;}',
+'#timelineContainer{background:linear-gradient(135deg,#060f24 0%,#0a1840 100%)!important;border-color:rgba(59,130,246,0.22)!important;}',
 '#controls,#sessionBar{background:rgba(2,11,24,0.15)!important;border-bottom-color:rgba(59,130,246,0.35)!important;box-shadow:0 4px 18px rgba(0,0,0,0.6),0 1px 0 rgba(59,130,246,0.2)!important;}',
-      '#x{background:#060f24!important;border-color:rgba(59,130,246,0.3)!important;}',
-      '.settings-menu-btn:hover{background:rgba(59,130,246,0.18)!important;color:#93c5fd!important;}',
-      'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#3b82f6,#60a5fa)!important;}',
-      '#studyStatsBar{background:rgba(59,130,246,0.14)!important;}',
-      '.accordion-header{background:rgba(6,15,36,0.9)!important;border-color:rgba(59,130,246,0.2)!important;color:#bfdbfe!important;}',
-      '.accordion-content{background:#060f24!important;}',
-      '#why > div{background:#060f24!important;border-color:rgba(59,130,246,0.18)!important;}',
-      '#why h4{color:#dbeafe!important;}#why p{color:#93c5fd!important;}',
-      '#plannerDateChip{background:rgba(59,130,246,0.15)!important;color:#93c5fd!important;}',
-      '#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(6,15,36,0.75),rgba(10,24,64,0.72))!important;border-color:rgba(59,130,246,0.18)!important;}',
-      'body.dropdowndark .custom-select-trigger{background:#060f24!important;border-color:rgba(59,130,246,0.35)!important;color:#bfdbfe!important;}',
-      'body.dropdowndark .custom-select-dropdown{background:#060f24!important;border-color:rgba(59,130,246,0.45)!important;}',
-      'body.dropdowndark .custom-select-option{color:#bfdbfe!important;}',
-      'body.dropdowndark .custom-select-option:hover{background:rgba(59,130,246,0.18)!important;color:#93c5fd!important;}',
-      'body.dropdowndark .assignmentName{background:#060f24!important;border-color:rgba(59,130,246,0.35)!important;color:#bfdbfe!important;}',
-      '#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(10,24,64,0.72) 86%,#0a1840 100%)!important;}',
-      '.accordion-content{background:#060f24!important;}',
-      '.content-inner{color:#bfdbfe!important;background:#060f24!important;}',
-      '#e > div > div{background:linear-gradient(145deg,#060f24,#0a1840)!important;border-color:rgba(59,130,246,0.25)!important;}',
-      '#e h2{color:#dbeafe!important;}',
-      '#e > div > p{color:#93c5fd!important;}',
-      '#customModalBox{background:#060f24!important;border-color:rgba(59,130,246,0.25)!important;}',
-      '#doneAssignmentsList{background:linear-gradient(135deg,#060f24,#0a1840)!important;border-left-color:#3b82f6!important;}',
-      '#timerInfoBox{background:rgba(6,15,36,0.9)!important;border-color:rgba(59,130,246,0.2)!important;}',
+'#x{background:#060f24!important;border-color:rgba(59,130,246,0.3)!important;}',
+'.settings-menu-btn:hover{background:rgba(59,130,246,0.18)!important;color:#93c5fd!important;}',
+'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#3b82f6,#60a5fa)!important;}',
+'#studyStatsBar{background:rgba(59,130,246,0.14)!important;}',
+'.accordion-header{background:rgba(6,15,36,0.9)!important;border-color:rgba(59,130,246,0.2)!important;color:#bfdbfe!important;}',
+'.accordion-content{background:#060f24!important;}',
+'#why > div{background:#060f24!important;border-color:rgba(59,130,246,0.18)!important;}',
+'#why h4{color:#dbeafe!important;}#why p{color:#93c5fd!important;}',
+'#plannerDateChip{background:rgba(59,130,246,0.15)!important;color:#93c5fd!important;}',
+'#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(6,15,36,0.75),rgba(10,24,64,0.72))!important;border-color:rgba(59,130,246,0.18)!important;}',
+'body.dropdowndark .custom-select-trigger{background:#060f24!important;border-color:rgba(59,130,246,0.35)!important;color:#bfdbfe!important;}',
+'body.dropdowndark .custom-select-dropdown{background:#060f24!important;border-color:rgba(59,130,246,0.45)!important;}',
+'body.dropdowndark .custom-select-option{color:#bfdbfe!important;}',
+'body.dropdowndark .custom-select-option:hover{background:rgba(59,130,246,0.18)!important;color:#93c5fd!important;}',
+'body.dropdowndark .assignmentName{background:#060f24!important;border-color:rgba(59,130,246,0.35)!important;color:#bfdbfe!important;}',
+'#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(10,24,64,0.72) 86%,#0a1840 100%)!important;}',
+'.accordion-content{background:#060f24!important;}',
+'.content-inner{color:#bfdbfe!important;background:#060f24!important;}',
+'#e > div > div{background:linear-gradient(145deg,#060f24,#0a1840)!important;border-color:rgba(59,130,246,0.25)!important;}',
+'#e h2{color:#dbeafe!important;}',
+'#e > div > p{color:#93c5fd!important;}',
+'#customModalBox{background:#060f24!important;border-color:rgba(59,130,246,0.25)!important;}',
+'#doneAssignmentsList{background:linear-gradient(135deg,#060f24,#0a1840)!important;border-left-color:#3b82f6!important;}',
+'#timerInfoBox{background:rgba(6,15,36,0.9)!important;border-color:rgba(59,130,246,0.2)!important;}',
 '#timerControls{background:linear-gradient(135deg,#060f24,#0a1840)!important;border-color:rgba(59,130,246,0.18)!important;}',
-      '#assignmentEndOverlay > div{background:#060f24!important;}',
-      '#b{background:linear-gradient(135deg,#3b82f6,#60a5fa)!important;box-shadow:0 8px 30px rgba(59,130,246,0.4)!important;}',
-      'body{--acc:#3b82f6;}'
-    ].join('')
+'#assignmentEndOverlay > div{background:#060f24!important;}',
+'#b{background:linear-gradient(135deg,#3b82f6,#60a5fa)!important;box-shadow:0 8px 30px rgba(59,130,246,0.4)!important;}',
+'body{--acc:#3b82f6;}'
+].join('')
 
-  });
+});
 });
 
 document.getElementById('ThemeForest') && document.getElementById('ThemeForest').addEventListener('click', function() {
-  _applyCustomTheme('forest', {
-    bg: '#020f07',
-    bgImg: 'radial-gradient(ellipse at 10% 0%,rgba(20,83,45,0.5) 0%,transparent 55%),radial-gradient(ellipse at 90% 95%,rgba(5,46,22,0.38) 0%,transparent 55%)',
-    particles: [[134,239,172],[74,222,128],[34,197,94],[187,247,208],[163,230,53]],
-    css: [
-      '#assignmentsContainer .assignment{background:linear-gradient(145deg,#031409 0%,#062415 100%)!important;border-color:rgba(34,197,94,0.28)!important;}',
-      '#output{background:linear-gradient(135deg,#031409 0%,#051f12 100%)!important;border-left-color:#16a34a!important;color:#bbf7d0!important;}',
-      '#timelineContainer{background:linear-gradient(135deg,#031409 0%,#051f12 100%)!important;border-color:rgba(34,197,94,0.22)!important;}',
-      '#controls,#sessionBar{background:rgba(2,15,7,0.88)!important;border-bottom-color:rgba(34,197,94,0.4)!important;box-shadow:0 4px 18px rgba(0,0,0,0.6),0 1px 0 rgba(34,197,94,0.2)!important;}',
-      '#x{background:#031409!important;border-color:rgba(34,197,94,0.3)!important;}',
-      '.settings-menu-btn:hover{background:rgba(34,197,94,0.18)!important;color:#86efac!important;}',
-      'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#16a34a,#84cc16)!important;}',
-      '#studyStatsBar{background:rgba(34,197,94,0.13)!important;}',
-      '.accordion-header{background:rgba(3,20,9,0.9)!important;border-color:rgba(34,197,94,0.2)!important;color:#bbf7d0!important;}',
-      '.accordion-content{background:#031409!important;}',
-      '#why > div{background:#031409!important;border-color:rgba(34,197,94,0.18)!important;}',
-      '#why h4{color:#dcfce7!important;}#why p{color:#86efac!important;}',
-      '#plannerDateChip{background:rgba(34,197,94,0.15)!important;color:#86efac!important;}',
-       '#addAssignmentBtn{background:#15803d!important;box-shadow:0 3px 0 #14532d!important;}',
-      '#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(3,20,9,0.75),rgba(6,36,21,0.72))!important;border-color:rgba(34,197,94,0.18)!important;}',
-      'body.dropdowndark .custom-select-trigger{background:#031409!important;border-color:rgba(34,197,94,0.35)!important;color:#bbf7d0!important;}',
-      'body.dropdowndark .custom-select-dropdown{background:#031409!important;border-color:rgba(34,197,94,0.45)!important;}',
-      'body.dropdowndark .custom-select-option{color:#bbf7d0!important;}',
-      'body.dropdowndark .custom-select-option:hover{background:rgba(34,197,94,0.18)!important;color:#86efac!important;}',
-      'body.dropdowndark .assignmentName{background:#031409!important;border-color:rgba(34,197,94,0.35)!important;color:#bbf7d0!important;}',
-     '#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(5,31,18,0.72) 86%,#051f12 100%)!important;}',
-      '.accordion-content{background:#031409!important;}',
-      '.content-inner{color:#bbf7d0!important;background:#031409!important;}',
-      '#e > div > div{background:linear-gradient(145deg,#031409,#062415)!important;border-color:rgba(34,197,94,0.25)!important;}',
-      '#e h2{color:#dcfce7!important;}',
-      '#e > div > p{color:#86efac!important;}',
-      '#customModalBox{background:#031409!important;border-color:rgba(34,197,94,0.25)!important;}',
-      '#doneAssignmentsList{background:linear-gradient(135deg,#031409,#062415)!important;border-left-color:#16a34a!important;}',
-      '#timerInfoBox{background:rgba(3,20,9,0.9)!important;border-color:rgba(34,197,94,0.2)!important;}',
+_applyCustomTheme('forest', {
+bg: '#020f07',
+bgImg: 'radial-gradient(ellipse at 10% 0%,rgba(20,83,45,0.5) 0%,transparent 55%),radial-gradient(ellipse at 90% 95%,rgba(5,46,22,0.38) 0%,transparent 55%)',
+particles: [[134,239,172],[74,222,128],[34,197,94],[187,247,208],[163,230,53]],
+css: [
+'#assignmentsContainer .assignment{background:linear-gradient(145deg,#031409 0%,#062415 100%)!important;border-color:rgba(34,197,94,0.28)!important;}',
+'#output{background:linear-gradient(135deg,#031409 0%,#051f12 100%)!important;border-left-color:#16a34a!important;color:#bbf7d0!important;}',
+'#timelineContainer{background:linear-gradient(135deg,#031409 0%,#051f12 100%)!important;border-color:rgba(34,197,94,0.22)!important;}',
+'#controls,#sessionBar{background:rgba(2,15,7,0.88)!important;border-bottom-color:rgba(34,197,94,0.4)!important;box-shadow:0 4px 18px rgba(0,0,0,0.6),0 1px 0 rgba(34,197,94,0.2)!important;}',
+'#x{background:#031409!important;border-color:rgba(34,197,94,0.3)!important;}',
+'.settings-menu-btn:hover{background:rgba(34,197,94,0.18)!important;color:#86efac!important;}',
+'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#16a34a,#84cc16)!important;}',
+'#studyStatsBar{background:rgba(34,197,94,0.13)!important;}',
+'.accordion-header{background:rgba(3,20,9,0.9)!important;border-color:rgba(34,197,94,0.2)!important;color:#bbf7d0!important;}',
+'.accordion-content{background:#031409!important;}',
+'#why > div{background:#031409!important;border-color:rgba(34,197,94,0.18)!important;}',
+'#why h4{color:#dcfce7!important;}#why p{color:#86efac!important;}',
+'#plannerDateChip{background:rgba(34,197,94,0.15)!important;color:#86efac!important;}',
+'#addAssignmentBtn{background:#15803d!important;box-shadow:0 3px 0 #14532d!important;}',
+'#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(3,20,9,0.75),rgba(6,36,21,0.72))!important;border-color:rgba(34,197,94,0.18)!important;}',
+'body.dropdowndark .custom-select-trigger{background:#031409!important;border-color:rgba(34,197,94,0.35)!important;color:#bbf7d0!important;}',
+'body.dropdowndark .custom-select-dropdown{background:#031409!important;border-color:rgba(34,197,94,0.45)!important;}',
+'body.dropdowndark .custom-select-option{color:#bbf7d0!important;}',
+'body.dropdowndark .custom-select-option:hover{background:rgba(34,197,94,0.18)!important;color:#86efac!important;}',
+'body.dropdowndark .assignmentName{background:#031409!important;border-color:rgba(34,197,94,0.35)!important;color:#bbf7d0!important;}',
+'#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(5,31,18,0.72) 86%,#051f12 100%)!important;}',
+'.accordion-content{background:#031409!important;}',
+'.content-inner{color:#bbf7d0!important;background:#031409!important;}',
+'#e > div > div{background:linear-gradient(145deg,#031409,#062415)!important;border-color:rgba(34,197,94,0.25)!important;}',
+'#e h2{color:#dcfce7!important;}',
+'#e > div > p{color:#86efac!important;}',
+'#customModalBox{background:#031409!important;border-color:rgba(34,197,94,0.25)!important;}',
+'#doneAssignmentsList{background:linear-gradient(135deg,#031409,#062415)!important;border-left-color:#16a34a!important;}',
+'#timerInfoBox{background:rgba(3,20,9,0.9)!important;border-color:rgba(34,197,94,0.2)!important;}',
 '#timerControls{background:linear-gradient(135deg,#031409,#062415)!important;border-color:rgba(34,197,94,0.18)!important;}',
-      '#assignmentEndOverlay > div{background:#031409!important;}',
-      '#b{background:linear-gradient(135deg,#16a34a,#84cc16)!important;box-shadow:0 8px 30px rgba(34,197,94,0.4)!important;}',
-      'body{--acc:#16a34a;}'
-    ].join('')
+'#assignmentEndOverlay > div{background:#031409!important;}',
+'#b{background:linear-gradient(135deg,#16a34a,#84cc16)!important;box-shadow:0 8px 30px rgba(34,197,94,0.4)!important;}',
+'body{--acc:#16a34a;}'
+].join('')
 
-  });
+});
 });
 
 document.getElementById('ThemeFiery') && document.getElementById('ThemeFiery').addEventListener('click', function() {
-  _applyCustomTheme('fiery', {
-    bg: '#120500',
-    bgImg: 'radial-gradient(ellipse at 20% 0%,rgba(194,65,12,0.45) 0%,transparent 55%),radial-gradient(ellipse at 80% 90%,rgba(161,98,7,0.35) 0%,transparent 55%)',
-    particles: [[251,146,60],[234,179,8],[252,211,77],[253,186,116],[254,215,170]],
-    css: [
-      '#assignmentsContainer .assignment{background:linear-gradient(145deg,#1a0800 0%,#2d1200 100%)!important;border-color:rgba(249,115,22,0.3)!important;}',
-      '#output{background:linear-gradient(135deg,#1a0800 0%,#2d1200 100%)!important;border-left-color:#f97316!important;color:#fed7aa!important;}',
-      '#timelineContainer{background:linear-gradient(135deg,#1a0800 0%,#2d1200 100%)!important;border-color:rgba(249,115,22,0.25)!important;}',
-      '#controls,#sessionBar{background:rgba(18,5,0,0.9)!important;border-bottom-color:rgba(249,115,22,0.45)!important;box-shadow:0 4px 18px rgba(0,0,0,0.65),0 1px 0 rgba(234,179,8,0.2)!important;}',
-      '#x{background:#1a0800!important;border-color:rgba(249,115,22,0.35)!important;}',
-      '.settings-menu-btn:hover{background:rgba(249,115,22,0.2)!important;color:#fdba74!important;}',
-      'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#f97316,#eab308)!important;}',
-      '#studyStatsBar{background:rgba(249,115,22,0.15)!important;}',
-      '.accordion-header{background:rgba(26,8,0,0.9)!important;border-color:rgba(249,115,22,0.22)!important;color:#fed7aa!important;}',
-      '.accordion-content{background:#1a0800!important;}',
-      '#why > div{background:#1a0800!important;border-color:rgba(249,115,22,0.2)!important;}',
-      '#why h4{color:#ffedd5!important;}#why p{color:#fdba74!important;}',
-      '#plannerDateChip{background:rgba(249,115,22,0.18)!important;color:#fdba74!important;}',
-      '#calculateBtn{background:#ea580c!important;box-shadow:0 3px 0 #7c2d12!important;}',
-      '#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(26,8,0,0.75),rgba(45,18,0,0.72))!important;border-color:rgba(249,115,22,0.2)!important;}',
-      'body.dropdowndark .custom-select-trigger{background:#1a0800!important;border-color:rgba(249,115,22,0.4)!important;color:#fed7aa!important;}',
-      'body.dropdowndark .custom-select-dropdown{background:#1a0800!important;border-color:rgba(249,115,22,0.5)!important;}',
-      'body.dropdowndark .custom-select-option{color:#fed7aa!important;}',
-      'body.dropdowndark .custom-select-option:hover{background:rgba(249,115,22,0.2)!important;color:#fdba74!important;}',
-      'body.dropdowndark .assignmentName{background:#1a0800!important;border-color:rgba(249,115,22,0.4)!important;color:#fed7aa!important;}',
-      '#outputFade{background:linear-gradient(to bottom,transparent 0%,rgba(45,18,0,0.5) 30%,rgba(45,18,0,0.88) 60%,#2d1200 100%)!important;}',
-      '.accordion-content{background:#1a0800!important;}',
-      '.content-inner{color:#fed7aa!important;background:#1a0800!important;}',
-      '#e > div > div{background:linear-gradient(145deg,#1a0800,#2d1200)!important;border-color:rgba(249,115,22,0.3)!important;}',
-      '#e h2{color:#ffedd5!important;}',
-      '#e > div > p{color:#fdba74!important;}',
-      '#customModalBox{background:#1a0800!important;border-color:rgba(249,115,22,0.3)!important;}',
-      '#doneAssignmentsList{background:linear-gradient(135deg,#1a0800,#2d1200)!important;border-left-color:#f97316!important;}',
-      '#timerInfoBox{background:rgba(26,8,0,0.9)!important;border-color:rgba(249,115,22,0.22)!important;}',
+_applyCustomTheme('fiery', {
+bg: '#120500',
+bgImg: 'radial-gradient(ellipse at 20% 0%,rgba(194,65,12,0.45) 0%,transparent 55%),radial-gradient(ellipse at 80% 90%,rgba(161,98,7,0.35) 0%,transparent 55%)',
+particles: [[251,146,60],[234,179,8],[252,211,77],[253,186,116],[254,215,170]],
+css: [
+'#assignmentsContainer .assignment{background:linear-gradient(145deg,#1a0800 0%,#2d1200 100%)!important;border-color:rgba(249,115,22,0.3)!important;}',
+'#output{background:linear-gradient(135deg,#1a0800 0%,#2d1200 100%)!important;border-left-color:#f97316!important;color:#fed7aa!important;}',
+'#timelineContainer{background:linear-gradient(135deg,#1a0800 0%,#2d1200 100%)!important;border-color:rgba(249,115,22,0.25)!important;}',
+'#controls,#sessionBar{background:rgba(18,5,0,0.9)!important;border-bottom-color:rgba(249,115,22,0.45)!important;box-shadow:0 4px 18px rgba(0,0,0,0.65),0 1px 0 rgba(234,179,8,0.2)!important;}',
+'#x{background:#1a0800!important;border-color:rgba(249,115,22,0.35)!important;}',
+'.settings-menu-btn:hover{background:rgba(249,115,22,0.2)!important;color:#fdba74!important;}',
+'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#f97316,#eab308)!important;}',
+'#studyStatsBar{background:rgba(249,115,22,0.15)!important;}',
+'.accordion-header{background:rgba(26,8,0,0.9)!important;border-color:rgba(249,115,22,0.22)!important;color:#fed7aa!important;}',
+'.accordion-content{background:#1a0800!important;}',
+'#why > div{background:#1a0800!important;border-color:rgba(249,115,22,0.2)!important;}',
+'#why h4{color:#ffedd5!important;}#why p{color:#fdba74!important;}',
+'#plannerDateChip{background:rgba(249,115,22,0.18)!important;color:#fdba74!important;}',
+'#calculateBtn{background:#ea580c!important;box-shadow:0 3px 0 #7c2d12!important;}',
+'#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(26,8,0,0.75),rgba(45,18,0,0.72))!important;border-color:rgba(249,115,22,0.2)!important;}',
+'body.dropdowndark .custom-select-trigger{background:#1a0800!important;border-color:rgba(249,115,22,0.4)!important;color:#fed7aa!important;}',
+'body.dropdowndark .custom-select-dropdown{background:#1a0800!important;border-color:rgba(249,115,22,0.5)!important;}',
+'body.dropdowndark .custom-select-option{color:#fed7aa!important;}',
+'body.dropdowndark .custom-select-option:hover{background:rgba(249,115,22,0.2)!important;color:#fdba74!important;}',
+'body.dropdowndark .assignmentName{background:#1a0800!important;border-color:rgba(249,115,22,0.4)!important;color:#fed7aa!important;}',
+'#outputFade{background:linear-gradient(to bottom,transparent 0%,rgba(45,18,0,0.5) 30%,rgba(45,18,0,0.88) 60%,#2d1200 100%)!important;}',
+'.accordion-content{background:#1a0800!important;}',
+'.content-inner{color:#fed7aa!important;background:#1a0800!important;}',
+'#e > div > div{background:linear-gradient(145deg,#1a0800,#2d1200)!important;border-color:rgba(249,115,22,0.3)!important;}',
+'#e h2{color:#ffedd5!important;}',
+'#e > div > p{color:#fdba74!important;}',
+'#customModalBox{background:#1a0800!important;border-color:rgba(249,115,22,0.3)!important;}',
+'#doneAssignmentsList{background:linear-gradient(135deg,#1a0800,#2d1200)!important;border-left-color:#f97316!important;}',
+'#timerInfoBox{background:rgba(26,8,0,0.9)!important;border-color:rgba(249,115,22,0.22)!important;}',
 '#timerControls{background:linear-gradient(135deg,#1a0800,#2d1200)!important;border-color:rgba(249,115,22,0.22)!important;}',
-      '#assignmentEndOverlay > div{background:#1a0800!important;}',
+'#assignmentEndOverlay > div{background:#1a0800!important;}',
 '#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(45,18,0,0.72) 86%,#2d1200 100%)!important;}',
 'body{--acc:#f97316;}'
-    ].join('')
+].join('')
 
-  });
+});
 });
 
 document.getElementById('ThemeRoyal') && document.getElementById('ThemeRoyal').addEventListener('click', function() {
-  _applyCustomTheme('royal', {
-    bg: '#0c0118',
-    bgImg: 'radial-gradient(ellipse at 15% 0%,rgba(126,34,206,0.45) 0%,transparent 55%),radial-gradient(ellipse at 85% 90%,rgba(190,24,93,0.3) 0%,transparent 55%)',
-    particles: [[192,132,252],[240,171,252],[217,70,239],[216,180,254],[249,168,212]],
-    css: [
-      '#assignmentsContainer .assignment{background:linear-gradient(145deg,#130025 0%,#200040 100%)!important;border-color:rgba(168,85,247,0.3)!important;}',
-      '#output{background:linear-gradient(135deg,#130025 0%,#1e0038 100%)!important;border-left-color:#a855f7!important;color:#e9d5ff!important;}',
-      '#timelineContainer{background:linear-gradient(135deg,#130025 0%,#1e0038 100%)!important;border-color:rgba(168,85,247,0.25)!important;}',
-      '#controls,#sessionBar{background:rgba(12,1,24,0.9)!important;border-bottom-color:rgba(168,85,247,0.45)!important;box-shadow:0 4px 18px rgba(0,0,0,0.65),0 1px 0 rgba(217,70,239,0.2)!important;}',
-      '#x{background:#130025!important;border-color:rgba(168,85,247,0.35)!important;}',
-      '.settings-menu-btn:hover{background:rgba(168,85,247,0.2)!important;color:#d8b4fe!important;}',
-      'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#a855f7,#d946ef)!important;}',
-      '#studyStatsBar{background:rgba(168,85,247,0.15)!important;}',
-      '.accordion-header{background:rgba(19,0,37,0.9)!important;border-color:rgba(168,85,247,0.22)!important;color:#e9d5ff!important;}',
-      '.accordion-content{background:#130025!important;}',
-      '#why > div{background:#130025!important;border-color:rgba(168,85,247,0.2)!important;}',
-      '#why h4{color:#f3e8ff!important;}#why p{color:#d8b4fe!important;}',
-      '#plannerDateChip{background:rgba(168,85,247,0.18)!important;color:#d8b4fe!important;}',
-         '#b{background:linear-gradient(135deg,#a855f7,#d946ef)!important;box-shadow:0 8px 30px rgba(168,85,247,0.45)!important;}',
-      '#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(19,0,37,0.75),rgba(30,0,56,0.72))!important;border-color:rgba(168,85,247,0.2)!important;}',
-      'body.dropdowndark .custom-select-trigger{background:#130025!important;border-color:rgba(168,85,247,0.4)!important;color:#e9d5ff!important;}',
-      'body.dropdowndark .custom-select-dropdown{background:#130025!important;border-color:rgba(168,85,247,0.5)!important;}',
-      'body.dropdowndark .custom-select-option{color:#e9d5ff!important;}',
-      'body.dropdowndark .custom-select-option:hover{background:rgba(168,85,247,0.2)!important;color:#d8b4fe!important;}',
-      'body.dropdowndark .assignmentName{background:#130025!important;border-color:rgba(168,85,247,0.4)!important;color:#e9d5ff!important;}',
-      '#outputFade{background:linear-gradient(to bottom,transparent 0%,rgba(30,0,56,0.5) 30%,rgba(30,0,56,0.88) 60%,#1e0038 100%)!important;}',
-      '.accordion-content{background:#130025!important;}',
-      '.content-inner{color:#e9d5ff!important;background:#130025!important;}',
-      '#e > div > div{background:linear-gradient(145deg,#130025,#1e0038)!important;border-color:rgba(168,85,247,0.3)!important;}',
-      '#e h2{color:#f3e8ff!important;}',
-      '#e > div > p{color:#d8b4fe!important;}',
-      '#customModalBox{background:#130025!important;border-color:rgba(168,85,247,0.3)!important;}',
-      '#doneAssignmentsList{background:linear-gradient(135deg,#130025,#1e0038)!important;border-left-color:#a855f7!important;}',
-      '#timerInfoBox{background:rgba(19,0,37,0.9)!important;border-color:rgba(168,85,247,0.22)!important;}',
+_applyCustomTheme('royal', {
+bg: '#0c0118',
+bgImg: 'radial-gradient(ellipse at 15% 0%,rgba(126,34,206,0.45) 0%,transparent 55%),radial-gradient(ellipse at 85% 90%,rgba(190,24,93,0.3) 0%,transparent 55%)',
+particles: [[192,132,252],[240,171,252],[217,70,239],[216,180,254],[249,168,212]],
+css: [
+'#assignmentsContainer .assignment{background:linear-gradient(145deg,#130025 0%,#200040 100%)!important;border-color:rgba(168,85,247,0.3)!important;}',
+'#output{background:linear-gradient(135deg,#130025 0%,#1e0038 100%)!important;border-left-color:#a855f7!important;color:#e9d5ff!important;}',
+'#timelineContainer{background:linear-gradient(135deg,#130025 0%,#1e0038 100%)!important;border-color:rgba(168,85,247,0.25)!important;}',
+'#controls,#sessionBar{background:rgba(12,1,24,0.9)!important;border-bottom-color:rgba(168,85,247,0.45)!important;box-shadow:0 4px 18px rgba(0,0,0,0.65),0 1px 0 rgba(217,70,239,0.2)!important;}',
+'#x{background:#130025!important;border-color:rgba(168,85,247,0.35)!important;}',
+'.settings-menu-btn:hover{background:rgba(168,85,247,0.2)!important;color:#d8b4fe!important;}',
+'input[type="range"]::-webkit-slider-runnable-track{background:linear-gradient(90deg,#a855f7,#d946ef)!important;}',
+'#studyStatsBar{background:rgba(168,85,247,0.15)!important;}',
+'.accordion-header{background:rgba(19,0,37,0.9)!important;border-color:rgba(168,85,247,0.22)!important;color:#e9d5ff!important;}',
+'.accordion-content{background:#130025!important;}',
+'#why > div{background:#130025!important;border-color:rgba(168,85,247,0.2)!important;}',
+'#why h4{color:#f3e8ff!important;}#why p{color:#d8b4fe!important;}',
+'#plannerDateChip{background:rgba(168,85,247,0.18)!important;color:#d8b4fe!important;}',
+'#b{background:linear-gradient(135deg,#a855f7,#d946ef)!important;box-shadow:0 8px 30px rgba(168,85,247,0.45)!important;}',
+'#calendarScrollContainer .cal-month-ph > div{background:linear-gradient(145deg,rgba(19,0,37,0.75),rgba(30,0,56,0.72))!important;border-color:rgba(168,85,247,0.2)!important;}',
+'body.dropdowndark .custom-select-trigger{background:#130025!important;border-color:rgba(168,85,247,0.4)!important;color:#e9d5ff!important;}',
+'body.dropdowndark .custom-select-dropdown{background:#130025!important;border-color:rgba(168,85,247,0.5)!important;}',
+'body.dropdowndark .custom-select-option{color:#e9d5ff!important;}',
+'body.dropdowndark .custom-select-option:hover{background:rgba(168,85,247,0.2)!important;color:#d8b4fe!important;}',
+'body.dropdowndark .assignmentName{background:#130025!important;border-color:rgba(168,85,247,0.4)!important;color:#e9d5ff!important;}',
+'#outputFade{background:linear-gradient(to bottom,transparent 0%,rgba(30,0,56,0.5) 30%,rgba(30,0,56,0.88) 60%,#1e0038 100%)!important;}',
+'.accordion-content{background:#130025!important;}',
+'.content-inner{color:#e9d5ff!important;background:#130025!important;}',
+'#e > div > div{background:linear-gradient(145deg,#130025,#1e0038)!important;border-color:rgba(168,85,247,0.3)!important;}',
+'#e h2{color:#f3e8ff!important;}',
+'#e > div > p{color:#d8b4fe!important;}',
+'#customModalBox{background:#130025!important;border-color:rgba(168,85,247,0.3)!important;}',
+'#doneAssignmentsList{background:linear-gradient(135deg,#130025,#1e0038)!important;border-left-color:#a855f7!important;}',
+'#timerInfoBox{background:rgba(19,0,37,0.9)!important;border-color:rgba(168,85,247,0.22)!important;}',
 '#timerControls{background:linear-gradient(135deg,#130025,#1e0038)!important;border-color:rgba(168,85,247,0.22)!important;}',
-     '#assignmentEndOverlay > div{background:#130025!important;}',
+'#assignmentEndOverlay > div{background:#130025!important;}',
 '#outputFade{background:linear-gradient(to bottom,transparent 0%,transparent 62%,rgba(30,0,56,0.72) 86%,#1e0038 100%)!important;}',
 'body{--acc:#a855f7;}'
-    ].join('')
+].join('')
 
-  });
+});
 });
 
 
@@ -4801,7 +4829,7 @@ if (!e.target.closest('#x') && !e.target.closest('#z')) {
 var _xp = document.getElementById('x');
 if (_xp && _xp.style.display !== 'none' && !_xp._closing) { _closeSettingsPanel(); }
 }
- if (!e.target.closest('.assignment') && !e.target.closest('#controls') && !e.target.closest('.custom-select-option') && !e.target.closest('.custom-select-dropdown') && !e.target.closest('.custom-select-trigger') && !e.target.closest('#customModalOverlay') && !e.target.closest('#spRoutinePanel') && !e.target.closest('#legalModal')) {
+if (!e.target.closest('.assignment') && !e.target.closest('#controls') && !e.target.closest('.custom-select-option') && !e.target.closest('.custom-select-dropdown') && !e.target.closest('.custom-select-trigger') && !e.target.closest('#customModalOverlay') && !e.target.closest('#spRoutinePanel') && !e.target.closest('#legalModal')) {
 if (!window.tutorialActive) collapseAllAssignments();
 }
 
@@ -4955,26 +4983,26 @@ playhead.style.left = '0';
 }
 
 if (elapsed % 5 === 0 && elapsed > 0) saveTimerState(remaining, false);
-        // track break segments
-        var _bSeg = segmentMap.find(function(ss){ return progress >= ss.start && progress < ss.end; });
-        if (_bSeg && _bSeg.isBreak) {
-          if (!window._inBreakSince) window._inBreakSince = Date.now();
-        } else if (window._inBreakSince) {
-          window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
-          window._inBreakSince = null;
-        }
-        if (remaining > 0) {
-          timerId = requestAnimationFrame(frame);
-        } else {
-          if (playhead) {
-            playhead.style.width = "100%";
-          }
-          clearTimerState();
-          document.getElementById("resetTimerBtn").classList.add("pulse-end");
-          commitStudiedTime();
-          finalizeSession();
-          renderStudyStats();
-        }
+// track break segments
+var _bSeg = segmentMap.find(function(ss){ return progress >= ss.start && progress < ss.end; });
+if (_bSeg && _bSeg.isBreak) {
+if (!window._inBreakSince) window._inBreakSince = Date.now();
+} else if (window._inBreakSince) {
+window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
+window._inBreakSince = null;
+}
+if (remaining > 0) {
+timerId = requestAnimationFrame(frame);
+} else {
+if (playhead) {
+playhead.style.width = "100%";
+}
+clearTimerState();
+document.getElementById("resetTimerBtn").classList.add("pulse-end");
+commitStudiedTime();
+finalizeSession();
+renderStudyStats();
+}
 
 }
 
@@ -4998,14 +5026,14 @@ window._timerActualStart = null;
 };
 
 document.getElementById("PauseTimerBtn").onclick = () => {
-  if (timerId && playhead) {
-    window._pauseStartTime = Date.now();
-    if (window._inBreakSince) {
-      window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
-      window._inBreakSince = null;
-    }
-    const currentProgressPercent = parseFloat(playhead.style.width);
-    window._pausedPercent = currentProgressPercent;
+if (timerId && playhead) {
+window._pauseStartTime = Date.now();
+if (window._inBreakSince) {
+window._sessionBreakSecs = (window._sessionBreakSecs || 0) + (Date.now() - window._inBreakSince) / 1000;
+window._inBreakSince = null;
+}
+const currentProgressPercent = parseFloat(playhead.style.width);
+window._pausedPercent = currentProgressPercent;
 
 
 const resumeOffset = window._resumeOffset || 0;
@@ -5030,11 +5058,11 @@ if (_pauseBM) _pauseBM.style.display = "none";
 
 document.getElementById("startTimerBtn").onclick = startTimer;
 document.getElementById("startTimerBtn").addEventListener("click", () => {
-  window._sessionBreakSecs = 0;
-  window._sessionPauseSecs = 0;
-  window._inBreakSince = null;
-  window._pauseStartTime = null;
-  _recordStatsSessionStart();
+window._sessionBreakSecs = 0;
+window._sessionPauseSecs = 0;
+window._inBreakSince = null;
+window._pauseStartTime = null;
+_recordStatsSessionStart();
 });
 
 
@@ -5121,10 +5149,10 @@ requestAnimationFrame(renderSegmentLabelTrack);
 
 document.getElementById("resetTimerBtn").onclick = () => {
 const _doSessionReset = () => {
-  commitStudiedTime();
-  finalizeSession();
-  renderStudyStats();
-  stopTimer();
+commitStudiedTime();
+finalizeSession();
+renderStudyStats();
+stopTimer();
 TOTAL_STUDY_SECONDS = 0;
 segmentMap = [];
 window._plannerEntryTime = Date.now();
@@ -5193,12 +5221,12 @@ showCustomConfirm("End your session? This will reset your timer and progress.", 
 };
 
 document.getElementById("ResumeTimerBtn").onclick = () => {
-  if (TOTAL_STUDY_SECONDS > 0) {
-    if (window._pauseStartTime) {
-      window._sessionPauseSecs = (window._sessionPauseSecs || 0) + (Date.now() - window._pauseStartTime) / 1000;
-      window._pauseStartTime = null;
-    }
-    window._sessionPaused = false;
+if (TOTAL_STUDY_SECONDS > 0) {
+if (window._pauseStartTime) {
+window._sessionPauseSecs = (window._sessionPauseSecs || 0) + (Date.now() - window._pauseStartTime) / 1000;
+window._pauseStartTime = null;
+}
+window._sessionPaused = false;
 
 document.title = 'Study Planner & Time Management Tool';
 if (window._pausedAssignmentDisplay) {
@@ -5405,9 +5433,9 @@ assignmentObserver.observe(document.getElementById("assignmentsContainer"), { ch
 
 document.getElementById("calculateBtn").addEventListener("click", () => {
 hasCalculated = true;
-  calculatedStateSnapshot = getAssignmentSnapshot();
-  var _otClear = document.getElementById('_spToast_outdated'); if (_otClear) window._hideToast(_otClear);
-  setPulse(false);
+calculatedStateSnapshot = getAssignmentSnapshot();
+var _otClear = document.getElementById('_spToast_outdated'); if (_otClear) window._hideToast(_otClear);
+setPulse(false);
 
 sessionDayCumOffset = 0;
 assignmentEndShownSet.clear();
@@ -6121,7 +6149,7 @@ _confettiAnimFrame = requestAnimationFrame(draw);
 }
 /* ── Copy / Paste Assignment (localStorage) ── */
 (function() {
- function _showCopyToast(msg, isError) { window._showToast(msg, isError, null, 3200); }
+function _showCopyToast(msg, isError) { window._showToast(msg, isError, null, 3200); }
 window._copyAssignmentCard = function(card) {
 var name=(card.querySelector('.assignmentName')||{}).value||'';
 var subject=(card.querySelector('.subject')||{}).value||'';
@@ -6154,9 +6182,9 @@ var sessionRunning = document.getElementById('resetTimerBtn') && document.getEle
 if (sessionRunning) return;
 var _paCont = document.getElementById('assignmentsContainer');
 if (_paCont && _paCont.querySelectorAll('.assignment').length >= 25) {
-    window._showToast('⚠️ Max assignments reached (25 limit).', true, 'maxAssign', 10000);
-    return;
-  }
+window._showToast('⚠️ Max assignments reached (25 limit).', true, 'maxAssign', 10000);
+return;
+}
 
 var p = str.split('\u2016'); if (p.length < 5) return;
 document.getElementById('addAssignmentBtn').click();
@@ -6794,10 +6822,10 @@ if (!isVisible(el2)) { T._show(idx + 1); return; }
 if (!window.isManualOrder && !el2._syntheticBounds && el2.classList && el2.classList.contains('assignment')) el2.classList.remove('collapsed');
 document.getElementById('tutTextEl').textContent = step.text;
 (function(){
-  var _tc=document.getElementById('tutTooltip');
-  var _sc=document.getElementById('_tutSC');
-  if(!_sc&&_tc){_sc=document.createElement('div');_sc.id='_tutSC';_sc.style.cssText='font-size:10px;font-weight:700;color:#94a3b8;text-align:right;margin-bottom:4px;font-family:"Inter",sans-serif;letter-spacing:0.3px;';_tc.insertBefore(_sc,_tc.firstChild);}
-  if(_sc)_sc.textContent=(idx+1)+' / '+T.STEPS.length;
+var _tc=document.getElementById('tutTooltip');
+var _sc=document.getElementById('_tutSC');
+if(!_sc&&_tc){_sc=document.createElement('div');_sc.id='_tutSC';_sc.style.cssText='font-size:10px;font-weight:700;color:#94a3b8;text-align:right;margin-bottom:4px;font-family:"Inter",sans-serif;letter-spacing:0.3px;';_tc.insertBefore(_sc,_tc.firstChild);}
+if(_sc)_sc.textContent=(idx+1)+' / '+T.STEPS.length;
 })();
 var _animRing = document.getElementById('tutSpotlightRing');
 var _animSec = document.getElementById('tutSecondaryRing');
@@ -7240,435 +7268,435 @@ requestAnimationFrame(loop);
 (function(){
 window._themeAnimFrame2 = null;
 window._stopThemeAnim = function(){
-  if(window._themeAnimFrame2){cancelAnimationFrame(window._themeAnimFrame2);window._themeAnimFrame2=null;}
-  var c=document.getElementById('themeCanvas');
-  if(c){c.style.display='none';var ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
+if(window._themeAnimFrame2){cancelAnimationFrame(window._themeAnimFrame2);window._themeAnimFrame2=null;}
+var c=document.getElementById('themeCanvas');
+if(c){c.style.display='none';var ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);}
 };
 window.addEventListener('resize',function(){
-  var c=document.getElementById('themeCanvas');
-  if(c&&c.style.display!=='none'){c.width=window.innerWidth;c.height=window.innerHeight;}
+var c=document.getElementById('themeCanvas');
+if(c&&c.style.display!=='none'){c.width=window.innerWidth;c.height=window.innerHeight;}
 });
 
 window._startMidnightAnim = function(){
-  var c=document.getElementById('themeCanvas');if(!c)return;
-  c.style.display='block';
-  var ctx=c.getContext('2d');
-  function draw(){
-    c.width=window.innerWidth;c.height=window.innerHeight;
-    ctx.clearRect(0,0,c.width,c.height);
-    var R=Math.min(c.width,c.height)*0.32,cx=c.width-R*0.52,cy=R*0.20;
-    // Outer glow halo
-    var halo=ctx.createRadialGradient(cx,cy,R*0.8,cx,cy,R*3.2);
-    halo.addColorStop(0,'rgba(255,253,200,0.15)');halo.addColorStop(0.5,'rgba(255,252,185,0.05)');halo.addColorStop(1,'rgba(255,252,185,0)');
-    ctx.fillStyle=halo;ctx.beginPath();ctx.arc(cx,cy,R*3.2,0,Math.PI*2);ctx.fill();
-    // Moon body — spherical radial gradient, light from upper-left
-    var moonGr=ctx.createRadialGradient(cx-R*0.28,cy-R*0.26,R*0.04,cx+R*0.08,cy+R*0.08,R*1.02);
-    moonGr.addColorStop(0,'rgba(255,254,238,0.99)');
-    moonGr.addColorStop(0.25,'rgba(251,246,218,0.97)');
-    moonGr.addColorStop(0.55,'rgba(235,224,182,0.94)');
-    moonGr.addColorStop(0.80,'rgba(215,202,152,0.91)');
-    moonGr.addColorStop(0.95,'rgba(198,184,128,0.88)');
-    moonGr.addColorStop(1,'rgba(182,168,108,0.84)');
-    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=moonGr;ctx.fill();
-    // Dark limb shadow for 3-D sphere feel
-    var limbGr=ctx.createRadialGradient(cx+R*0.28,cy+R*0.24,0,cx,cy,R*1.02);
-    limbGr.addColorStop(0.44,'rgba(0,0,0,0)');limbGr.addColorStop(0.76,'rgba(4,2,24,0.10)');limbGr.addColorStop(1,'rgba(4,2,24,0.26)');
-    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=limbGr;ctx.fill();
-    // Craters with rim highlights and floor shading
-    var craters=[
-      {x:-R*.22,y:-R*.12,r:R*.145,d:0.60},{x:R*.25,y:R*.20,r:R*.115,d:0.55},
-      {x:R*.04,y:R*.37,r:R*.095,d:0.50},{x:-R*.16,y:R*.28,r:R*.075,d:0.46},
-      {x:R*.35,y:-R*.08,r:R*.085,d:0.48},{x:-R*.38,y:R*.08,r:R*.070,d:0.42},
-      {x:R*.12,y:-R*.33,r:R*.078,d:0.46},{x:-R*.06,y:-R*.38,r:R*.058,d:0.38},
-      {x:R*.42,y:R*.28,r:R*.052,d:0.36},{x:-R*.30,y:-R*.32,r:R*.042,d:0.32},
-      {x:R*.28,y:-R*.30,r:R*.038,d:0.30},{x:-R*.44,y:-R*.18,r:R*.032,d:0.28},
-      {x:-R*.58,y:R*.22,r:R*.050,d:0.36},{x:R*.54,y:-R*.26,r:R*.044,d:0.32},
-      {x:R*.30,y:R*.58,r:R*.048,d:0.34},{x:-R*.26,y:-R*.60,r:R*.040,d:0.28},
-      {x:R*.64,y:R*.12,r:R*.038,d:0.28},{x:-R*.62,y:-R*.30,r:R*.036,d:0.26},
-      {x:R*.16,y:-R*.66,r:R*.034,d:0.24},{x:-R*.18,y:R*.65,r:R*.036,d:0.26},
-      {x:R*.68,y:-R*.16,r:R*.032,d:0.22},{x:-R*.70,y:R*.12,r:R*.030,d:0.22},
-      {x:R*.46,y:-R*.54,r:R*.034,d:0.24},{x:-R*.52,y:-R*.48,r:R*.036,d:0.24},
-      {x:R*.72,y:R*.22,r:R*.028,d:0.20},{x:-R*.74,y:-R*.08,r:R*.026,d:0.20},
-      {x:R*.34,y:R*.68,r:R*.030,d:0.22},{x:-R*.36,y:-R*.66,r:R*.028,d:0.20},
-      {x:R*.58,y:R*.46,r:R*.030,d:0.22},{x:-R*.56,y:R*.44,r:R*.028,d:0.20}
-    ];
-    craters.forEach(function(cr){
-      if(Math.sqrt(cr.x*cr.x+cr.y*cr.y)+cr.r>R*0.93)return;
-      ctx.save();ctx.translate(cx+cr.x,cy+cr.y);
-      // Crater floor (dark radial)
-      var cg=ctx.createRadialGradient(cr.r*0.1,cr.r*0.1,0,0,0,cr.r);
-      cg.addColorStop(0,'rgba(72,62,28,'+(cr.d*0.75)+')');
-      cg.addColorStop(0.6,'rgba(46,38,12,'+(cr.d*0.88)+')');
-      cg.addColorStop(1,'rgba(22,18,4,'+(cr.d*0.55)+')');
-      ctx.beginPath();ctx.arc(0,0,cr.r,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
-      // Bright rim — upper-left arc
-      ctx.beginPath();ctx.arc(0,0,cr.r*1.04,Math.PI*0.72,Math.PI*1.78);
-      ctx.strokeStyle='rgba(255,250,205,'+(cr.d*0.54)+')';ctx.lineWidth=cr.r*0.24;ctx.stroke();
-      // Dark rim — lower-right arc
-      ctx.beginPath();ctx.arc(0,0,cr.r*1.04,Math.PI*1.78,Math.PI*0.72);
-      ctx.strokeStyle='rgba(28,20,3,'+(cr.d*0.36)+')';ctx.lineWidth=cr.r*0.18;ctx.stroke();
-      ctx.restore();
-    });
-    // Mare patches (subtle dark surface regions)
-    ctx.save();ctx.globalAlpha=0.09;
-    [{x:-R*.08,y:R*.06,rx:R*.32,ry:R*.20,rot:0.5},{x:R*.18,y:-R*.22,rx:R*.22,ry:R*.13,rot:-0.4},{x:R*.10,y:R*.22,rx:R*.18,ry:R*.10,rot:0.2}].forEach(function(p){
-      ctx.save();ctx.translate(cx+p.x,cy+p.y);ctx.rotate(p.rot);
-      ctx.beginPath();ctx.ellipse(0,0,p.rx,p.ry,0,0,Math.PI*2);
-      ctx.fillStyle='rgba(80,68,32,1)';ctx.fill();ctx.restore();
-    });
-    ctx.restore();
-    // Moon edge
-    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.strokeStyle='rgba(215,205,145,0.22)';ctx.lineWidth=1.5;ctx.stroke();
-    window._themeAnimFrame2=requestAnimationFrame(draw);
-  }
-  window._themeAnimFrame2=requestAnimationFrame(draw);
+var c=document.getElementById('themeCanvas');if(!c)return;
+c.style.display='block';
+var ctx=c.getContext('2d');
+function draw(){
+c.width=window.innerWidth;c.height=window.innerHeight;
+ctx.clearRect(0,0,c.width,c.height);
+var R=Math.min(c.width,c.height)*0.32,cx=c.width-R*0.52,cy=R*0.20;
+// Outer glow halo
+var halo=ctx.createRadialGradient(cx,cy,R*0.8,cx,cy,R*3.2);
+halo.addColorStop(0,'rgba(255,253,200,0.15)');halo.addColorStop(0.5,'rgba(255,252,185,0.05)');halo.addColorStop(1,'rgba(255,252,185,0)');
+ctx.fillStyle=halo;ctx.beginPath();ctx.arc(cx,cy,R*3.2,0,Math.PI*2);ctx.fill();
+// Moon body — spherical radial gradient, light from upper-left
+var moonGr=ctx.createRadialGradient(cx-R*0.28,cy-R*0.26,R*0.04,cx+R*0.08,cy+R*0.08,R*1.02);
+moonGr.addColorStop(0,'rgba(255,254,238,0.99)');
+moonGr.addColorStop(0.25,'rgba(251,246,218,0.97)');
+moonGr.addColorStop(0.55,'rgba(235,224,182,0.94)');
+moonGr.addColorStop(0.80,'rgba(215,202,152,0.91)');
+moonGr.addColorStop(0.95,'rgba(198,184,128,0.88)');
+moonGr.addColorStop(1,'rgba(182,168,108,0.84)');
+ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=moonGr;ctx.fill();
+// Dark limb shadow for 3-D sphere feel
+var limbGr=ctx.createRadialGradient(cx+R*0.28,cy+R*0.24,0,cx,cy,R*1.02);
+limbGr.addColorStop(0.44,'rgba(0,0,0,0)');limbGr.addColorStop(0.76,'rgba(4,2,24,0.10)');limbGr.addColorStop(1,'rgba(4,2,24,0.26)');
+ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=limbGr;ctx.fill();
+// Craters with rim highlights and floor shading
+var craters=[
+{x:-R*.22,y:-R*.12,r:R*.145,d:0.60},{x:R*.25,y:R*.20,r:R*.115,d:0.55},
+{x:R*.04,y:R*.37,r:R*.095,d:0.50},{x:-R*.16,y:R*.28,r:R*.075,d:0.46},
+{x:R*.35,y:-R*.08,r:R*.085,d:0.48},{x:-R*.38,y:R*.08,r:R*.070,d:0.42},
+{x:R*.12,y:-R*.33,r:R*.078,d:0.46},{x:-R*.06,y:-R*.38,r:R*.058,d:0.38},
+{x:R*.42,y:R*.28,r:R*.052,d:0.36},{x:-R*.30,y:-R*.32,r:R*.042,d:0.32},
+{x:R*.28,y:-R*.30,r:R*.038,d:0.30},{x:-R*.44,y:-R*.18,r:R*.032,d:0.28},
+{x:-R*.58,y:R*.22,r:R*.050,d:0.36},{x:R*.54,y:-R*.26,r:R*.044,d:0.32},
+{x:R*.30,y:R*.58,r:R*.048,d:0.34},{x:-R*.26,y:-R*.60,r:R*.040,d:0.28},
+{x:R*.64,y:R*.12,r:R*.038,d:0.28},{x:-R*.62,y:-R*.30,r:R*.036,d:0.26},
+{x:R*.16,y:-R*.66,r:R*.034,d:0.24},{x:-R*.18,y:R*.65,r:R*.036,d:0.26},
+{x:R*.68,y:-R*.16,r:R*.032,d:0.22},{x:-R*.70,y:R*.12,r:R*.030,d:0.22},
+{x:R*.46,y:-R*.54,r:R*.034,d:0.24},{x:-R*.52,y:-R*.48,r:R*.036,d:0.24},
+{x:R*.72,y:R*.22,r:R*.028,d:0.20},{x:-R*.74,y:-R*.08,r:R*.026,d:0.20},
+{x:R*.34,y:R*.68,r:R*.030,d:0.22},{x:-R*.36,y:-R*.66,r:R*.028,d:0.20},
+{x:R*.58,y:R*.46,r:R*.030,d:0.22},{x:-R*.56,y:R*.44,r:R*.028,d:0.20}
+];
+craters.forEach(function(cr){
+if(Math.sqrt(cr.x*cr.x+cr.y*cr.y)+cr.r>R*0.93)return;
+ctx.save();ctx.translate(cx+cr.x,cy+cr.y);
+// Crater floor (dark radial)
+var cg=ctx.createRadialGradient(cr.r*0.1,cr.r*0.1,0,0,0,cr.r);
+cg.addColorStop(0,'rgba(72,62,28,'+(cr.d*0.75)+')');
+cg.addColorStop(0.6,'rgba(46,38,12,'+(cr.d*0.88)+')');
+cg.addColorStop(1,'rgba(22,18,4,'+(cr.d*0.55)+')');
+ctx.beginPath();ctx.arc(0,0,cr.r,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+// Bright rim — upper-left arc
+ctx.beginPath();ctx.arc(0,0,cr.r*1.04,Math.PI*0.72,Math.PI*1.78);
+ctx.strokeStyle='rgba(255,250,205,'+(cr.d*0.54)+')';ctx.lineWidth=cr.r*0.24;ctx.stroke();
+// Dark rim — lower-right arc
+ctx.beginPath();ctx.arc(0,0,cr.r*1.04,Math.PI*1.78,Math.PI*0.72);
+ctx.strokeStyle='rgba(28,20,3,'+(cr.d*0.36)+')';ctx.lineWidth=cr.r*0.18;ctx.stroke();
+ctx.restore();
+});
+// Mare patches (subtle dark surface regions)
+ctx.save();ctx.globalAlpha=0.09;
+[{x:-R*.08,y:R*.06,rx:R*.32,ry:R*.20,rot:0.5},{x:R*.18,y:-R*.22,rx:R*.22,ry:R*.13,rot:-0.4},{x:R*.10,y:R*.22,rx:R*.18,ry:R*.10,rot:0.2}].forEach(function(p){
+ctx.save();ctx.translate(cx+p.x,cy+p.y);ctx.rotate(p.rot);
+ctx.beginPath();ctx.ellipse(0,0,p.rx,p.ry,0,0,Math.PI*2);
+ctx.fillStyle='rgba(80,68,32,1)';ctx.fill();ctx.restore();
+});
+ctx.restore();
+// Moon edge
+ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+ctx.strokeStyle='rgba(215,205,145,0.22)';ctx.lineWidth=1.5;ctx.stroke();
+window._themeAnimFrame2=requestAnimationFrame(draw);
+}
+window._themeAnimFrame2=requestAnimationFrame(draw);
 };
 
 
 window._startForestAnim = function(){
-  var c=document.getElementById('themeCanvas');if(!c)return;
-  c.style.display='block';
-  var ctx=c.getContext('2d'),t0=null;
-  var leaves=Array.from({length:40},function(_,i){
-    var r=function(s){return Math.abs(Math.sin(s*17.3)*1e4)%1;};
-    return{x:r(i*3)*(window.innerWidth||800),y:r(i*7)*(window.innerHeight||600),
-    s:1.8+r(i*11)*3.2,vx:(r(i*5)-.5)*.55,vy:.35+r(i*13)*.68,
-    rot:r(i*17)*Math.PI*2,rv:(r(i*19)-.5)*.024,h:88+Math.floor(r(i*23)*55),a:.22+r(i*29)*.30};
-  });
+var c=document.getElementById('themeCanvas');if(!c)return;
+c.style.display='block';
+var ctx=c.getContext('2d'),t0=null;
+var leaves=Array.from({length:40},function(_,i){
+var r=function(s){return Math.abs(Math.sin(s*17.3)*1e4)%1;};
+return{x:r(i*3)*(window.innerWidth||800),y:r(i*7)*(window.innerHeight||600),
+s:1.8+r(i*11)*3.2,vx:(r(i*5)-.5)*.55,vy:.35+r(i*13)*.68,
+rot:r(i*17)*Math.PI*2,rv:(r(i*19)-.5)*.024,h:88+Math.floor(r(i*23)*55),a:.22+r(i*29)*.30};
+});
 
-  function rng(seed,n){return Math.abs(Math.sin(seed*17.3+n*9.7)*1e4)%1;}
+function rng(seed,n){return Math.abs(Math.sin(seed*17.3+n*9.7)*1e4)%1;}
 
-  function drawTrunk(x,gy,h,w){
-    var g=ctx.createLinearGradient(x-w,0,x+w,0);
-    g.addColorStop(0,'rgba(22,8,1,.88)');g.addColorStop(.45,'rgba(50,22,4,.92)');g.addColorStop(1,'rgba(16,6,1,.80)');
-    ctx.fillStyle=g;
-    ctx.beginPath();ctx.moveTo(x-w*.62,gy);ctx.lineTo(x+w*.62,gy);ctx.lineTo(x+w*.30,gy-h);ctx.lineTo(x-w*.30,gy-h);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(10,4,0,.28)';ctx.lineWidth=.8;
-    for(var i=1;i<=3;i++){var yi=gy-h*(i*.24);ctx.beginPath();ctx.moveTo(x-w*.42,yi);ctx.quadraticCurveTo(x,yi+h*.04,x+w*.42,yi);ctx.stroke();}
-  }
+function drawTrunk(x,gy,h,w){
+var g=ctx.createLinearGradient(x-w,0,x+w,0);
+g.addColorStop(0,'rgba(22,8,1,.88)');g.addColorStop(.45,'rgba(50,22,4,.92)');g.addColorStop(1,'rgba(16,6,1,.80)');
+ctx.fillStyle=g;
+ctx.beginPath();ctx.moveTo(x-w*.62,gy);ctx.lineTo(x+w*.62,gy);ctx.lineTo(x+w*.30,gy-h);ctx.lineTo(x-w*.30,gy-h);ctx.closePath();ctx.fill();
+ctx.strokeStyle='rgba(10,4,0,.28)';ctx.lineWidth=.8;
+for(var i=1;i<=3;i++){var yi=gy-h*(i*.24);ctx.beginPath();ctx.moveTo(x-w*.42,yi);ctx.quadraticCurveTo(x,yi+h*.04,x+w*.42,yi);ctx.stroke();}
+}
 
-  function drawPineTree(x,gy,tH,sd){
-    var trunkH=tH*.17,tw=Math.max(3,tH*.04);
-    drawTrunk(x,gy,trunkH,tw);
-    var tiers=6,tipY=gy-tH,baseY=gy-trunkH;
-    for(var ti=0;ti<tiers;ti++){
-      var frac=ti/tiers;
-      var ty=tipY+(baseY-tipY)*(frac*.90+.03);
-      var hw=tH*(.05+frac*.27)*(0.80+rng(sd,ti+2)*.40);
-      var th=tH*.21*(1-frac*.25);
-      var al=.70+frac*.14;
-      var cols=[['rgba(12,72,16,','rgba(26,112,30,','rgba(8,54,12,'],['rgba(10,64,14,','rgba(22,98,26,','rgba(6,48,10,'],['rgba(16,84,18,','rgba(30,118,34,','rgba(10,60,14,']];
-      var cv=cols[ti%3];
-      var g=ctx.createLinearGradient(x-hw,ty,x+hw,ty+th);
-      g.addColorStop(0,cv[0]+al+')');g.addColorStop(.48,cv[1]+(al+.10)+')');g.addColorStop(1,cv[2]+(al-.08)+')');
-      // Tier silhouette with scalloped branch edges
-      ctx.beginPath();ctx.moveTo(x,ty);
-      var bSteps=6+ti*2;
-      for(var bi=1;bi<=bSteps;bi++){
-        var bf=bi/bSteps;
-        var bx=x+hw*bf,by=ty+th*.70*bf;
-        var droop=th*.12*Math.sin(bf*Math.PI)*(1-frac*.4);
-        var jag=hw*.055*Math.sin(bf*Math.PI*(3+ti)+sd*.8)*rng(sd,bi+ti*10);
-        ctx.lineTo(bx+jag,by+droop);
-      }
-      ctx.lineTo(x+hw*.30,ty+th);ctx.lineTo(x-hw*.30,ty+th);
-      for(var bi=bSteps;bi>=1;bi--){
-        var bf=bi/bSteps;
-        var bx=x-hw*bf,by=ty+th*.70*bf;
-        var droop=th*.12*Math.sin(bf*Math.PI)*(1-frac*.4);
-        var jag=hw*.055*Math.sin(bf*Math.PI*(3+ti)+sd*.8)*rng(sd,bi+ti*10);
-        ctx.lineTo(bx-jag,by+droop);
-      }
-      ctx.closePath();ctx.fillStyle=g;ctx.fill();
-      // Individual branch lines radiating from centre
-      ctx.lineWidth=.85;
-      var numB=3+ti*2;
-      for(var bi=0;bi<numB;bi++){
-        var bf2=(bi+.5)/numB;
-        for(var side=-1;side<=1;side+=2){
-          var endX=x+side*hw*bf2*1.02,endY=ty+th*.68*bf2;
-          var midX=x+side*hw*bf2*.42,midY=ty+th*.35*bf2;
-          var grad=ctx.createLinearGradient(midX,midY,endX,endY);
-          grad.addColorStop(0,'rgba(6,36,8,0)');grad.addColorStop(1,'rgba(6,36,8,.52)');
-          ctx.strokeStyle=grad;
-          ctx.beginPath();ctx.moveTo(midX,midY);ctx.lineTo(endX,endY);ctx.stroke();
-          // Needle cluster at tip
-          ctx.strokeStyle='rgba(30,100,22,.58)';ctx.lineWidth=.6;
-          var nLen=hw*.10;
-          for(var ni=-1;ni<=1;ni++){
-            var na=Math.atan2(endY-midY,endX-midX)+ni*.22;
-            ctx.beginPath();ctx.moveTo(endX,endY);ctx.lineTo(endX+Math.cos(na)*nLen,endY+Math.sin(na)*nLen);ctx.stroke();
-          }
-          ctx.lineWidth=.85;
-        }
-      }
-      // Top highlight
-      ctx.beginPath();ctx.moveTo(x,ty);ctx.lineTo(x+hw*.30,ty+th*.24);
-      ctx.strokeStyle='rgba(90,200,72,.20)';ctx.lineWidth=1.1;ctx.stroke();
-    }
-  }
+function drawPineTree(x,gy,tH,sd){
+var trunkH=tH*.17,tw=Math.max(3,tH*.04);
+drawTrunk(x,gy,trunkH,tw);
+var tiers=6,tipY=gy-tH,baseY=gy-trunkH;
+for(var ti=0;ti<tiers;ti++){
+var frac=ti/tiers;
+var ty=tipY+(baseY-tipY)*(frac*.90+.03);
+var hw=tH*(.05+frac*.27)*(0.80+rng(sd,ti+2)*.40);
+var th=tH*.21*(1-frac*.25);
+var al=.70+frac*.14;
+var cols=[['rgba(12,72,16,','rgba(26,112,30,','rgba(8,54,12,'],['rgba(10,64,14,','rgba(22,98,26,','rgba(6,48,10,'],['rgba(16,84,18,','rgba(30,118,34,','rgba(10,60,14,']];
+var cv=cols[ti%3];
+var g=ctx.createLinearGradient(x-hw,ty,x+hw,ty+th);
+g.addColorStop(0,cv[0]+al+')');g.addColorStop(.48,cv[1]+(al+.10)+')');g.addColorStop(1,cv[2]+(al-.08)+')');
+// Tier silhouette with scalloped branch edges
+ctx.beginPath();ctx.moveTo(x,ty);
+var bSteps=6+ti*2;
+for(var bi=1;bi<=bSteps;bi++){
+var bf=bi/bSteps;
+var bx=x+hw*bf,by=ty+th*.70*bf;
+var droop=th*.12*Math.sin(bf*Math.PI)*(1-frac*.4);
+var jag=hw*.055*Math.sin(bf*Math.PI*(3+ti)+sd*.8)*rng(sd,bi+ti*10);
+ctx.lineTo(bx+jag,by+droop);
+}
+ctx.lineTo(x+hw*.30,ty+th);ctx.lineTo(x-hw*.30,ty+th);
+for(var bi=bSteps;bi>=1;bi--){
+var bf=bi/bSteps;
+var bx=x-hw*bf,by=ty+th*.70*bf;
+var droop=th*.12*Math.sin(bf*Math.PI)*(1-frac*.4);
+var jag=hw*.055*Math.sin(bf*Math.PI*(3+ti)+sd*.8)*rng(sd,bi+ti*10);
+ctx.lineTo(bx-jag,by+droop);
+}
+ctx.closePath();ctx.fillStyle=g;ctx.fill();
+// Individual branch lines radiating from centre
+ctx.lineWidth=.85;
+var numB=3+ti*2;
+for(var bi=0;bi<numB;bi++){
+var bf2=(bi+.5)/numB;
+for(var side=-1;side<=1;side+=2){
+var endX=x+side*hw*bf2*1.02,endY=ty+th*.68*bf2;
+var midX=x+side*hw*bf2*.42,midY=ty+th*.35*bf2;
+var grad=ctx.createLinearGradient(midX,midY,endX,endY);
+grad.addColorStop(0,'rgba(6,36,8,0)');grad.addColorStop(1,'rgba(6,36,8,.52)');
+ctx.strokeStyle=grad;
+ctx.beginPath();ctx.moveTo(midX,midY);ctx.lineTo(endX,endY);ctx.stroke();
+// Needle cluster at tip
+ctx.strokeStyle='rgba(30,100,22,.58)';ctx.lineWidth=.6;
+var nLen=hw*.10;
+for(var ni=-1;ni<=1;ni++){
+var na=Math.atan2(endY-midY,endX-midX)+ni*.22;
+ctx.beginPath();ctx.moveTo(endX,endY);ctx.lineTo(endX+Math.cos(na)*nLen,endY+Math.sin(na)*nLen);ctx.stroke();
+}
+ctx.lineWidth=.85;
+}
+}
+// Top highlight
+ctx.beginPath();ctx.moveTo(x,ty);ctx.lineTo(x+hw*.30,ty+th*.24);
+ctx.strokeStyle='rgba(90,200,72,.20)';ctx.lineWidth=1.1;ctx.stroke();
+}
+}
 
-  function drawDeciduousTree(x,gy,tH,sd){
-    var trunkH=tH*.28,tw=Math.max(5,tH*.075);
-    drawTrunk(x,gy,trunkH,tw);
-    var baseY=gy-trunkH,cr=tH*.36;
-    // Main branches
-    var numB=3+Math.floor(rng(sd,1)*3);
-    for(var bi=0;bi<numB;bi++){
-      var ang=(-Math.PI*.75+(bi/numB)*Math.PI*1.5)*(0.82+rng(sd,bi+5)*.36);
-      if(Math.sin(ang)>0.45) ang=ang>0?Math.PI*.42:-Math.PI*.42;
-      var bLen=cr*(.54+rng(sd,bi+15)*.36);
-      var endX=x+Math.cos(ang)*bLen,endY=baseY+Math.sin(ang)*bLen;
-      var bw=Math.max(1.8,tw*.50*(1-bi/numB*.35));
-      var cpX=x+Math.cos(ang)*bLen*.46+Math.sin(ang)*bLen*.10;
-      var cpY=baseY+Math.sin(ang)*bLen*.46-Math.cos(ang)*bLen*.08;
-      ctx.beginPath();ctx.moveTo(x,baseY);ctx.quadraticCurveTo(cpX,cpY,endX,endY);
-      ctx.strokeStyle='rgba(40,16,3,.82)';ctx.lineWidth=bw;ctx.stroke();
-      // Sub-branches
-      for(var si=0;si<2+bi%2;si++){
-        var sf=.40+si*.26;
-        var sbX=x+Math.cos(ang)*bLen*sf,sbY=baseY+Math.sin(ang)*bLen*sf;
-        var sa=ang+(si%2===0?.54:-.54)*(1+rng(sd,si+bi)*0.28);
-        var sl=bLen*(.30+rng(sd,si+bi*3)*.10);
-        ctx.beginPath();ctx.moveTo(sbX,sbY);ctx.lineTo(sbX+Math.cos(sa)*sl,sbY+Math.sin(sa)*sl);
-        ctx.strokeStyle='rgba(30,12,2,.65)';ctx.lineWidth=Math.max(.8,bw*.44);ctx.stroke();
-      }
-    }
-    // Leaf canopy — many small, individually distinct clusters (not blobs)
-    var clData=[];
-    var clusterCount=24+Math.floor(rng(sd,99)*12);
-    for(var ci=0;ci<clusterCount;ci++){
-      var cf=(ci+.5)/clusterCount;
-      var cAng=cf*Math.PI*2+sd*.8+ci*.70;
-      var cDist=cr*(.20+rng(sd,ci+20)*.68);
-      var cX=x+Math.cos(cAng)*cDist;
-      var cY=baseY-cr*.14+Math.sin(cAng)*cDist*.80;
-      if(cY>baseY+cr*.06) continue;
-      clData.push({x:cX,y:cY,r:cr*(.060+rng(sd,ci+30)*.072),ci:ci});
-    }
-    // Back-to-front sort so overlapping reads naturally
-    clData.sort(function(a,b){return a.y-b.y;});
-    clData.forEach(function(cl){
-      var hue=90+Math.floor(rng(sd,cl.ci*7+3)*54);
-      var sat=50+Math.floor(rng(sd,cl.ci*11)*28);
-      var lit=22+Math.floor(rng(sd,cl.ci*13)*22);
-      var al=.74+rng(sd,cl.ci*17)*.20;
-      // Irregular but small and defined shape
-      ctx.beginPath();
-      var pts=6+cl.ci%4;
-      for(var pi=0;pi<=pts;pi++){
-        var pa=(pi/pts)*Math.PI*2;
-        var pr=cl.r*(.68+.34*Math.sin(pa*2.1+cl.ci*.72+sd*.9));
-        var px2=cl.x+Math.cos(pa)*pr,py2=cl.y+Math.sin(pa)*pr*.88;
-        if(pi===0) ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2);
-      }
-      ctx.closePath();
-      ctx.fillStyle='hsla('+hue+','+sat+'%,'+lit+'%,'+al+')';ctx.fill();
-      // Thin outline to separate adjacent clusters
-      ctx.strokeStyle='hsla('+hue+','+(sat-10)+'%,'+(lit-8)+'%,.28)';ctx.lineWidth=.6;ctx.stroke();
-      // Small highlight
-      ctx.fillStyle='rgba(82,195,68,.12)';
-      ctx.beginPath();ctx.arc(cl.x-cl.r*.18,cl.y-cl.r*.20,cl.r*.34,0,Math.PI*2);ctx.fill();
-    });
-  }
+function drawDeciduousTree(x,gy,tH,sd){
+var trunkH=tH*.28,tw=Math.max(5,tH*.075);
+drawTrunk(x,gy,trunkH,tw);
+var baseY=gy-trunkH,cr=tH*.36;
+// Main branches
+var numB=3+Math.floor(rng(sd,1)*3);
+for(var bi=0;bi<numB;bi++){
+var ang=(-Math.PI*.75+(bi/numB)*Math.PI*1.5)*(0.82+rng(sd,bi+5)*.36);
+if(Math.sin(ang)>0.45) ang=ang>0?Math.PI*.42:-Math.PI*.42;
+var bLen=cr*(.54+rng(sd,bi+15)*.36);
+var endX=x+Math.cos(ang)*bLen,endY=baseY+Math.sin(ang)*bLen;
+var bw=Math.max(1.8,tw*.50*(1-bi/numB*.35));
+var cpX=x+Math.cos(ang)*bLen*.46+Math.sin(ang)*bLen*.10;
+var cpY=baseY+Math.sin(ang)*bLen*.46-Math.cos(ang)*bLen*.08;
+ctx.beginPath();ctx.moveTo(x,baseY);ctx.quadraticCurveTo(cpX,cpY,endX,endY);
+ctx.strokeStyle='rgba(40,16,3,.82)';ctx.lineWidth=bw;ctx.stroke();
+// Sub-branches
+for(var si=0;si<2+bi%2;si++){
+var sf=.40+si*.26;
+var sbX=x+Math.cos(ang)*bLen*sf,sbY=baseY+Math.sin(ang)*bLen*sf;
+var sa=ang+(si%2===0?.54:-.54)*(1+rng(sd,si+bi)*0.28);
+var sl=bLen*(.30+rng(sd,si+bi*3)*.10);
+ctx.beginPath();ctx.moveTo(sbX,sbY);ctx.lineTo(sbX+Math.cos(sa)*sl,sbY+Math.sin(sa)*sl);
+ctx.strokeStyle='rgba(30,12,2,.65)';ctx.lineWidth=Math.max(.8,bw*.44);ctx.stroke();
+}
+}
+// Leaf canopy — many small, individually distinct clusters (not blobs)
+var clData=[];
+var clusterCount=24+Math.floor(rng(sd,99)*12);
+for(var ci=0;ci<clusterCount;ci++){
+var cf=(ci+.5)/clusterCount;
+var cAng=cf*Math.PI*2+sd*.8+ci*.70;
+var cDist=cr*(.20+rng(sd,ci+20)*.68);
+var cX=x+Math.cos(cAng)*cDist;
+var cY=baseY-cr*.14+Math.sin(cAng)*cDist*.80;
+if(cY>baseY+cr*.06) continue;
+clData.push({x:cX,y:cY,r:cr*(.060+rng(sd,ci+30)*.072),ci:ci});
+}
+// Back-to-front sort so overlapping reads naturally
+clData.sort(function(a,b){return a.y-b.y;});
+clData.forEach(function(cl){
+var hue=90+Math.floor(rng(sd,cl.ci*7+3)*54);
+var sat=50+Math.floor(rng(sd,cl.ci*11)*28);
+var lit=22+Math.floor(rng(sd,cl.ci*13)*22);
+var al=.74+rng(sd,cl.ci*17)*.20;
+// Irregular but small and defined shape
+ctx.beginPath();
+var pts=6+cl.ci%4;
+for(var pi=0;pi<=pts;pi++){
+var pa=(pi/pts)*Math.PI*2;
+var pr=cl.r*(.68+.34*Math.sin(pa*2.1+cl.ci*.72+sd*.9));
+var px2=cl.x+Math.cos(pa)*pr,py2=cl.y+Math.sin(pa)*pr*.88;
+if(pi===0) ctx.moveTo(px2,py2); else ctx.lineTo(px2,py2);
+}
+ctx.closePath();
+ctx.fillStyle='hsla('+hue+','+sat+'%,'+lit+'%,'+al+')';ctx.fill();
+// Thin outline to separate adjacent clusters
+ctx.strokeStyle='hsla('+hue+','+(sat-10)+'%,'+(lit-8)+'%,.28)';ctx.lineWidth=.6;ctx.stroke();
+// Small highlight
+ctx.fillStyle='rgba(82,195,68,.12)';
+ctx.beginPath();ctx.arc(cl.x-cl.r*.18,cl.y-cl.r*.20,cl.r*.34,0,Math.PI*2);ctx.fill();
+});
+}
 
-  var trees=[
-    {xF:.04,hF:.34,tp:1,sd:1},{xF:.13,hF:.43,tp:1,sd:2},
-    {xF:.21,hF:.29,tp:1,sd:3},{xF:.30,hF:.38,tp:1,sd:4},
-    {xF:.40,hF:.24,tp:1,sd:5},{xF:.60,hF:.24,tp:1,sd:6},
-    {xF:.70,hF:.38,tp:1,sd:7},{xF:.79,hF:.29,tp:1,sd:8},
-    {xF:.87,hF:.43,tp:1,sd:9},{xF:.96,hF:.34,tp:1,sd:10}
-  ];
+var trees=[
+{xF:.04,hF:.34,tp:1,sd:1},{xF:.13,hF:.43,tp:1,sd:2},
+{xF:.21,hF:.29,tp:1,sd:3},{xF:.30,hF:.38,tp:1,sd:4},
+{xF:.40,hF:.24,tp:1,sd:5},{xF:.60,hF:.24,tp:1,sd:6},
+{xF:.70,hF:.38,tp:1,sd:7},{xF:.79,hF:.29,tp:1,sd:8},
+{xF:.87,hF:.43,tp:1,sd:9},{xF:.96,hF:.34,tp:1,sd:10}
+];
 
-  function draw(ts){
-    if(!t0)t0=ts; var t=(ts-t0)/1e3;
-    var W=window.innerWidth,H=window.innerHeight;
-    c.width=W;c.height=H;ctx.clearRect(0,0,W,H);
-    trees.forEach(function(tr){
-      if(tr.tp===1) drawPineTree(W*tr.xF,H,H*tr.hF,tr.sd);
-      else drawDeciduousTree(W*tr.xF,H,H*tr.hF,tr.sd);
-    });
-    leaves.forEach(function(l){
-      l.x+=l.vx+Math.sin(t*.38+l.x*.009)*.32;l.y+=l.vy;l.rot+=l.rv;
-      if(l.y>H+14){l.y=-14;l.x=Math.random()*W;}
-      if(l.x<-10)l.x=W+10;if(l.x>W+10)l.x=-10;
-      ctx.save();ctx.translate(l.x,l.y);ctx.rotate(l.rot);
-      ctx.fillStyle='hsla('+l.h+',60%,30%,'+l.a+')';
-      ctx.beginPath();ctx.ellipse(0,0,l.s,l.s*.50,0,0,Math.PI*2);ctx.fill();
-      ctx.restore();
-    });
-    window._themeAnimFrame2=requestAnimationFrame(draw);
-  }
-  window._themeAnimFrame2=requestAnimationFrame(draw);
+function draw(ts){
+if(!t0)t0=ts; var t=(ts-t0)/1e3;
+var W=window.innerWidth,H=window.innerHeight;
+c.width=W;c.height=H;ctx.clearRect(0,0,W,H);
+trees.forEach(function(tr){
+if(tr.tp===1) drawPineTree(W*tr.xF,H,H*tr.hF,tr.sd);
+else drawDeciduousTree(W*tr.xF,H,H*tr.hF,tr.sd);
+});
+leaves.forEach(function(l){
+l.x+=l.vx+Math.sin(t*.38+l.x*.009)*.32;l.y+=l.vy;l.rot+=l.rv;
+if(l.y>H+14){l.y=-14;l.x=Math.random()*W;}
+if(l.x<-10)l.x=W+10;if(l.x>W+10)l.x=-10;
+ctx.save();ctx.translate(l.x,l.y);ctx.rotate(l.rot);
+ctx.fillStyle='hsla('+l.h+',60%,30%,'+l.a+')';
+ctx.beginPath();ctx.ellipse(0,0,l.s,l.s*.50,0,0,Math.PI*2);ctx.fill();
+ctx.restore();
+});
+window._themeAnimFrame2=requestAnimationFrame(draw);
+}
+window._themeAnimFrame2=requestAnimationFrame(draw);
 };
 
 
 window._startFieryAnim = function(){
-  var c=document.getElementById('themeCanvas');if(!c)return;
-  c.style.display='block';c.width=window.innerWidth;c.height=window.innerHeight;
-  var ctx=c.getContext('2d'),t0=null;
-  function draw(ts){
-    if(!t0)t0=ts;var t=(ts-t0)/1000;
-    c.width=window.innerWidth;c.height=window.innerHeight;
-    ctx.clearRect(0,0,c.width,c.height);
-    var cx=c.width/2,cy=c.height,R=Math.min(c.width,c.height)*0.20;
-    // Broad atmospheric sunset haze
-    // Sky gradient bands (horizon glow)
-    var skyGr=ctx.createLinearGradient(0,cy-R*3,0,cy);
-    skyGr.addColorStop(0,'rgba(180,0,40,0.0)');
-    skyGr.addColorStop(0.3,'rgba(220,30,10,0.10)');
-    skyGr.addColorStop(0.65,'rgba(255,80,0,0.22)');
-    skyGr.addColorStop(0.85,'rgba(255,140,0,0.30)');
-    skyGr.addColorStop(1,'rgba(255,200,20,0.38)');
-    ctx.fillStyle=skyGr;ctx.fillRect(0,0,c.width,cy);
-    var gr=ctx.createRadialGradient(cx,cy,R*.18,cx,cy,R*5.0);
-    gr.addColorStop(0,'rgba(255,230,80,0.55)');gr.addColorStop(.12,'rgba(255,140,20,0.42)');gr.addColorStop(.30,'rgba(255,60,0,0.28)');gr.addColorStop(.55,'rgba(220,10,10,0.14)');gr.addColorStop(.80,'rgba(160,0,30,0.06)');gr.addColorStop(1,'rgba(120,0,20,0)');
-    ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,R*5.0,Math.PI,0);ctx.fill();
-    // Sun rays
-    for(var i=0;i<24;i++){
-      var ang=-Math.PI+(i/24)*Math.PI,pulse=.80+.28*Math.sin(t*0.75+i*.65);
-      var x1=cx+Math.cos(ang)*R*1.02,y1=cy+Math.sin(ang)*R*1.02;
-      var x2=cx+Math.cos(ang)*R*(2.8+pulse),y2=cy+Math.sin(ang)*R*(2.8+pulse);
-      var rayAlpha=(0.18+0.10*Math.abs(Math.sin(i*.6)));
-      ctx.strokeStyle=i<8?'rgba(255,80,0,'+rayAlpha+')':i<16?'rgba(255,160,0,'+rayAlpha+')':'rgba(255,220,60,'+rayAlpha+')';
-      ctx.lineWidth=2.0+1.8*Math.abs(Math.sin(i*.70));
-      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
-    }
-    // Sun disc — deep orange-red core
-    var sunGr=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
-    sunGr.addColorStop(0,'rgba(255,255,180,0.90)');
-    sunGr.addColorStop(0.30,'rgba(255,200,40,0.80)');
-    sunGr.addColorStop(0.65,'rgba(255,90,0,0.65)');
-    sunGr.addColorStop(1,'rgba(220,20,0,0.45)');
-    ctx.fillStyle=sunGr;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.fill();
-    ctx.strokeStyle='rgba(255,100,0,0.80)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.stroke();
-    // Inner bright core
-    ctx.fillStyle='rgba(255,255,210,0.55)';ctx.beginPath();ctx.arc(cx,cy,R*.40,Math.PI,0);ctx.fill();
-    ctx.fillStyle='rgba(255,255,240,0.28)';ctx.beginPath();ctx.arc(cx,cy,R*.18,Math.PI,0);ctx.fill();
-    window._themeAnimFrame2=requestAnimationFrame(draw);
-  }
-  window._themeAnimFrame2=requestAnimationFrame(draw);
+var c=document.getElementById('themeCanvas');if(!c)return;
+c.style.display='block';c.width=window.innerWidth;c.height=window.innerHeight;
+var ctx=c.getContext('2d'),t0=null;
+function draw(ts){
+if(!t0)t0=ts;var t=(ts-t0)/1000;
+c.width=window.innerWidth;c.height=window.innerHeight;
+ctx.clearRect(0,0,c.width,c.height);
+var cx=c.width/2,cy=c.height,R=Math.min(c.width,c.height)*0.20;
+// Broad atmospheric sunset haze
+// Sky gradient bands (horizon glow)
+var skyGr=ctx.createLinearGradient(0,cy-R*3,0,cy);
+skyGr.addColorStop(0,'rgba(180,0,40,0.0)');
+skyGr.addColorStop(0.3,'rgba(220,30,10,0.10)');
+skyGr.addColorStop(0.65,'rgba(255,80,0,0.22)');
+skyGr.addColorStop(0.85,'rgba(255,140,0,0.30)');
+skyGr.addColorStop(1,'rgba(255,200,20,0.38)');
+ctx.fillStyle=skyGr;ctx.fillRect(0,0,c.width,cy);
+var gr=ctx.createRadialGradient(cx,cy,R*.18,cx,cy,R*5.0);
+gr.addColorStop(0,'rgba(255,230,80,0.55)');gr.addColorStop(.12,'rgba(255,140,20,0.42)');gr.addColorStop(.30,'rgba(255,60,0,0.28)');gr.addColorStop(.55,'rgba(220,10,10,0.14)');gr.addColorStop(.80,'rgba(160,0,30,0.06)');gr.addColorStop(1,'rgba(120,0,20,0)');
+ctx.fillStyle=gr;ctx.beginPath();ctx.arc(cx,cy,R*5.0,Math.PI,0);ctx.fill();
+// Sun rays
+for(var i=0;i<24;i++){
+var ang=-Math.PI+(i/24)*Math.PI,pulse=.80+.28*Math.sin(t*0.75+i*.65);
+var x1=cx+Math.cos(ang)*R*1.02,y1=cy+Math.sin(ang)*R*1.02;
+var x2=cx+Math.cos(ang)*R*(2.8+pulse),y2=cy+Math.sin(ang)*R*(2.8+pulse);
+var rayAlpha=(0.18+0.10*Math.abs(Math.sin(i*.6)));
+ctx.strokeStyle=i<8?'rgba(255,80,0,'+rayAlpha+')':i<16?'rgba(255,160,0,'+rayAlpha+')':'rgba(255,220,60,'+rayAlpha+')';
+ctx.lineWidth=2.0+1.8*Math.abs(Math.sin(i*.70));
+ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+}
+// Sun disc — deep orange-red core
+var sunGr=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+sunGr.addColorStop(0,'rgba(255,255,180,0.90)');
+sunGr.addColorStop(0.30,'rgba(255,200,40,0.80)');
+sunGr.addColorStop(0.65,'rgba(255,90,0,0.65)');
+sunGr.addColorStop(1,'rgba(220,20,0,0.45)');
+ctx.fillStyle=sunGr;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.fill();
+ctx.strokeStyle='rgba(255,100,0,0.80)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,R,Math.PI,0);ctx.stroke();
+// Inner bright core
+ctx.fillStyle='rgba(255,255,210,0.55)';ctx.beginPath();ctx.arc(cx,cy,R*.40,Math.PI,0);ctx.fill();
+ctx.fillStyle='rgba(255,255,240,0.28)';ctx.beginPath();ctx.arc(cx,cy,R*.18,Math.PI,0);ctx.fill();
+window._themeAnimFrame2=requestAnimationFrame(draw);
+}
+window._themeAnimFrame2=requestAnimationFrame(draw);
 };
 
 window._startRoyalAnim = function(){
-  var c=document.getElementById('themeCanvas');if(!c)return;
-  c.style.display='block';
-  var ctx=c.getContext('2d');
-  function drawScene(){
-    var W=window.innerWidth,H=window.innerHeight;
-    c.width=W;c.height=H;
-    ctx.clearRect(0,0,W,H);
-    var vx=W*0.5,vy=H*0.40;
-    var roadW=W*0.44; // half-road width at screen bottom
-    // Road surface
-    var roadGr=ctx.createLinearGradient(0,vy,0,H);
-    roadGr.addColorStop(0,'rgba(22,0,50,0)');roadGr.addColorStop(1,'rgba(14,0,32,0.35)');
-    ctx.beginPath();ctx.moveTo(vx,vy);ctx.lineTo(W*0.06,H);ctx.lineTo(W*0.94,H);ctx.closePath();ctx.fillStyle=roadGr;ctx.fill();
-    // Road edge lines (kerbs)
-    [[W*0.06,H],[W*0.94,H]].forEach(function(pt){
-      var lg=ctx.createLinearGradient(pt[0],pt[1],vx,vy);
-      lg.addColorStop(0,'rgba(185,95,255,0.30)');lg.addColorStop(1,'rgba(185,95,255,0)');
-      ctx.beginPath();ctx.moveTo(pt[0],pt[1]);ctx.lineTo(vx,vy);ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.stroke();
-    });
-    // Horizon glow
-    var hg=ctx.createRadialGradient(vx,vy,0,vx,vy,W*0.42);
-    hg.addColorStop(0,'rgba(165,55,255,0.20)');hg.addColorStop(1,'rgba(165,55,255,0)');
-    ctx.beginPath();ctx.ellipse(vx,vy,W*0.42,H*0.11,0,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
-    // Buildings with true perspective: drawn back-to-front along road sides.
-    // t=depth parameter: 0=near vanishing point (small), 1=near viewer (large).
-    // At depth t: ground y = vy+(H-vy)*t, left road edge = vx-roadW*t, right road edge = vx+roadW*t.
-    var depths=[0.04,0.07,0.11,0.16,0.22,0.30,0.40,0.54,0.72,0.94];
-    var bSeeds=[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20]];
-    depths.forEach(function(t,di){
-      var gy=vy+(H-vy)*t;
-      var lrx=vx-roadW*t;
-      var rrx=vx+roadW*t;
-      var margin=Math.max(2,roadW*t*0.10);
-      var bW=Math.max(3,W*0.14*t);
-      var bH=Math.max(4,H*0.58*t);
-      var alpha=Math.min(0.90,0.10+t*0.82);
-      var sf=0.085;
-      // Left building offset by margin from road; Right building offset by margin from road
-      [[lrx-margin-bW,lrx-margin,bSeeds[di][0],'L'],[rrx+margin,rrx+margin+bW,bSeeds[di][1],'R']].forEach(function(b){
-        var bLeft=b[0],bRight=b[1],sd=b[2],side=b[3];
-        var bTop=gy-bH;
-        if(bRight<0||bLeft>W||bTop>H)return;
-        // Road-facing edge and vanishing-point projection for 3-D side face
-        var faceX=side==='L'?bRight:bLeft;
-        var roadEdgeX=side==='L'?lrx:rrx;
-        var backX=faceX+sf*(vx-faceX);
-        backX=side==='L'?Math.min(backX,roadEdgeX-1):Math.max(backX,roadEdgeX+1);
-        var sBackTopY=bTop+sf*(vy-bTop);
-        var sBackBotY=gy+sf*(vy-gy);
-        // Road-facing side face drawn first so front face renders on top
-        var sgFace=ctx.createLinearGradient(faceX,bTop,backX,gy);
-        sgFace.addColorStop(0,'rgba(18,2,44,'+(alpha*0.88)+')');
-        sgFace.addColorStop(1,'rgba(10,1,28,'+(alpha*0.72)+')');
-        ctx.beginPath();
-        ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.lineTo(faceX,gy);
-        ctx.closePath();ctx.fillStyle=sgFace;ctx.fill();
-        // Back edge of side face
-        ctx.strokeStyle='rgba(160,70,220,'+(alpha*0.38)+')';ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.stroke();
-        // Front face
-        var gb=ctx.createLinearGradient(bLeft,bTop,bRight,gy);
-        gb.addColorStop(0,'rgba(26,4,56,'+alpha+')');
-        gb.addColorStop(0.45,'rgba(40,8,80,'+(alpha*1.08)+')');
-        gb.addColorStop(1,'rgba(16,2,38,'+(alpha*0.92)+')');
-        ctx.fillStyle=gb;
-        ctx.fillRect(Math.round(bLeft),Math.round(bTop),Math.round(bW),Math.round(bH));
-        // Road-facing edge glow
-        ctx.fillStyle='rgba(205,115,255,'+(alpha*0.42)+')';
-        ctx.fillRect(Math.round(side==='L'?bRight-2:bLeft),Math.round(bTop),2,Math.round(bH));
-        // Outer edge shadow
-        ctx.fillStyle='rgba(8,0,20,'+(alpha*0.48)+')';
-        ctx.fillRect(Math.round(side==='L'?bLeft:bRight-2),Math.round(bTop),2,Math.round(bH));
-        // Roofline (front face)
-        ctx.fillStyle='rgba(212,122,255,'+(alpha*0.74)+')';
-        ctx.fillRect(Math.round(bLeft-1),Math.round(bTop),Math.round(bW+2),Math.max(1,Math.round(bW*0.05)));
-        // Roofline cap (side face)
-        var roofH=Math.max(1,bW*0.04);
-        ctx.fillStyle='rgba(170,80,230,'+(alpha*0.55)+')';
-        ctx.beginPath();ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackTopY+roofH);ctx.lineTo(faceX,bTop+roofH);ctx.closePath();ctx.fill();
-        // Windows
-        var wSz=Math.max(1.5,Math.min(5.5,bW*0.14));
-        var wGx=wSz*2.1,wGy=wSz*2.6;
-        var cols=Math.max(1,Math.floor((bW-wSz)/wGx));
-        var rows=Math.max(1,Math.floor((bH*0.80)/wGy));
-        var wx0=bLeft+(bW-cols*wGx+wGx-wSz)/2;
-        for(var ri=0;ri<rows;ri++){
-          for(var ci=0;ci<cols;ci++){
-            if(((sd*13+ri*7+ci*11)%9)<=2)continue;
-            ctx.fillStyle='rgba(228,172,255,0.26)';
-            ctx.fillRect(Math.round(wx0+ci*wGx),Math.round(bTop+bH*0.12+ri*wGy),Math.round(wSz),Math.round(wSz*1.5));
-          }
-        }
-        // Antenna on taller buildings
-        if(bH>H*0.18&&t>0.52){
-          var ax=bLeft+bW*0.5,aLen=bH*0.09;
-          ctx.strokeStyle='rgba(215,135,255,0.52)';ctx.lineWidth=1.5;
-          ctx.beginPath();ctx.moveTo(Math.round(ax),Math.round(bTop));ctx.lineTo(Math.round(ax),Math.round(bTop-aLen));ctx.stroke();
-          ctx.fillStyle='rgba(255,168,255,0.74)';
-          ctx.beginPath();ctx.arc(Math.round(ax),Math.round(bTop-aLen),1.8,0,Math.PI*2);ctx.fill();
-        }
-      });
-    });
-    // Center-line road dashes in perspective
-    for(var di2=0;di2<6;di2++){
-      var dt=(di2+0.5)/7,dy=vy+(H-vy)*dt;
-      var dw=Math.max(2,W*0.010*dt),dh=Math.max(2,(H-vy)/7*0.36);
-      ctx.fillStyle='rgba(205,140,255,'+(0.08+dt*0.12)+')';
-      ctx.fillRect(vx-dw/2,dy,dw,dh);
-    }
-  }
-  drawScene();
-  window.addEventListener('resize',function _rpRzR(){
-    var tc=document.getElementById('themeCanvas');
-    if(!tc||tc.style.display==='none'){window.removeEventListener('resize',_rpRzR);return;}
-    drawScene();
-  });
-  window._themeAnimFrame2=null;
+var c=document.getElementById('themeCanvas');if(!c)return;
+c.style.display='block';
+var ctx=c.getContext('2d');
+function drawScene(){
+var W=window.innerWidth,H=window.innerHeight;
+c.width=W;c.height=H;
+ctx.clearRect(0,0,W,H);
+var vx=W*0.5,vy=H*0.40;
+var roadW=W*0.44; // half-road width at screen bottom
+// Road surface
+var roadGr=ctx.createLinearGradient(0,vy,0,H);
+roadGr.addColorStop(0,'rgba(22,0,50,0)');roadGr.addColorStop(1,'rgba(14,0,32,0.35)');
+ctx.beginPath();ctx.moveTo(vx,vy);ctx.lineTo(W*0.06,H);ctx.lineTo(W*0.94,H);ctx.closePath();ctx.fillStyle=roadGr;ctx.fill();
+// Road edge lines (kerbs)
+[[W*0.06,H],[W*0.94,H]].forEach(function(pt){
+var lg=ctx.createLinearGradient(pt[0],pt[1],vx,vy);
+lg.addColorStop(0,'rgba(185,95,255,0.30)');lg.addColorStop(1,'rgba(185,95,255,0)');
+ctx.beginPath();ctx.moveTo(pt[0],pt[1]);ctx.lineTo(vx,vy);ctx.strokeStyle=lg;ctx.lineWidth=2.5;ctx.stroke();
+});
+// Horizon glow
+var hg=ctx.createRadialGradient(vx,vy,0,vx,vy,W*0.42);
+hg.addColorStop(0,'rgba(165,55,255,0.20)');hg.addColorStop(1,'rgba(165,55,255,0)');
+ctx.beginPath();ctx.ellipse(vx,vy,W*0.42,H*0.11,0,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
+// Buildings with true perspective: drawn back-to-front along road sides.
+// t=depth parameter: 0=near vanishing point (small), 1=near viewer (large).
+// At depth t: ground y = vy+(H-vy)*t, left road edge = vx-roadW*t, right road edge = vx+roadW*t.
+var depths=[0.04,0.07,0.11,0.16,0.22,0.30,0.40,0.54,0.72,0.94];
+var bSeeds=[[1,2],[3,4],[5,6],[7,8],[9,10],[11,12],[13,14],[15,16],[17,18],[19,20]];
+depths.forEach(function(t,di){
+var gy=vy+(H-vy)*t;
+var lrx=vx-roadW*t;
+var rrx=vx+roadW*t;
+var margin=Math.max(2,roadW*t*0.10);
+var bW=Math.max(3,W*0.14*t);
+var bH=Math.max(4,H*0.58*t);
+var alpha=Math.min(0.90,0.10+t*0.82);
+var sf=0.085;
+// Left building offset by margin from road; Right building offset by margin from road
+[[lrx-margin-bW,lrx-margin,bSeeds[di][0],'L'],[rrx+margin,rrx+margin+bW,bSeeds[di][1],'R']].forEach(function(b){
+var bLeft=b[0],bRight=b[1],sd=b[2],side=b[3];
+var bTop=gy-bH;
+if(bRight<0||bLeft>W||bTop>H)return;
+// Road-facing edge and vanishing-point projection for 3-D side face
+var faceX=side==='L'?bRight:bLeft;
+var roadEdgeX=side==='L'?lrx:rrx;
+var backX=faceX+sf*(vx-faceX);
+backX=side==='L'?Math.min(backX,roadEdgeX-1):Math.max(backX,roadEdgeX+1);
+var sBackTopY=bTop+sf*(vy-bTop);
+var sBackBotY=gy+sf*(vy-gy);
+// Road-facing side face drawn first so front face renders on top
+var sgFace=ctx.createLinearGradient(faceX,bTop,backX,gy);
+sgFace.addColorStop(0,'rgba(18,2,44,'+(alpha*0.88)+')');
+sgFace.addColorStop(1,'rgba(10,1,28,'+(alpha*0.72)+')');
+ctx.beginPath();
+ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.lineTo(faceX,gy);
+ctx.closePath();ctx.fillStyle=sgFace;ctx.fill();
+// Back edge of side face
+ctx.strokeStyle='rgba(160,70,220,'+(alpha*0.38)+')';ctx.lineWidth=1;
+ctx.beginPath();ctx.moveTo(backX,sBackTopY);ctx.lineTo(backX,sBackBotY);ctx.stroke();
+// Front face
+var gb=ctx.createLinearGradient(bLeft,bTop,bRight,gy);
+gb.addColorStop(0,'rgba(26,4,56,'+alpha+')');
+gb.addColorStop(0.45,'rgba(40,8,80,'+(alpha*1.08)+')');
+gb.addColorStop(1,'rgba(16,2,38,'+(alpha*0.92)+')');
+ctx.fillStyle=gb;
+ctx.fillRect(Math.round(bLeft),Math.round(bTop),Math.round(bW),Math.round(bH));
+// Road-facing edge glow
+ctx.fillStyle='rgba(205,115,255,'+(alpha*0.42)+')';
+ctx.fillRect(Math.round(side==='L'?bRight-2:bLeft),Math.round(bTop),2,Math.round(bH));
+// Outer edge shadow
+ctx.fillStyle='rgba(8,0,20,'+(alpha*0.48)+')';
+ctx.fillRect(Math.round(side==='L'?bLeft:bRight-2),Math.round(bTop),2,Math.round(bH));
+// Roofline (front face)
+ctx.fillStyle='rgba(212,122,255,'+(alpha*0.74)+')';
+ctx.fillRect(Math.round(bLeft-1),Math.round(bTop),Math.round(bW+2),Math.max(1,Math.round(bW*0.05)));
+// Roofline cap (side face)
+var roofH=Math.max(1,bW*0.04);
+ctx.fillStyle='rgba(170,80,230,'+(alpha*0.55)+')';
+ctx.beginPath();ctx.moveTo(faceX,bTop);ctx.lineTo(backX,sBackTopY);ctx.lineTo(backX,sBackTopY+roofH);ctx.lineTo(faceX,bTop+roofH);ctx.closePath();ctx.fill();
+// Windows
+var wSz=Math.max(1.5,Math.min(5.5,bW*0.14));
+var wGx=wSz*2.1,wGy=wSz*2.6;
+var cols=Math.max(1,Math.floor((bW-wSz)/wGx));
+var rows=Math.max(1,Math.floor((bH*0.80)/wGy));
+var wx0=bLeft+(bW-cols*wGx+wGx-wSz)/2;
+for(var ri=0;ri<rows;ri++){
+for(var ci=0;ci<cols;ci++){
+if(((sd*13+ri*7+ci*11)%9)<=2)continue;
+ctx.fillStyle='rgba(228,172,255,0.26)';
+ctx.fillRect(Math.round(wx0+ci*wGx),Math.round(bTop+bH*0.12+ri*wGy),Math.round(wSz),Math.round(wSz*1.5));
+}
+}
+// Antenna on taller buildings
+if(bH>H*0.18&&t>0.52){
+var ax=bLeft+bW*0.5,aLen=bH*0.09;
+ctx.strokeStyle='rgba(215,135,255,0.52)';ctx.lineWidth=1.5;
+ctx.beginPath();ctx.moveTo(Math.round(ax),Math.round(bTop));ctx.lineTo(Math.round(ax),Math.round(bTop-aLen));ctx.stroke();
+ctx.fillStyle='rgba(255,168,255,0.74)';
+ctx.beginPath();ctx.arc(Math.round(ax),Math.round(bTop-aLen),1.8,0,Math.PI*2);ctx.fill();
+}
+});
+});
+// Center-line road dashes in perspective
+for(var di2=0;di2<6;di2++){
+var dt=(di2+0.5)/7,dy=vy+(H-vy)*dt;
+var dw=Math.max(2,W*0.010*dt),dh=Math.max(2,(H-vy)/7*0.36);
+ctx.fillStyle='rgba(205,140,255,'+(0.08+dt*0.12)+')';
+ctx.fillRect(vx-dw/2,dy,dw,dh);
+}
+}
+drawScene();
+window.addEventListener('resize',function _rpRzR(){
+var tc=document.getElementById('themeCanvas');
+if(!tc||tc.style.display==='none'){window.removeEventListener('resize',_rpRzR);return;}
+drawScene();
+});
+window._themeAnimFrame2=null;
 };
 
 })();
@@ -8427,13 +8455,13 @@ return c.classList && c.classList.contains('assignment') && c !== _dragging;
 });
 
 var _ghostTop = cy - _dragOffY;
-  var _ghostH = (_dragGhost && _dragGhost.offsetHeight) ? _dragGhost.offsetHeight : 100;
-  var _ghostCY = _ghostTop + _ghostH * 0.5;
-  var targetRow = colCards.length; /* default: append after last card in column */
-  for (var i = 0; i < colCards.length; i++) {
-    var r = colCards[i].getBoundingClientRect();
-    if (_ghostCY < r.top + r.height * 0.5) { targetRow = i; break; }
-  }
+var _ghostH = (_dragGhost && _dragGhost.offsetHeight) ? _dragGhost.offsetHeight : 100;
+var _ghostCY = _ghostTop + _ghostH * 0.5;
+var targetRow = colCards.length; /* default: append after last card in column */
+for (var i = 0; i < colCards.length; i++) {
+var r = colCards[i].getBoundingClientRect();
+if (_ghostCY < r.top + r.height * 0.5) { targetRow = i; break; }
+}
 
 /* Step 3 — convert (row, col) → flat index.
 layoutByFlatOrder places newOrder[k] in column k%n, so
@@ -8500,17 +8528,17 @@ CALENDAR SYSTEM
 
 // ── Persistent past-day message (anchored near button, no auto-dismiss) ──
 function _showPastDayMsg(btnEl) {
-  var ex = document.getElementById('_calPastDayMsg'); if (ex) return;
-  var dk = document.body.classList.contains('assignmentsdark');
-  var msgEl = document.createElement('div');
-  msgEl.id = '_calPastDayMsg';
-  msgEl.style.cssText = 'position:fixed;z-index:999999;left:50%;transform:translateX(-50%);bottom:28px;max-width:420px;width:calc(100% - 48px);padding:16px 22px;border-radius:16px;font-family:"Inter",sans-serif;font-size:15px;font-weight:700;line-height:1.6;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);color:'+(dk?'#94a3b8':'#475569')+';background:'+(dk?'#1e2d3d':'white')+';border:1.5px solid '+(dk?'rgba(148,163,184,0.2)':'rgba(148,163,184,0.4)')+';pointer-events:auto;transition:opacity 0.25s ease;';
-  msgEl.textContent = 'This day has passed. You cannot add any assignments.';
-  document.body.appendChild(msgEl);
+var ex = document.getElementById('_calPastDayMsg'); if (ex) return;
+var dk = document.body.classList.contains('assignmentsdark');
+var msgEl = document.createElement('div');
+msgEl.id = '_calPastDayMsg';
+msgEl.style.cssText = 'position:fixed;z-index:999999;left:50%;transform:translateX(-50%);bottom:28px;max-width:420px;width:calc(100% - 48px);padding:16px 22px;border-radius:16px;font-family:"Inter",sans-serif;font-size:15px;font-weight:700;line-height:1.6;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.25);color:'+(dk?'#94a3b8':'#475569')+';background:'+(dk?'#1e2d3d':'white')+';border:1.5px solid '+(dk?'rgba(148,163,184,0.2)':'rgba(148,163,184,0.4)')+';pointer-events:auto;transition:opacity 0.25s ease;';
+msgEl.textContent = 'This day has passed. You cannot add any assignments.';
+document.body.appendChild(msgEl);
 }
 function _hidePastDayMsg() {
-  var ex = document.getElementById('_calPastDayMsg'); if (!ex) return;
-  ex.style.opacity='0'; setTimeout(function(){ if(ex.parentNode)ex.remove(); },260);
+var ex = document.getElementById('_calPastDayMsg'); if (!ex) return;
+ex.style.opacity='0'; setTimeout(function(){ if(ex.parentNode)ex.remove(); },260);
 }
 
 
@@ -8744,10 +8772,10 @@ container.appendChild(wrap);
 
 // ── Navigation ─────────────────────────────────────────────────
 window._openPlannerForDate = function(iso) {
-  if (iso >= getTodayISO()) _hidePastDayMsg();
-  if (window.tutorialActive && typeof window._tutorialAdvanceIfCalDate === 'function') {
-    window._tutorialAdvanceIfCalDate(iso);
-  }
+if (iso >= getTodayISO()) _hidePastDayMsg();
+if (window.tutorialActive && typeof window._tutorialAdvanceIfCalDate === 'function') {
+window._tutorialAdvanceIfCalDate(iso);
+}
 
 // Circle expand animation from clicked date button
 (function() {
@@ -8809,10 +8837,10 @@ setTimeout(syncCPanelTop, 50);
 };
 
 window._closePlannerToCalendar = function() {
-  _hidePastDayMsg();
-  // Save current assignments before leaving
-  _savePlannerToDay(window._activeDate || getTodayISO());
-  doReset();
+_hidePastDayMsg();
+// Save current assignments before leaving
+_savePlannerToDay(window._activeDate || getTodayISO());
+doReset();
 
 
 var cDiv = document.getElementById('c');
@@ -9047,83 +9075,83 @@ _box.style.display = 'none';
 (function() {
 var _sb = document.getElementById('shiftExcessBtn');
 if (_sb) _sb.addEventListener('click', function() {
-    var iso = window._activeDate || getTodayISO();
-    var _calMaxD = new Date(); var _calMaxLimit = new Date(_calMaxD.getFullYear(), _calMaxD.getMonth() + 13, 0); var _calMaxISO = _dateToISO(_calMaxLimit);
-    var level = document.getElementById('schoolLevel').value;
-    var limit = getDailyLimit(level);
-    var tasks = _loadDayTasks(iso);
-    var keep = [], toShift = [];
-    var _accumulated = 0;
-    for (var _si = 0; _si < tasks.length; _si++) {
-      var _t = tasks[_si], _tt = parseInt(_t.time) || 0;
-      if (_accumulated + _tt <= limit) {
-        keep.push(_t); _accumulated += _tt;
-      } else if (_accumulated < limit) {
-        var _kTime = limit - _accumulated, _sTime = _tt - _kTime;
-        keep.push(Object.assign({}, _t, { time: _kTime }));
-        toShift.push(Object.assign({}, _t, { time: _sTime }));
-        _accumulated = limit;
-      } else {
-        toShift.push(_t);
-      }
-    }
-    if (!toShift.length) return;
-    var _undoShiftSnap = {}; _undoShiftSnap[iso] = tasks.slice();
-    var _pending = toShift.slice();
-    var _curD = new Date(iso + 'T00:00:00');
-    var _daysUsed = [];
-    while (_pending.length > 0) {
-      _curD.setDate(_curD.getDate() + 1);
-      var _dIso = _dateToISO(_curD);
-      if (_dIso > _calMaxISO) { showCustomAlert('Cannot shift excess work. The end of the calendar has been reached.'); return; }
-      var _dTasks = _loadDayTasks(_dIso);
-      var _dTotal = _dTasks.reduce(function(s,t2){return s+(parseInt(t2.time)||0);},0);
-      if (_dTotal >= limit) continue;
-      var _dSpace = limit - _dTotal, _added = [], _stillPending = [], _dUsed = 0;
-      for (var _pi = 0; _pi < _pending.length; _pi++) {
-        var _pt = _pending[_pi], _ptt = parseInt(_pt.time)||0;
-        if (_dUsed + _ptt <= _dSpace) { _added.push(_pt); _dUsed += _ptt; }
-        else if (_dUsed < _dSpace) {
-          var _pk = _dSpace - _dUsed, _pr = _ptt - _pk;
-          _added.push(Object.assign({}, _pt, { time: _pk }));
-          _stillPending.push(Object.assign({}, _pt, { time: _pr }));
-          _dUsed = _dSpace;
-        } else { _stillPending.push(_pt); }
-      }
-      if (_added.length) { if (!_undoShiftSnap[_dIso]) _undoShiftSnap[_dIso] = _dTasks.slice(); _saveDayTasks(_dIso, _dTasks.concat(_added)); _updateCalDayDot(_dIso); _daysUsed.push(_dIso); }
-      _pending = _stillPending;
-    }
-    var _shiftRoutines = _getRoutines(); var _routinesChanged = false;
-    toShift.forEach(function(t) {
-      if (!t.routineId) return;
-      var _sr = _shiftRoutines.find(function(r){return r.id===t.routineId;});
-      if (_sr) { if (!_sr.exceptions) _sr.exceptions=[]; if (!_sr.exceptions.includes(iso)){_sr.exceptions.push(iso);_routinesChanged=true;} }
-    });
-    if (_routinesChanged) _saveRoutines(_shiftRoutines);
-    _saveDayTasks(iso, keep); _updateCalDayDot(iso);
-    doReset(); _loadDayIntoPlanner(iso);
-    document.getElementById('limitExceedBox').style.display = 'none';
-    hasCalculated = false;
-    if (keep.length > 0) {
-      setTimeout(function() {
-        document.getElementById('calculateBtn').click();
-        setTimeout(function(){ if (typeof renderSegmentLabelTrack==='function') requestAnimationFrame(renderSegmentLabelTrack); },450);
-      }, 120);
-    }
-    (function(_snap, _origIso, _shiftedN, _daysN) {
-      var _st = window._showToast('Shifted ' + _shiftedN + ' assignment(s) across ' + _daysN + ' day(s). <button id="_undoShiftBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:4px 10px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(99,102,241,0.35);margin-left:6px;vertical-align:middle;">Undo?</button>', false, 'shiftDone', 15000);
-      setTimeout(function() {
-        var _ub = document.getElementById('_undoShiftBtn'); if (!_ub) return;
-        _ub.addEventListener('click', function() {
-          if (_st) window._hideToast(_st);
-          Object.keys(_snap).forEach(function(k) { _saveDayTasks(k, _snap[k]); _updateCalDayDot(k); });
-          doReset(); _loadDayIntoPlanner(_origIso);
-          if (typeof _checkDailyLimitOverflow === 'function') setTimeout(_checkDailyLimitOverflow, 120);
-          window._showToast('Shift undone \u2713', false, null, 3000);
-        });
-      }, 100);
-    })(_undoShiftSnap, iso, toShift.length, _daysUsed.length);
-  });
+var iso = window._activeDate || getTodayISO();
+var _calMaxD = new Date(); var _calMaxLimit = new Date(_calMaxD.getFullYear(), _calMaxD.getMonth() + 13, 0); var _calMaxISO = _dateToISO(_calMaxLimit);
+var level = document.getElementById('schoolLevel').value;
+var limit = getDailyLimit(level);
+var tasks = _loadDayTasks(iso);
+var keep = [], toShift = [];
+var _accumulated = 0;
+for (var _si = 0; _si < tasks.length; _si++) {
+var _t = tasks[_si], _tt = parseInt(_t.time) || 0;
+if (_accumulated + _tt <= limit) {
+keep.push(_t); _accumulated += _tt;
+} else if (_accumulated < limit) {
+var _kTime = limit - _accumulated, _sTime = _tt - _kTime;
+keep.push(Object.assign({}, _t, { time: _kTime }));
+toShift.push(Object.assign({}, _t, { time: _sTime }));
+_accumulated = limit;
+} else {
+toShift.push(_t);
+}
+}
+if (!toShift.length) return;
+var _undoShiftSnap = {}; _undoShiftSnap[iso] = tasks.slice();
+var _pending = toShift.slice();
+var _curD = new Date(iso + 'T00:00:00');
+var _daysUsed = [];
+while (_pending.length > 0) {
+_curD.setDate(_curD.getDate() + 1);
+var _dIso = _dateToISO(_curD);
+if (_dIso > _calMaxISO) { showCustomAlert('Cannot shift excess work. The end of the calendar has been reached.'); return; }
+var _dTasks = _loadDayTasks(_dIso);
+var _dTotal = _dTasks.reduce(function(s,t2){return s+(parseInt(t2.time)||0);},0);
+if (_dTotal >= limit) continue;
+var _dSpace = limit - _dTotal, _added = [], _stillPending = [], _dUsed = 0;
+for (var _pi = 0; _pi < _pending.length; _pi++) {
+var _pt = _pending[_pi], _ptt = parseInt(_pt.time)||0;
+if (_dUsed + _ptt <= _dSpace) { _added.push(_pt); _dUsed += _ptt; }
+else if (_dUsed < _dSpace) {
+var _pk = _dSpace - _dUsed, _pr = _ptt - _pk;
+_added.push(Object.assign({}, _pt, { time: _pk }));
+_stillPending.push(Object.assign({}, _pt, { time: _pr }));
+_dUsed = _dSpace;
+} else { _stillPending.push(_pt); }
+}
+if (_added.length) { if (!_undoShiftSnap[_dIso]) _undoShiftSnap[_dIso] = _dTasks.slice(); _saveDayTasks(_dIso, _dTasks.concat(_added)); _updateCalDayDot(_dIso); _daysUsed.push(_dIso); }
+_pending = _stillPending;
+}
+var _shiftRoutines = _getRoutines(); var _routinesChanged = false;
+toShift.forEach(function(t) {
+if (!t.routineId) return;
+var _sr = _shiftRoutines.find(function(r){return r.id===t.routineId;});
+if (_sr) { if (!_sr.exceptions) _sr.exceptions=[]; if (!_sr.exceptions.includes(iso)){_sr.exceptions.push(iso);_routinesChanged=true;} }
+});
+if (_routinesChanged) _saveRoutines(_shiftRoutines);
+_saveDayTasks(iso, keep); _updateCalDayDot(iso);
+doReset(); _loadDayIntoPlanner(iso);
+document.getElementById('limitExceedBox').style.display = 'none';
+hasCalculated = false;
+if (keep.length > 0) {
+setTimeout(function() {
+document.getElementById('calculateBtn').click();
+setTimeout(function(){ if (typeof renderSegmentLabelTrack==='function') requestAnimationFrame(renderSegmentLabelTrack); },450);
+}, 120);
+}
+(function(_snap, _origIso, _shiftedN, _daysN) {
+var _st = window._showToast('Shifted ' + _shiftedN + ' assignment(s) across ' + _daysN + ' day(s). <button id="_undoShiftBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;padding:4px 10px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(99,102,241,0.35);margin-left:6px;vertical-align:middle;">Undo?</button>', false, 'shiftDone', 15000);
+setTimeout(function() {
+var _ub = document.getElementById('_undoShiftBtn'); if (!_ub) return;
+_ub.addEventListener('click', function() {
+if (_st) window._hideToast(_st);
+Object.keys(_snap).forEach(function(k) { _saveDayTasks(k, _snap[k]); _updateCalDayDot(k); });
+doReset(); _loadDayIntoPlanner(_origIso);
+if (typeof _checkDailyLimitOverflow === 'function') setTimeout(_checkDailyLimitOverflow, 120);
+window._showToast('Shift undone \u2713', false, null, 3000);
+});
+}, 100);
+})(_undoShiftSnap, iso, toShift.length, _daysUsed.length);
+});
 
 })();
 
@@ -9206,14 +9234,14 @@ _savePlannerToDay(window._activeDate || getTodayISO());
 }
 
 tog.addEventListener('click', function(e) {
-  e.stopPropagation();
-  var on = tog.dataset.on === '1';
-  tog.dataset.on = on ? '0' : '1';
-  tog.dataset.manualOn = on ? '0' : '1';
-  tog.style.background = on ? '#cbd5e1' : '#6366f1';
-  tog.querySelector('div').style.left = on ? '2px' : '16px';
-  opts.style.display = on ? 'none' : 'block';
-  if (!on) calcDays();
+e.stopPropagation();
+var on = tog.dataset.on === '1';
+tog.dataset.on = on ? '0' : '1';
+tog.dataset.manualOn = on ? '0' : '1';
+tog.style.background = on ? '#cbd5e1' : '#6366f1';
+tog.querySelector('div').style.left = on ? '2px' : '16px';
+opts.style.display = on ? 'none' : 'block';
+if (!on) calcDays();
 });
 
 
@@ -9296,25 +9324,25 @@ card.dataset.isSpread = '1';
 _savePlannerToDay(window._activeDate || getTodayISO());
 _setupUnspreadBtn(spreadId);
 (function(_sid, _sLen, _cardRef, _origT) {
-  setTimeout(function() {
-    var _existT = document.getElementById('_spToast_spreadDone'); if (_existT && _existT.parentNode) _existT.parentNode.removeChild(_existT);
+setTimeout(function() {
+var _existT = document.getElementById('_spToast_spreadDone'); if (_existT && _existT.parentNode) _existT.parentNode.removeChild(_existT);
 
-    var _t = window._showToast('Work spread across ' + _sLen + ' day(s). <button id="_undoSpreadBtn" style="background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:8px;padding:4px 10px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(239,68,68,0.35);margin-left:6px;vertical-align:middle;">Undo?</button>', false, 'spreadDone', 15000);
-    setTimeout(function() {
-      var _ub = document.getElementById('_undoSpreadBtn'); if (!_ub) return;
-      _ub.addEventListener('click', function() {
-        if (_t) window._hideToast(_t);
-        if (_sid) { Object.keys(localStorage).forEach(function(k) { if (!k.startsWith('sp_day_')) return; try { var ts=JSON.parse(localStorage.getItem(k)||'[]').filter(function(t2){return t2.spreadId!==_sid;}); localStorage.setItem(k,JSON.stringify(ts)); if(typeof _updateCalDayDot==='function')_updateCalDayDot(k.slice(7)); } catch(e2){} }); }
-        if (_origT > 0) { var _sl=_cardRef.querySelector('.time'),_lb=_cardRef.querySelector('.time-label'); if(_sl){_sl.value=_origT;if(_lb)_lb.textContent=timeValToText(_origT);updateAssignmentSummary(_cardRef);} }
-        _cardRef.dataset.isSpread='0'; _cardRef.dataset.spreadId=''; _cardRef.dataset.originalTime='';
-        var _spB=_cardRef.querySelector('.sp-btn'); if(_spB){_spB.textContent='📅 Spread Work';_spB.style.background='linear-gradient(135deg,#6366f1,#8b5cf6)';_spB.onclick=null;}
-        var _spTg=_cardRef.querySelector('.sp-tog'); if(_spTg){_spTg.dataset.on='0';_spTg.dataset.manualOn='0';_spTg.style.background='#cbd5e1';var _th=_spTg.querySelector('div');if(_th)_th.style.left='2px';}
-        var _spOp=_cardRef.querySelector('.sp-opts'); if(_spOp)_spOp.style.display='none';
-        _savePlannerToDay(window._activeDate||getTodayISO());
-        window._showToast('Spread undone ✓', false, null, 3000);
-      });
-    }, 80);
-  }, 50);
+var _t = window._showToast('Work spread across ' + _sLen + ' day(s). <button id="_undoSpreadBtn" style="background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:8px;padding:4px 10px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 2px 6px rgba(239,68,68,0.35);margin-left:6px;vertical-align:middle;">Undo?</button>', false, 'spreadDone', 15000);
+setTimeout(function() {
+var _ub = document.getElementById('_undoSpreadBtn'); if (!_ub) return;
+_ub.addEventListener('click', function() {
+if (_t) window._hideToast(_t);
+if (_sid) { Object.keys(localStorage).forEach(function(k) { if (!k.startsWith('sp_day_')) return; try { var ts=JSON.parse(localStorage.getItem(k)||'[]').filter(function(t2){return t2.spreadId!==_sid;}); localStorage.setItem(k,JSON.stringify(ts)); if(typeof _updateCalDayDot==='function')_updateCalDayDot(k.slice(7)); } catch(e2){} }); }
+if (_origT > 0) { var _sl=_cardRef.querySelector('.time'),_lb=_cardRef.querySelector('.time-label'); if(_sl){_sl.value=_origT;if(_lb)_lb.textContent=timeValToText(_origT);updateAssignmentSummary(_cardRef);} }
+_cardRef.dataset.isSpread='0'; _cardRef.dataset.spreadId=''; _cardRef.dataset.originalTime='';
+var _spB=_cardRef.querySelector('.sp-btn'); if(_spB){_spB.textContent='📅 Spread Work';_spB.style.background='linear-gradient(135deg,#6366f1,#8b5cf6)';_spB.onclick=null;}
+var _spTg=_cardRef.querySelector('.sp-tog'); if(_spTg){_spTg.dataset.on='0';_spTg.dataset.manualOn='0';_spTg.style.background='#cbd5e1';var _th=_spTg.querySelector('div');if(_th)_th.style.left='2px';}
+var _spOp=_cardRef.querySelector('.sp-opts'); if(_spOp)_spOp.style.display='none';
+_savePlannerToDay(window._activeDate||getTodayISO());
+window._showToast('Spread undone ✓', false, null, 3000);
+});
+}, 80);
+}, 50);
 })(spreadId, spreadDays.length, card, totalMins);
 
 });
@@ -9766,9 +9794,9 @@ if (!_erR) return;
 var _erExist = document.getElementById('spExceptionsOverlay');
 var _savedScroll = 0;
 if (_erExist) {
-  var _scrollCont = _erExist.querySelector('div[style*="max-height:55vh"]');
-  if (_scrollCont) _savedScroll = _scrollCont.scrollTop;
-  _erExist.remove();
+var _scrollCont = _erExist.querySelector('div[style*="max-height:55vh"]');
+if (_scrollCont) _savedScroll = _scrollCont.scrollTop;
+_erExist.remove();
 }
 if (!_isRefresh) { var _rpForEx = document.getElementById('spRoutinePanel'); if (_rpForEx) _rpForEx.style.zIndex = '350000'; }
 var _erTD = new Date(); var _erMaxD = new Date(); _erMaxD.setMonth(_erMaxD.getMonth() + 13);
@@ -9803,8 +9831,8 @@ var _erClose = function() { _erOv.remove(); var _rpR = document.getElementById('
 _erOv.addEventListener('click', function(e) { if (e.target === _erOv) _erClose(); });
 document.body.appendChild(_erOv);
 if (_savedScroll > 0) {
-  var _newScrollCont = _erOv.querySelector('div[style*="max-height:55vh"]');
-  if (_newScrollCont) setTimeout(function(){ _newScrollCont.scrollTop = _savedScroll; }, 0);
+var _newScrollCont = _erOv.querySelector('div[style*="max-height:55vh"]');
+if (_newScrollCont) setTimeout(function(){ _newScrollCont.scrollTop = _savedScroll; }, 0);
 }
 var _erCloseBtn = document.getElementById('spExCloseBtn'); if (_erCloseBtn) _erCloseBtn.addEventListener('click', _erClose);
 };
