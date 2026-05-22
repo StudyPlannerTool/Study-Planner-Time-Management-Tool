@@ -3136,31 +3136,19 @@ _pH += '<'+'script type="application/json" id="sp-backup-data">'+_safeJson+'<'+'
 _pH += '</body></html>';
 var _pFn = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.html';
 try {
-      var _pBlob = new Blob([_pH], { type: 'text/html' });
-      if (navigator.canShare) {
-        try {
-          var _shareFile = new File([_pBlob], _pFn, { type: 'text/html' });
-          if (navigator.canShare({ files: [_shareFile] })) {
-            navigator.share({ files: [_shareFile], title: 'Study Plan Backup' }).then(function() {
-              window._showToast('\u2713 Shared! Save the file to your device \u2014 you can import it here later to restore your data.', false, 'backupDone', 8000);
-            }).catch(function(_se2) { if (_se2 && _se2.name !== 'AbortError') window._showToast('Share cancelled.', false, 'backupDone', 3000); });
-            return;
-          }
-        } catch(_se) {}
-      }
-      var _pUrl = URL.createObjectURL(_pBlob);
-      var _pA = document.createElement('a');
-      _pA.href = _pUrl; _pA.download = _pFn;
-      document.body.appendChild(_pA); _pA.click(); document.body.removeChild(_pA);
-      setTimeout(function(){ URL.revokeObjectURL(_pUrl); }, 2000);
-    } catch(e2) {
-      var _pA2 = document.createElement('a');
-      _pA2.download = _pFn;
-      _pA2.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(_pH);
-      document.body.appendChild(_pA2); _pA2.click(); document.body.removeChild(_pA2);
-    }
-    window._showToast('\u2713 Downloaded! Import this file here to restore your data.', false, 'backupDone', 8000);
-
+var _pBlob = new Blob([_pH], { type: 'text/html' });
+var _pUrl = URL.createObjectURL(_pBlob);
+var _pA = document.createElement('a');
+_pA.href = _pUrl; _pA.download = _pFn;
+document.body.appendChild(_pA); _pA.click(); document.body.removeChild(_pA);
+setTimeout(function(){ URL.revokeObjectURL(_pUrl); }, 2000);
+} catch(e2) {
+var _pA2 = document.createElement('a');
+_pA2.download = _pFn;
+_pA2.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(_pH);
+document.body.appendChild(_pA2); _pA2.click(); document.body.removeChild(_pA2);
+}
+window._showToast('\u2713 Downloaded! Open the file in a browser to print as PDF, or import it here to restore your data.', false, 'backupDone', 8000);
 });
 
 
