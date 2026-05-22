@@ -3136,19 +3136,23 @@ _pH += '<'+'script type="application/json" id="sp-backup-data">'+_safeJson+'<'+'
 _pH += '</body></html>';
 var _pFn = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.html';
 try {
-var _pBlob = new Blob([_pH], { type: 'text/html' });
-var _pUrl = URL.createObjectURL(_pBlob);
-var _pA = document.createElement('a');
-_pA.href = _pUrl; _pA.download = _pFn;
-document.body.appendChild(_pA); _pA.click(); document.body.removeChild(_pA);
-setTimeout(function(){ URL.revokeObjectURL(_pUrl); }, 2000);
-} catch(e2) {
-var _pA2 = document.createElement('a');
-_pA2.download = _pFn;
-_pA2.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(_pH);
-document.body.appendChild(_pA2); _pA2.click(); document.body.removeChild(_pA2);
-}
-window._showToast('\u2713 Downloaded! Open the file in a browser to print as PDF, or import it here to restore your data.', false, 'backupDone', 8000);
+      var _pBlob = new Blob([_pH], { type: 'text/html' });
+      if (/GSA\//i.test(navigator.userAgent)) {
+        var _gW = window.open('', '_blank');
+        if (_gW) { _gW.document.write(_pH); _gW.document.close(); window._showToast('\u2713 Opened in new tab \u2014 tap the share button \u2794 \u201cSave to Files\u201d to keep your backup.', false, 'backupDone', 12000); return; }
+      }
+      var _pUrl = URL.createObjectURL(_pBlob);
+      var _pA = document.createElement('a');
+      _pA.href = _pUrl; _pA.download = _pFn;
+      document.body.appendChild(_pA); _pA.click(); document.body.removeChild(_pA);
+      setTimeout(function(){ URL.revokeObjectURL(_pUrl); }, 2000);
+    } catch(e2) {
+      var _pA2 = document.createElement('a');
+      _pA2.download = _pFn;
+      _pA2.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(_pH);
+      document.body.appendChild(_pA2); _pA2.click(); document.body.removeChild(_pA2);
+    }
+    window._showToast('\u2713 Downloaded! Import this file here to restore your data.', false, 'backupDone', 8000);
 });
 
 
