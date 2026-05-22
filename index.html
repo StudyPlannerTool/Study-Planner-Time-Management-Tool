@@ -3138,8 +3138,15 @@ var _pFn = 'study-planner-backup-' + new Date().toISOString().slice(0,10) + '.ht
 try {
       var _pBlob = new Blob([_pH], { type: 'text/html' });
       if (/GSA\//i.test(navigator.userAgent)) {
-        var _gW = window.open('', '_blank');
-        if (_gW) { _gW.document.write(_pH); _gW.document.close(); window._showToast('\u2713 Opened in new tab \u2014 tap the share button \u2794 \u201cSave to Files\u201d to keep your backup.', false, 'backupDone', 12000); return; }
+        try {
+          var _shareFile = new File([_pBlob], _pFn, { type: 'text/html' });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [_shareFile] })) {
+            navigator.share({ files: [_shareFile], title: 'Study Plan Backup' }).then(function() {
+              window._showToast('\u2713 Share sheet opened \u2014 tap \u201cSave to Files\u201d to keep your backup.', false, 'backupDone', 10000);
+            }).catch(function(_se) { if (_se && _se.name !== 'AbortError') window._showToast('Share cancelled.', false, 'backupDone', 3000); });
+            return;
+          }
+        } catch(_fe) {}
       }
       var _pUrl = URL.createObjectURL(_pBlob);
       var _pA = document.createElement('a');
