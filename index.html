@@ -3540,10 +3540,10 @@ const x = document.getElementById("x")
 function _openSettingsPanel() {
 var _mp = document.getElementById('settingsMainPanel');
 var _sp = document.getElementById('settingsSubPanel');
-if (_mp) _mp.style.transform = '';
-if (_sp) _sp.style.transform = 'translateX(102%)';
-x.style.height = '';
-['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
+if (_mp) { _mp.style.transform = ''; _mp.style.maxHeight = ''; _mp.style.overflow = ''; }
+        if (_sp) _sp.style.transform = 'translateX(102%)';
+        x.style.height = '';
+        ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
 var s = document.getElementById(id); if(s) s.style.display = 'none';
 });
 x.style.display = 'block';
@@ -3574,10 +3574,10 @@ x.style.transform = '';
 x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
 var _mp = document.getElementById('settingsMainPanel');
 var _sp = document.getElementById('settingsSubPanel');
-if (_mp) _mp.style.transform = '';
-if (_sp) _sp.style.transform = 'translateX(102%)';
-x.style.height = '';
-['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
+if (_mp) { _mp.style.transform = ''; _mp.style.maxHeight = ''; _mp.style.overflow = ''; }
+        if (_sp) _sp.style.transform = 'translateX(102%)';
+        x.style.height = '';
+        ['themeSub','limitSub','a11ySub','orderSub'].forEach(function(id){
 var s = document.getElementById(id); if(s) s.style.display = 'none';
 });
 }, 190);
@@ -7960,13 +7960,15 @@ x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
 mainPanel.style.transform = 'translateX(-102%)';
 subPanel.style.transform = 'translateX(0)';
 x.style.height = Math.max(toH, 60) + 'px';
+setTimeout(function() { mainPanel.style.maxHeight = '0'; mainPanel.style.overflow = 'hidden'; }, 350);
 }
 function closeSettingsSub() {
-
 var x = document.getElementById('x');
 var mainPanel = document.getElementById('settingsMainPanel');
 var subPanel = document.getElementById('settingsSubPanel');
 if (!x || !mainPanel || !subPanel) return;
+mainPanel.style.maxHeight = '';
+mainPanel.style.overflow = '';
 var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
 var rawToH = mainPanel.scrollHeight || mainPanel.offsetHeight || 200;
