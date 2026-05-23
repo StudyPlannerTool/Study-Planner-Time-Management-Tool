@@ -2115,7 +2115,7 @@ div.innerHTML = `
 <span class="assign-summary-diff" style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:50px; white-space:nowrap; flex-shrink:0;"></span>
 </div>
 </div>
-<button class="copyAssignBtn" type="button" style="position:absolute;top:10px;right:10px;background:transparent;border:1.5px solid rgba(99,102,241,0.22);border-radius:8px;padding:4px 8px;color:#6366f1;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;z-index:5;line-height:1;">📋</button>
+<button class="copyAssignBtn" type="button" style="position:absolute;top:10px;right:10px;background:transparent;border:1.5px solid rgba(99,102,241,0.22);border-radius:8px;padding:4px 8px;color:#6366f1;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;z-index:5;line-height:1;">📋</button>
 <div class="assignment-body">
 <label>Assignment Name</label>
 <input type="text" class="assignmentName" placeholder="e.g. Chapter 7 Review"
@@ -4230,8 +4230,8 @@ css: [
 
 document.getElementById('ThemeForest') && document.getElementById('ThemeForest').addEventListener('click', function() {
 _applyCustomTheme('forest', {
-bg: '#020f07',
-bgImg: 'radial-gradient(ellipse at 10% 0%,rgba(20,83,45,0.5) 0%,transparent 55%),radial-gradient(ellipse at 90% 95%,rgba(5,46,22,0.38) 0%,transparent 55%)',
+bg: '#061d0c',
+bgImg: 'radial-gradient(ellipse at 10% 0%,rgba(40,160,75,0.54) 0%,transparent 55%),radial-gradient(ellipse at 90% 95%,rgba(20,110,50,0.42) 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(18,90,40,0.18) 0%,transparent 60%)',
 particles: [[134,239,172],[74,222,128],[34,197,94],[187,247,208],[163,230,53]],
 css: [
 '#assignmentsContainer .assignment{background:linear-gradient(145deg,#031409 0%,#062415 100%)!important;border-color:rgba(34,197,94,0.28)!important;}',
@@ -7397,7 +7397,7 @@ var ty=tipY+(baseY-tipY)*(frac*.90+.03);
 var hw=tH*(.05+frac*.27)*(0.80+rng(sd,ti+2)*.40);
 var th=tH*.21*(1-frac*.25);
 var al=.70+frac*.14;
-var cols=[['rgba(12,72,16,','rgba(26,112,30,','rgba(8,54,12,'],['rgba(10,64,14,','rgba(22,98,26,','rgba(6,48,10,'],['rgba(16,84,18,','rgba(30,118,34,','rgba(10,60,14,']];
+var cols=[['rgba(22,110,28,','rgba(44,170,52,','rgba(14,80,20,'],['rgba(18,96,24,','rgba(36,148,44,','rgba(12,68,16,'],['rgba(28,128,34,','rgba(54,188,62,','rgba(18,92,24,']];
 var cv=cols[ti%3];
 var g=ctx.createLinearGradient(x-hw,ty,x+hw,ty+th);
 g.addColorStop(0,cv[0]+al+')');g.addColorStop(.48,cv[1]+(al+.10)+')');g.addColorStop(1,cv[2]+(al-.08)+')');
@@ -7490,9 +7490,9 @@ clData.push({x:cX,y:cY,r:cr*(.060+rng(sd,ci+30)*.072),ci:ci});
 clData.sort(function(a,b){return a.y-b.y;});
 clData.forEach(function(cl){
 var hue=90+Math.floor(rng(sd,cl.ci*7+3)*54);
-var sat=50+Math.floor(rng(sd,cl.ci*11)*28);
-var lit=22+Math.floor(rng(sd,cl.ci*13)*22);
-var al=.74+rng(sd,cl.ci*17)*.20;
+var sat=62+Math.floor(rng(sd,cl.ci*11)*28);
+var lit=36+Math.floor(rng(sd,cl.ci*13)*26);
+var al=.80+rng(sd,cl.ci*17)*.16;
 // Irregular but small and defined shape
 ctx.beginPath();
 var pts=6+cl.ci%4;
@@ -7953,6 +7953,7 @@ var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
 var rawToH = subPanel.scrollHeight || subPanel.offsetHeight || 200;
 var toH = Math.min(rawToH, _maxPanelH);
+x.scrollTop = 0;
 x.style.height = fromH + 'px';
 x.offsetHeight; // force reflow
 x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
@@ -7970,6 +7971,7 @@ var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
 var rawToH = mainPanel.scrollHeight || mainPanel.offsetHeight || 200;
 var toH = Math.min(rawToH, _maxPanelH);
+x.scrollTop = 0;
 x.style.height = fromH + 'px';
     x.offsetHeight;
     x.style.transition = 'height 0.32s cubic-bezier(0.4,0,0.2,1)';
@@ -9147,7 +9149,8 @@ var _ub = document.getElementById('_undoShiftBtn'); if (!_ub) return;
 _ub.addEventListener('click', function() {
 if (_st) window._hideToast(_st);
 Object.keys(_snap).forEach(function(k) { _saveDayTasks(k, _snap[k]); _updateCalDayDot(k); });
-doReset(); _loadDayIntoPlanner(_origIso);
+var _undoCurDay = window._activeDate || _origIso;
+doReset(); _loadDayIntoPlanner(_undoCurDay);
 if (typeof _checkDailyLimitOverflow === 'function') setTimeout(_checkDailyLimitOverflow, 120);
 window._showToast('Shift undone \u2713', false, null, 3000);
 });
