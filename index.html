@@ -379,10 +379,19 @@ blocked.style.display = "block";
 <div id="settingsSubTitle" style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;"></div>
 </div>
 <div id="limitSub" style="display:none;padding:8px 12px 10px;">
+<div id="limitSingleMode">
 <div style="font-size:16px;font-weight:800;font-family:'Syne',sans-serif;color:#6366f1;text-align:center;margin-bottom:8px;"><span id="limitDisplay">--</span></div>
 <input type="range" id="limitSlider" min="30" max="300" step="10" value="140" style="width:100%;margin-bottom:4px;accent-color:#6366f1;">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-bottom:8px;"><span>30 min</span><span>5 hrs</span></div>
-<button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;">↩ Reset to Default</button>
+<button onclick="resetDailyLimit()" style="width:100%;padding:6px 10px;font-size:12px;font-weight:600;border:1.5px solid rgba(99,102,241,0.3);border-radius:8px;background:transparent;color:#6366f1;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;margin-bottom:2px;">↩ Reset to Default</button>
+</div>
+<div id="limitPerDayMode" style="display:none;"></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid rgba(99,102,241,0.1);">
+<span class="sub-label">Customize?</span>
+<div id="perDayLimitToggle" onclick="togglePerDayLimit()" style="width:38px;height:21px;background:#cbd5e1;border-radius:11px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0;margin-left:10px;">
+<div id="perDayLimitThumb" style="position:absolute;top:2px;left:2px;width:17px;height:17px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div>
+</div>
+</div>
 </div>
 <div id="orderSub" style="display:none;padding:8px 12px 10px;">
 <div id="orderAutoOpt" onclick="setOrderMode('auto')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;margin-bottom:4px;transition:background 0.15s;">
@@ -1648,7 +1657,15 @@ college:["Arts & Humanities","STEM","Science","Computer Science","Astronomy","En
 
 const attentionBlocks = { middle:30, high:45, college:60 };
 const difficultyRank = { priority:0, hard:1, medium:2, easy:3 };
-function getDailyLimit(level) {
+function getDailyLimit(level, iso) {
+if (localStorage.getItem('studyPlanner_perDayLimit') === 'true') {
+var _pdKeys = ['sun','mon','tue','wed','thu','fri','sat'];
+var _pdDow = iso ? new Date(iso + 'T00:00:00').getDay() : new Date().getDay();
+var _pdStored = localStorage.getItem('studyPlanner_dayLimit_' + _pdKeys[_pdDow]);
+if (_pdStored) return parseInt(_pdStored);
+var _pdDef = level === 'middle' ? 90 : level === 'high' ? 140 : 200;
+return _pdDef;
+}
 var stored = localStorage.getItem('studyPlanner_dailyLimit');
 if (stored) return parseInt(stored);
 return level === 'middle' ? 90 : level === 'high' ? 140 : 200;
@@ -5256,14 +5273,26 @@ document.getElementById("currentAssignmentDisplay").textContent = window._paused
 window._pausedAssignmentDisplay = null;
 }
 if (segmentMap && segmentMap.length) {
-var _rmSegs = segmentMap.map(function(s){ return {name:s.name,durationMinutes:s.durationMinutes,isBreak:s.isBreak,difficulty:s.difficulty}; });
-var _rmW = _rmSegs.filter(function(s){return !s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
-var _rmB = _rmSegs.filter(function(s){return s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
-updateOutputAfterSkip(_rmSegs, _rmW, _rmB, '\u25b6 Session resumed');
-}
-resumeTimer();
-updateSessionEndTime();
-requestAnimationFrame(renderSegmentLabelTrack);
+            var _resumePct = window._pausedPercent || 0;
+            var _resumeSegIdx = segmentMap.findIndex(function(s){ return _resumePct >= s.start && _resumePct < s.end; });
+            var _rmSegs;
+            if (_resumeSegIdx >= 0) {
+                var _curSeg = segmentMap[_resumeSegIdx];
+                var _remainPct = _curSeg.end - _resumePct;
+                var _totalSegPct = _curSeg.end - _curSeg.start;
+                var _remainMins = _totalSegPct > 0 ? Math.max(1, Math.round((_remainPct / _totalSegPct) * _curSeg.durationMinutes)) : _curSeg.durationMinutes;
+                _rmSegs = [{name:_curSeg.name, durationMinutes:_remainMins, isBreak:_curSeg.isBreak, difficulty:_curSeg.difficulty}]
+                    .concat(segmentMap.slice(_resumeSegIdx + 1).map(function(s){ return {name:s.name,durationMinutes:s.durationMinutes,isBreak:s.isBreak,difficulty:s.difficulty}; }));
+            } else {
+                _rmSegs = segmentMap.map(function(s){ return {name:s.name,durationMinutes:s.durationMinutes,isBreak:s.isBreak,difficulty:s.difficulty}; });
+            }
+            var _rmW = _rmSegs.filter(function(s){return !s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
+            var _rmB = _rmSegs.filter(function(s){return s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
+            updateOutputAfterSkip(_rmSegs, _rmW, _rmB, '\u25b6 Session resumed');
+        }
+        resumeTimer();
+        updateSessionEndTime();
+        requestAnimationFrame(renderSegmentLabelTrack);
 }
 };
 
@@ -7977,6 +8006,17 @@ var h = Math.floor(mins / 60), m = mins % 60;
 return m ? h + 'h ' + m + 'm' : h + ' hrs';
 }
 function initLimitSlider() {
+var isPerDay = localStorage.getItem('studyPlanner_perDayLimit') === 'true';
+var tog = document.getElementById('perDayLimitToggle');
+var thumb = document.getElementById('perDayLimitThumb');
+if (tog) tog.style.background = isPerDay ? '#6366f1' : '#cbd5e1';
+if (thumb) thumb.style.left = isPerDay ? '19px' : '2px';
+if (isPerDay) {
+var sm = document.getElementById('limitSingleMode'); if (sm) sm.style.display = 'none';
+_renderPerDaySliders();
+} else {
+var pm = document.getElementById('limitPerDayMode'); if (pm) pm.style.display = 'none';
+var sm2 = document.getElementById('limitSingleMode'); if (sm2) sm2.style.display = 'block';
 var slider = document.getElementById('limitSlider');
 var display = document.getElementById('limitDisplay');
 var val = getDailyLimit(document.getElementById('schoolLevel').value);
@@ -7991,6 +8031,69 @@ localStorage.setItem('studyPlanner_dailyLimit', v);
 if (typeof markOutdated === 'function') markOutdated();
 };
 }
+}
+}
+function _renderPerDaySliders() {
+var pm = document.getElementById('limitPerDayMode'); if (!pm) return;
+pm.style.display = 'block';
+var dk = document.body.classList.contains('assignmentsdark');
+var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var keys = ['mon','tue','wed','thu','fri','sat','sun'];
+var level = document.getElementById('schoolLevel').value;
+var def = level === 'middle' ? 90 : level === 'high' ? 140 : 200;
+pm.innerHTML = days.map(function(d, i) {
+var val = parseInt(localStorage.getItem('studyPlanner_dayLimit_' + keys[i]) || def);
+return '<div style="margin-bottom:8px;">' +
+'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1px;">' +
+'<span style="font-size:11px;font-weight:700;color:' + (dk ? '#a78bfa' : '#6366f1') + ';font-family:\'Inter\',sans-serif;">' + d + '</span>' +
+'<span id="pdLimitDisplay_' + keys[i] + '" style="font-size:11px;font-weight:700;color:' + (dk ? '#e2e8f0' : '#1e293b') + ';font-family:\'Inter\',sans-serif;">' + formatLimitDisplay(val) + '</span>' +
+'</div>' +
+'<input type="range" id="pdLimitSlider_' + keys[i] + '" min="30" max="300" step="10" value="' + val + '" style="width:100%;accent-color:#6366f1;" data-day="' + keys[i] + '">' +
+'</div>';
+}).join('');
+keys.forEach(function(k) {
+var sl = document.getElementById('pdLimitSlider_' + k);
+var disp = document.getElementById('pdLimitDisplay_' + k);
+if (!sl) return;
+expandSliderHitArea(sl);
+sl.oninput = function() {
+var v = parseInt(this.value);
+if (disp) disp.textContent = formatLimitDisplay(v);
+localStorage.setItem('studyPlanner_dayLimit_' + k, v);
+if (typeof markOutdated === 'function') markOutdated();
+};
+});
+}
+function togglePerDayLimit() {
+var isPerDay = localStorage.getItem('studyPlanner_perDayLimit') === 'true';
+isPerDay = !isPerDay;
+localStorage.setItem('studyPlanner_perDayLimit', isPerDay);
+var tog = document.getElementById('perDayLimitToggle');
+var thumb = document.getElementById('perDayLimitThumb');
+if (tog) tog.style.background = isPerDay ? '#6366f1' : '#cbd5e1';
+if (thumb) thumb.style.left = isPerDay ? '19px' : '2px';
+if (isPerDay) {
+var sm = document.getElementById('limitSingleMode'); if (sm) sm.style.display = 'none';
+_renderPerDaySliders();
+} else {
+var pm = document.getElementById('limitPerDayMode'); if (pm) { pm.style.display = 'none'; pm.innerHTML = ''; }
+var sm2 = document.getElementById('limitSingleMode'); if (sm2) sm2.style.display = 'block';
+var slider = document.getElementById('limitSlider');
+var display = document.getElementById('limitDisplay');
+var val = getDailyLimit(document.getElementById('schoolLevel').value);
+if (slider) slider.value = val;
+if (display) display.textContent = formatLimitDisplay(val);
+if (slider) {
+expandSliderHitArea(slider);
+slider.oninput = function() {
+var v = parseInt(this.value);
+if (display) display.textContent = formatLimitDisplay(v);
+localStorage.setItem('studyPlanner_dailyLimit', v);
+if (typeof markOutdated === 'function') markOutdated();
+};
+}
+}
+if (typeof markOutdated === 'function') markOutdated();
 }
 function resetDailyLimit() {
 localStorage.removeItem('studyPlanner_dailyLimit');
@@ -9042,7 +9145,7 @@ var _sessionRunning = document.getElementById('resetTimerBtn') && document.getEl
 if (_sessionRunning) { if (_box) _box.style.display = 'none'; return; }
 var iso = window._activeDate || getTodayISO();
 var level = document.getElementById('schoolLevel').value;
-var limit = getDailyLimit(level);
+var limit = getDailyLimit(level, iso);
 var tasks = _loadDayTasks(iso);
 var total = tasks.reduce(function(s, t) { return s + (parseInt(t.time) || 0); }, 0);
 if (total > limit && _box && _msg) {
@@ -9061,7 +9164,7 @@ if (_sb) _sb.addEventListener('click', function() {
 var iso = window._activeDate || getTodayISO();
 var _calMaxD = new Date(); var _calMaxLimit = new Date(_calMaxD.getFullYear(), _calMaxD.getMonth() + 13, 0); var _calMaxISO = _dateToISO(_calMaxLimit);
 var level = document.getElementById('schoolLevel').value;
-var limit = getDailyLimit(level);
+var limit = getDailyLimit(level, iso);
 var tasks = _loadDayTasks(iso);
 var keep = [], toShift = [];
 var _accumulated = 0;
@@ -9089,8 +9192,9 @@ var _dIso = _dateToISO(_curD);
 if (_dIso > _calMaxISO) { showCustomAlert('Cannot shift excess work. The end of the calendar has been reached.'); return; }
 var _dTasks = _loadDayTasks(_dIso);
 var _dTotal = _dTasks.reduce(function(s,t2){return s+(parseInt(t2.time)||0);},0);
-if (_dTotal >= limit) continue;
-var _dSpace = limit - _dTotal, _added = [], _stillPending = [], _dUsed = 0;
+var _dLimit = getDailyLimit(level, _dIso);
+if (_dTotal >= _dLimit) continue;
+var _dSpace = _dLimit - _dTotal, _added = [], _stillPending = [], _dUsed = 0;
 for (var _pi = 0; _pi < _pending.length; _pi++) {
 var _pt = _pending[_pi], _ptt = parseInt(_pt.time)||0;
 if (_dUsed + _ptt <= _dSpace) { _added.push(_pt); _dUsed += _ptt; }
