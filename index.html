@@ -355,7 +355,9 @@ blocked.style.display = "block";
 <div id="settingsMainPanel" style="padding:5px;box-sizing:border-box;transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);">
 <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:8px 14px 4px;">Calculation</div>
 <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+<button class="settings-menu-btn" onclick="openSettingsSub('planSub','Planning Logic')">🧠&nbsp; Planning Logic <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="openSettingsSub('limitSub','Daily Study Limit')">⏱&nbsp; Daily Study Limit <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+
 <button class="settings-menu-btn" onclick="openSettingsSub('orderSub','Assignment Order')">↕&nbsp; Assignment Order <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 
 <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
@@ -407,7 +409,25 @@ blocked.style.display = "block";
 <span style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Manual Order</span>
 </div>
 </div>
+<div id="planSub" style="display:none;padding:8px 12px 10px;">
+<div id="planSmartOpt" onclick="setPlanningLogic('smart')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;cursor:pointer;border-radius:6px;margin-bottom:6px;transition:background 0.15s;">
+<div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;"><div id="planSmartDot" style="width:8px;height:8px;border-radius:50%;background:#6366f1;transition:background 0.15s;"></div></div>
+<div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Smart cognitive load</div>
+<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">Progressively changes break times based on the difficulty of assignments.</div></div>
+</div>
+<div id="planPomoOpt" onclick="setPlanningLogic('pomodoro')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;cursor:pointer;border-radius:6px;margin-bottom:6px;transition:background 0.15s;">
+<div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;"><div id="planPomoDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div></div>
+<div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Pomodoro timer</div>
+<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">The classic; 25 minute work sessions split in between 5 minute work breaks.</div></div>
+</div>
+<div id="plan5217Opt" onclick="setPlanningLogic('r5217')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;cursor:pointer;border-radius:6px;transition:background 0.15s;">
+<div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;"><div id="plan5217Dot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div></div>
+<div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">52/17 rule</div>
+<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">Science backed 52 minutes of high intensity work followed by 17 minute breaks.</div></div>
+</div>
+</div>
 <div id="themeSub" style="display:none;padding:4px 0;">
+
 <div style="font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 3px;">Default</div>
 <div style="height:1px;background:rgba(99,102,241,0.12);margin:0 8px 2px;"></div>
 <button id="Light" class="settings-menu-btn" style="padding-left:22px;">☀️&nbsp; Light Mode</button>
@@ -2054,7 +2074,17 @@ if(h===0) return `${m} minutes`;
 if(m===0) return `${h} hours`;
 return `${h} hours ${m} minutes`;
 }
+function getPlanningLogic(){ return window.planningLogic || localStorage.getItem('studyPlanner_planningLogic') || 'smart'; }
+function getPlanningBlock(schoolLevel){
+var mode = getPlanningLogic();
+if (mode === 'pomodoro') return 25;
+if (mode === 'r5217') return 52;
+return attentionBlocks[schoolLevel];
+}
 function calcBreakDuration(sectionWorkSegs, schoolLevel) {
+var mode = getPlanningLogic();
+if (mode === 'pomodoro') return 5;
+if (mode === 'r5217') return 17;
 var totalWork = sectionWorkSegs.reduce(function(s, a) { return s + a.durationMinutes; }, 0);
 if (totalWork === 0) return 5;
 var hardTime = 0, medPriTime = 0, easyTime = 0;
@@ -2076,6 +2106,27 @@ return 10;
 if (schoolLevel === 'high' || schoolLevel === 'college') return 10;
 return 5;
 }
+function setPlanningLogic(mode){
+if (mode !== 'smart' && mode !== 'pomodoro' && mode !== 'r5217') mode = 'smart';
+window.planningLogic = mode;
+localStorage.setItem('studyPlanner_planningLogic', mode);
+refreshPlanningLogicUI();
+var bannerEl = document.getElementById('outdatedBanner');
+var outEl = document.getElementById('output');
+if (bannerEl && outEl && outEl.innerHTML.trim()) bannerEl.style.display = 'block';
+}
+function refreshPlanningLogicUI(){
+var mode = getPlanningLogic();
+var map = { smart:'planSmartDot', pomodoro:'planPomoDot', r5217:'plan5217Dot' };
+Object.keys(map).forEach(function(k){
+var dot = document.getElementById(map[k]);
+if (dot) dot.style.background = (mode === k) ? '#6366f1' : 'transparent';
+});
+}
+window.setPlanningLogic = setPlanningLogic;
+window.refreshPlanningLogicUI = refreshPlanningLogicUI;
+(function(){ var stored = localStorage.getItem('studyPlanner_planningLogic'); if (stored) window.planningLogic = stored; })();
+
 
 
 function timeValToText(val) {
@@ -2341,7 +2392,8 @@ return b.minutes - a.minutes;
 }); }
 
 
-const block = attentionBlocks[schoolLevel.value];
+const block = getPlanningBlock(schoolLevel.value);
+
 let dailyLimit = getDailyLimit(schoolLevel.value);
 
 
@@ -4025,7 +4077,8 @@ const _sbL = document.getElementById("studyStatsBar");
 if (_sbL) _sbL.style.background = "rgba(99,102,241,0.07)";
 document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#1e293b");
 
-document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span').forEach(function(el) { el.style.color = '#1e293b'; });
+document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span, .planOptName').forEach(function(el) { el.style.color = '#1e293b'; });
+
 document.querySelectorAll('.order-pos-label').forEach(function(el) { el.style.color = '#dc2626'; });
 if (typeof window._forceCalendarRerender === 'function') window._forceCalendarRerender();
 });
@@ -4189,7 +4242,8 @@ const _sbD = document.getElementById("studyStatsBar");
 if (_sbD) _sbD.style.background = "rgba(99,102,241,0.12)";
 document.querySelectorAll("#statToday, #statWeek, #statTotal").forEach(el => el.style.color = "#e2e8f0");
 
-document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span').forEach(function(el) { el.style.color = '#e2e8f0'; });
+document.querySelectorAll('#orderAutoOpt > span, #orderManualOpt > span, .planOptName').forEach(function(el) { el.style.color = '#e2e8f0'; });
+
 document.querySelectorAll('.order-pos-label').forEach(function(el) { el.style.color = '#f87171'; });
 if (typeof window._forceCalendarRerender === 'function') window._forceCalendarRerender();
 });
@@ -5536,7 +5590,8 @@ const _curSegElapsed = Math.round(((progressPercent - seg.start) / Math.max(seg.
 const _completedAssignData = { difficulty: seg.difficulty || 'easy', durationMinutes: Math.max(1, _prevSegTime + _curSegElapsed) };
 const schoolLvl = document.getElementById("schoolLevel").value;
 
-const block = attentionBlocks[schoolLvl];
+const block = getPlanningBlock(schoolLvl);
+
 const dailyLimitVal = getDailyLimit(schoolLvl);
 
 
@@ -7948,13 +8003,16 @@ var mainPanel = document.getElementById('settingsMainPanel');
 var subPanel = document.getElementById('settingsSubPanel');
 var titleEl = document.getElementById('settingsSubTitle');
 if (!x || !mainPanel || !subPanel) return;
-['limitSub','orderSub','themeSub','a11ySub'].forEach(function(id) {
+['limitSub','orderSub','planSub','themeSub','a11ySub'].forEach(function(id) {
+
 var el = document.getElementById(id);
 if (el) el.style.display = (id === subId) ? 'block' : 'none';
 });
 if (titleEl) titleEl.textContent = title || '';
 if (subId === 'limitSub') initLimitSlider();
 if (subId === 'a11ySub') initA11yUI();
+if (subId === 'planSub' && typeof refreshPlanningLogicUI === 'function') refreshPlanningLogicUI();
+
 var _maxPanelH = window.innerHeight - 80;
 var fromH = x.offsetHeight;
 var rawToH = subPanel.scrollHeight || subPanel.offsetHeight || 200;
@@ -7987,7 +8045,8 @@ x.style.height = fromH + 'px';
     subPanel.style.transform = 'translateX(102%)';
     x.style.height = Math.max(toH, 60) + 'px';
     setTimeout(function() {
-        ['limitSub','orderSub','themeSub','a11ySub'].forEach(function(id){var s=document.getElementById(id);if(s)s.style.display='none';});
+       ['limitSub','orderSub','planSub','themeSub','a11ySub'].forEach(function(id){var s=document.getElementById(id);if(s)s.style.display='none';});
+
         x.style.transition = 'none';
         x.style.height = '';
         void x.offsetHeight;
@@ -7996,7 +8055,8 @@ x.style.height = fromH + 'px';
 }
 function toggleSettingsSub(id) {
 
-var names = { limitSub:'Daily Study Limit', orderSub:'Assignment Order', themeSub:'Theme Color', a11ySub:'Accessibility' };
+var names = { limitSub:'Daily Study Limit', orderSub:'Assignment Order', planSub:'Planning Logic', themeSub:'Theme Color', a11ySub:'Accessibility' };
+
 openSettingsSub(id, names[id] || '');
 }
 /* Daily Limit */
@@ -8094,8 +8154,20 @@ if (typeof markOutdated === 'function') markOutdated();
 }
 }
 if (typeof markOutdated === 'function') markOutdated();
+if (typeof _resizeSettingsPanelToSub === 'function') _resizeSettingsPanelToSub();
+}
+function _resizeSettingsPanelToSub() {
+var x = document.getElementById('x');
+var subPanel = document.getElementById('settingsSubPanel');
+if (!x || !subPanel) return;
+var _maxPanelH = window.innerHeight - 80;
+var rawToH = subPanel.scrollHeight || subPanel.offsetHeight || 200;
+var toH = Math.min(rawToH, _maxPanelH);
+x.style.transition = 'height 0.28s cubic-bezier(0.4,0,0.2,1)';
+x.style.height = Math.max(toH, 60) + 'px';
 }
 function resetDailyLimit() {
+
 localStorage.removeItem('studyPlanner_dailyLimit');
 var l = document.getElementById('schoolLevel').value;
 var def = l === 'middle' ? 90 : l === 'high' ? 140 : 200;
