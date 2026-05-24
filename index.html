@@ -2393,7 +2393,7 @@ document.getElementById("showMoreContainer").style.display = "block";
 document.getElementById("showLessContainer").style.display = "none";
 const outputFade = document.getElementById("outputFade");
 if (outputFade) outputFade.style.display = "block";
-requestAnimationFrame(() => {
+if (!window.tutorialActive) requestAnimationFrame(() => {
 const _cPanel = document.getElementById('c');
 const _targetTop = timelineContainer.offsetTop + timelineContainer.scrollHeight - _cPanel.clientHeight;
 const _startTop = _cPanel.scrollTop;
@@ -2778,11 +2778,13 @@ var streak = parseInt(localStorage.getItem('streak_count') || '0');
 var maxStreak = Math.max(streak, s.maxStreak || 0);
 var history = [];
 try { history = JSON.parse(localStorage.getItem('study_history') || '[]'); } catch(e) {}
-var activeDays = history.length || 1;
-var avgSec = Math.round(totalStudySec / activeDays);
 var totalBreak = s.totalBreakSecs || 0;
 var totalPause = s.totalPauseSecs || 0;
 var dailySecs = s.dailySecs || {};
+var _dsActiveKeys = Object.keys(dailySecs).filter(function(k){ return (dailySecs[k]||0) > 0; });
+var _dsActiveSum = _dsActiveKeys.reduce(function(a,k){ return a+(dailySecs[k]||0); }, 0);
+var activeDays = Math.max(history.length, _dsActiveKeys.length);
+var avgSec = _dsActiveKeys.length > 0 ? Math.round(_dsActiveSum / _dsActiveKeys.length) : (activeDays > 0 ? Math.round(totalStudySec / activeDays) : 0);
 var planningPerDay = s.planningPerDay || {};
 var sessionStarts = s.sessionStarts || [];
 // most common hours
@@ -2849,7 +2851,7 @@ return '<line x1="'+padL+'" y1="'+y+'" x2="'+(svgW-padR)+'" y2="'+y+'" stroke="'
 // x-axis labels (every ~15 days)
 var xLabels = graphDays.filter(function(d,i){ return i===0 || i===Math.floor(barCount/2) || i===barCount-1; }).map(function(d,i){
 var idx = graphDays.indexOf(d);
-var x = padL + (idx/barCount)*chartW + barW/2;
+var x = padL + (idx/barCount)*chartW + (chartW/barCount)/2;
 var dd = new Date(d.iso+'T00:00:00');
 var lbl = (dd.getMonth()+1)+'/'+dd.getDate();
 return '<text x="'+x+'" y="'+(svgH-8)+'" text-anchor="middle" font-size="9" font-family="Inter,sans-serif" fill="'+textSub+'">'+lbl+'</text>';
@@ -2867,7 +2869,7 @@ card('🔥 Streaks', [
 card('📚 All-Time Studying', [
 ['Total time studied', totalStudySec >= 3600 ? fmtHours(totalStudySec) : fmtHMS(totalStudySec)],
 ['Active study days', activeDays + ' day' + (activeDays===1?'':'s')],
-['Average per active day', fmtHMS(avgSec)],
+['Average per active day', avgSec > 0 ? fmtHMS(avgSec) : '\u2014'],
 ['Total break time', fmtHMS(Math.round(totalBreak))],
 ['Total time paused', fmtHMS(Math.round(totalPause))]
 ], '#6366f1') +
@@ -3402,7 +3404,16 @@ const pendingSession = localStorage.getItem("studyTime_session_pending");
 if (pendingSession) {
 try {
 const p = JSON.parse(pendingSession);
-if (p.seconds >= 1) saveStudiedTime(p.seconds);
+if (p.seconds >= 1) {
+saveStudiedTime(p.seconds);
+try {
+var _pISO = getLocalDateStr();
+var _pES = JSON.parse(localStorage.getItem('sp_ext_stats') || '{}');
+if (!_pES.dailySecs) _pES.dailySecs = {};
+_pES.dailySecs[_pISO] = (_pES.dailySecs[_pISO] || 0) + Math.round(p.seconds);
+localStorage.setItem('sp_ext_stats', JSON.stringify(_pES));
+} catch(e2) {}
+}
 } catch(e) {}
 localStorage.removeItem("studyTime_session_pending");
 }
@@ -6602,41 +6613,7 @@ on: 'click', post: 700 },
 { el: function () { return document.getElementById('d'); },
 text: "Next, click '← Calendar' to return to the calendar view.",
 on: 'click', post: 800 },
-{ el: function () {
-var _fd = new Date(); _fd.setDate(_fd.getDate() + 7);
-var _fiso = _fd.getFullYear() + '-' + String(_fd.getMonth()+1).padStart(2,'0') + '-' + String(_fd.getDate()).padStart(2,'0');
-return document.querySelector('.cal-day-btn[data-iso="' + _fiso + '"]') || null;
-},
-spotlightEl: function() { return document.getElementById('calendarScrollContainer'); },
-text: 'To add future assignments, you can click the number on any future date. Try this one, 7 days from now, to open that day\'s planner.',
-on: 'click', post: 900 },
-{ el: function () { return document.getElementById('addAssignmentBtn'); },
-text: 'Add an assignment for this future day. ',
-on: 'click', post: 0 },
-{ el: function () {
-var _sCard = window._lastAddedCard || document.querySelector('#assignmentsContainer .assignment');
-return _sCard ? (_sCard.querySelector('.sp-tog') || null) : null;
-},
-spotlightEl: function () {
-var _sCard = window._lastAddedCard || document.querySelector('#assignmentsContainer .assignment');
-return _sCard ? (_sCard.querySelector('.spread-section') || _sCard) : document.getElementById('assignmentsContainer');
-},
-text: 'Future assignments have a \u201cSpread work across multiple days\u201d toggle \u2014 click it to see the options!',
-on: 'click', post: 500, clampToControls: true },
-{ el: function () {
-var _sCard = window._lastAddedCard || document.querySelector('#assignmentsContainer .assignment');
-return _sCard ? (_sCard.querySelector('.sp-opts') || _sCard.querySelector('.spread-section') || null) : null;
-},
-spotlightEl: function () {
-var _sCard = window._lastAddedCard || document.querySelector('#assignmentsContainer .assignment');
-return _sCard ? (_sCard.querySelector('.sp-opts') || _sCard.querySelector('.spread-section') || _sCard) : document.getElementById('assignmentsContainer');
-},
-noSecondaryRing: true,
-text: 'Here, you can set the daily time limit and start direction to spread your work accross multiple days without much hassle. Click Next to continue.',
-on: 'next', post: 0, clampToControls: true },
-{ el: function () { return document.getElementById('d'); },
-text: "Click '← Calendar' to return to the calendar.",
-on: 'click', post: 800 },
+
 { el: function () { return document.getElementById('calRoutineBtn'); },
 text: 'Routines let you auto-schedule recurring tasks (like daily homework) on chosen days of the week. Click here to explore!',
 on: 'click', post: 400 },
