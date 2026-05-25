@@ -6641,47 +6641,9 @@ on: 'click', post: 0 },
 { el: function () { return document.getElementById('calculateBtn'); },
 text: 'Next, calculate your study plan!',
 on: 'click', post: 0 },
-{ el: function () {
-var o = document.getElementById('outputWrapper');
-if (!o || o.offsetParent === null) return null;
-var sm = document.getElementById('showMoreContainer');
-var els = [o];
-if (sm && sm.style.display !== 'none') els.push(sm);
-return { _syntheticBounds: true, _useFirstElWidth: true, _els: els };
-},
-text: 'This is your initial plan. Click the "Next" button to continue building upon it!',
-on: 'next', post: 0, clampToControls: true, noSecondaryRing: true },
-{ el: function () { return document.getElementById('z'); },
-text: 'Want to customize your plan to match your preferences? Change it here!',
-on: 'click', post: 160 },
-{ el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Daily Study Limit')!==-1)return bs[i];} return null; },
-spotlightEl: function () { return document.getElementById('x'); },
-tipSide: 'left',
-text: 'You can change the allotted time per day to studying by changing the Daily Study Limit. Try it out!',
-on: 'click', post: 160 },
-{ el: function () { return document.getElementById('limitSlider'); },
-spotlightEl: function () { return document.getElementById('x'); },
-tipSide: 'left',
-noSecondaryRing: true,
-text: 'Drag the slider to adjust your daily study limit.',
-on: 'limitSlider', post: 0 },
-{ el: function () { var p=document.getElementById('settingsMainPanel'); if(!p)return null; var bs=p.querySelectorAll('.settings-menu-btn'); for(var i=0;i<bs.length;i++){if(bs[i].textContent.indexOf('Assignment Order')!==-1)return bs[i];} return null; },
-spotlightEl: function () { return document.getElementById('x'); },
-tipSide: 'left',
-text: 'You can also manually re-order assignments to match your preferences, or stick to the automatic sort.',
-on: 'click', post: 160 },
-{ el: function () { return document.getElementById('orderManualOpt'); },
-spotlightEl: function () { return document.getElementById('x'); },
-tipSide: 'left',
-text: 'Try switching it to manual!',
-on: 'click', post: 0 },
-{ el: function () { var _dc = document.querySelectorAll('#assignmentsContainer .assignment'); return _dc.length ? _dc[0] : document.getElementById('assignmentsContainer'); },
-spotlightEl: function () { return document.getElementById('assignmentsContainer'); },
-noSecondaryRing: true,
-text: 'Click and hold on any assignment, then drag it to your preferred location and leave it.',
-on: 'drag', post: 0, clampToControls: true},
+
 { el: function () { return document.getElementById('startTimerBtn'); },
-text: "It\u2019s that simple! For now, let\u2019s stick to auto sorting while we finish learning how to use this planner. Once you are happy with your plan, simply click this button to begin studying!",
+text: "Now, a plan ordering all your assignments and splitting them optimally between breaks has been created! Click this button to begin studying!",
 on: 'click', post: 0 },
 { el: function () { return document.getElementById('PauseTimerBtn'); },
 text: "In case you need to momentarily stop studying, this button pauses the timer and session.",
@@ -6697,46 +6659,13 @@ on: 'click', post: 0 },
 text: 'All done with the session! Click this button to reset it.',
 on: 'click', post: 700 },
 { el: function () { return document.getElementById('d'); },
-text: "Next, click '← Calendar' to return to the calendar view.",
+text: "Finally, click '← Calendar' to return to the calendar view.",
 on: 'click', post: 800 },
-
-{ el: function () { return document.getElementById('calRoutineBtn'); },
-text: 'Routines let you auto-schedule recurring tasks (like daily homework) on chosen days of the week. Click here to explore!',
-on: 'click', post: 400 },
-{ el: function () {
-var _rp = document.getElementById('spRoutinePanel');
-return (_rp && _rp.style.display !== 'none') ? (document.getElementById('spAddRoutineBtn') || _rp) : null;
-},
-spotlightEl: function() { return document.getElementById('spRoutinePanel') || null; },
-text: 'Click "Add Routine" to explore the creation options!',
-on: 'click', post: 500 },
-{ el: function () {
-var _rp = document.getElementById('spRoutinePanel');
-return (_rp && _rp.style.display !== 'none') ? (document.getElementById('spRoutineForm') || _rp) : null;
-},
-spotlightEl: function() { return document.getElementById('spRoutinePanel') || null; },
-noSecondaryRing: true,
-text: 'This menu provides options to name, schedule, and customize your routine. Click Next to continue.',
-on: 'next', post: 0 },
-{ el: function () {
-if (!window._tutClosedRPOnce) {
-window._tutClosedRPOnce = true;
-var _p = document.getElementById('spRoutinePanel');
-if (_p) _p.style.display = 'none';
-}
-return document.getElementById('calResetAllBtn');
-},
-spotlightEl: function () {
-var _s = document.getElementById('g');
-return (_s && _s.querySelector('div[style*="sticky"]')) || _s;
-},
-text: '"Reset All" clears every assignment and routine across all days.',
-on: 'next', post: 0 },
 { el: function () { return { _centered: true }; },
 text: 'IMPORTANT NOTE: this planner uses local storage to save your data onto your device, and clearing your cache, browser data, or using this planner in a private browsing page will result in the loss of any assignments and other data added (though closing the tab or window that the planner is on will not result in any loss of data). If you want to save your data, simply export your study plan using the \u201cImport/Export\u201d option in the settings menu.',
 on: 'next', post: 0 },
 { el: function () { return { _centered: true }; },
-text: 'This marks the end of the tutorial! Happy studying \uD83C\uDF89',
+text: 'To learn more about how to use this planner, check out the "User Guide" in the settings menu (on the top right of your screen). This marks the end of the tutorial! Happy studying \uD83C\uDF89',
 on: 'next', nextLabel: 'End Tutorial \uD83C\uDF89', post: 0 }
 ],
 
