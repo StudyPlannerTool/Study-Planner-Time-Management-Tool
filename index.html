@@ -6642,8 +6642,11 @@ on: 'click', post: 0 },
 text: 'Next, calculate your study plan!',
 on: 'click', post: 0 },
 
-{ el: function () { return document.getElementById('startTimerBtn'); },
-text: "Now, a plan ordering all your assignments and splitting them optimally between breaks has been created! Click this button to begin studying!",
+{ el: function () { 
+  var btn = document.getElementById('startTimerBtn'); 
+  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+  return btn; 
+}, text: "Now, a plan ordering all your assignments and splitting them optimally between breaks has been created! Click this button to begin studying!",
 on: 'click', post: 0 },
 { el: function () { return document.getElementById('PauseTimerBtn'); },
 text: "In case you need to momentarily stop studying, this button pauses the timer and session.",
