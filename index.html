@@ -370,7 +370,9 @@ blocked.style.display = "block";
 <div style="height:1px;background:rgba(99,102,241,0.08);margin:8px 8px 4px;"></div>
 <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1.5px;padding:4px 14px 4px;">Other</div>
 <div style="height:1px;background:rgba(99,102,241,0.15);margin:0 8px 4px;"></div>
+<button class="settings-menu-btn" onclick="openUserGuide()">📘&nbsp; User Guide <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="_openStatsPage()">📊&nbsp; My Stats <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
+
 <button class="settings-menu-btn" onclick="_openImportExportPage()">📦&nbsp; Import / Export <span style="float:right;margin-left:8px;font-size:11px;opacity:0.45;">›</span></button>
 <button class="settings-menu-btn" onclick="_settingsGoHome()">🏠&nbsp; ←Home Page </button>
 </div>
@@ -7971,6 +7973,46 @@ body.assignmentsdark button[onclick="resetAccessibility()"] { border-color:rgba(
 body.assignmentsdark #settingsSubPanel > div:first-child { border-bottom-color:rgba(99,102,241,0.25) !important; }
 body.assignmentsdark #settingsBackBtn { color:#a78bfa !important; }
 body.assignmentsdark #settingsSubTitle { color:#a78bfa !important; }
+
+/* ===== User Guide ===== */
+#userGuidePage h2 { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; color:#1e293b; margin:0 0 18px; letter-spacing:0.2px; }
+#userGuidePage h3 { font-family:'Syne',sans-serif; font-size:21px; font-weight:700; color:#4338ca; margin:28px 0 10px; }
+#userGuidePage p { margin:0 0 14px; }
+#userGuidePage ul { margin:0 0 16px; padding-left:22px; }
+#userGuidePage li { margin-bottom:8px; }
+#userGuidePage strong { color:#312e81; }
+.ug-link { color:#2563eb; text-decoration:underline; cursor:pointer; font-weight:600; }
+.ug-link:hover { color:#1d4ed8; }
+.ug-topic { font-size:11px; font-weight:800; color:#6366f1; text-transform:uppercase; letter-spacing:1.5px; padding:14px 10px 6px; }
+.ug-topic-divider { height:1px; background:rgba(99,102,241,0.18); margin:0 8px 6px; }
+.ug-menu-btn { display:block; width:100%; text-align:left; padding:10px 14px; border:none; background:transparent; font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#1e293b; border-radius:10px; cursor:pointer; transition:background 0.15s,color 0.15s; }
+.ug-menu-btn:hover { background:rgba(99,102,241,0.1); color:#4338ca; }
+.ug-menu-btn.active { background:rgba(99,102,241,0.16); color:#4338ca; }
+.ug-nav-btn { padding:10px 18px; border:1.5px solid rgba(99,102,241,0.35); background:#fff; color:#4338ca; font-family:'Inter',sans-serif; font-weight:700; font-size:14px; border-radius:10px; cursor:pointer; transition:background 0.15s; }
+.ug-nav-btn:hover { background:rgba(99,102,241,0.1); }
+@media (max-width:640px) {
+  #ugSideMenu { width:100vw !important; }
+  #userGuidePage h2 { font-size:25px; }
+  #userGuidePage h3 { font-size:19px; }
+  #userGuidePage { font-size:15.5px; }
+  #ugContentScroll { padding:60px 18px 80px; }
+}
+body.assignmentsdark #userGuidePage { background:#0f172a; color:#e2e8f0; }
+body.assignmentsdark #ugHeader { background:#111a2e; border-bottom-color:rgba(99,102,241,0.25); }
+body.assignmentsdark #ugHeader div { color:#e2e8f0 !important; }
+body.assignmentsdark #ugBackBtn,
+body.assignmentsdark #ugHamburger { background:#1a2236; border-color:rgba(139,92,246,0.4); color:#a78bfa; }
+body.assignmentsdark #ugHamburger span { background:#a78bfa; }
+body.assignmentsdark #ugSideMenu { background:#1a2236; border-right-color:rgba(99,102,241,0.25); }
+body.assignmentsdark .ug-menu-btn { color:#e2e8f0; }
+body.assignmentsdark .ug-menu-btn:hover,
+body.assignmentsdark .ug-menu-btn.active { background:rgba(99,102,241,0.2); color:#c4b5fd; }
+body.assignmentsdark #userGuidePage h2 { color:#f1f5f9; }
+body.assignmentsdark #userGuidePage h3 { color:#c4b5fd; }
+body.assignmentsdark #userGuidePage strong { color:#ddd6fe; }
+body.assignmentsdark .ug-link { color:#93c5fd; }
+body.assignmentsdark .ug-nav-btn { background:#1a2236; border-color:rgba(139,92,246,0.4); color:#c4b5fd; }
+
 /* Colorblind timeline patterns */
 body.colorblind-mode #timelineBar > div[data-seg-diff="priority"] { background:repeating-linear-gradient(45deg,#800080,#800080 4px,#b060b0 4px,#b060b0 8px) !important; }
 body.colorblind-mode #timelineBar > div[data-seg-diff="hard"] { background:radial-gradient(circle,#6b2f00 2px,#d9613d 2px) !important; background-size:8px 8px !important; }
@@ -7984,8 +8026,219 @@ body.colorblind-mode [data-swatch="easy"] { background:repeating-linear-gradient
 body.colorblind-mode [data-swatch="break"] { background:repeating-linear-gradient(-45deg,#999,#999 3px,#bbb 3px,#bbb 6px) !important; }
 </style>
 <script>
+/* ── User Guide Logic ── */
+var UG_TOPICS = [
+  { topic: 'The Basics', sections: [
+    { id:'planning', title:'Planning' },
+    { id:'during-sessions', title:'During Sessions' },
+    { id:'routines', title:'Routines' }
+  ]},
+  { topic: 'Plan Customization', sections: [
+    { id:'changing-planning-logic', title:'Changing Planning Logic' },
+    { id:'daily-study-limits', title:'Daily Study Limits' },
+    { id:'assignment-ordering', title:'Assignment Ordering' }
+  ]},
+  { topic: 'Useful Tips', sections: [
+    { id:'assignment-difficulty', title:'Choosing Assignment Difficulty' },
+    { id:'time-estimations', title:'Accurate Time Estimations' },
+    { id:'during-breaks', title:'During Breaks' },
+    { id:'studying-tips', title:'Studying Tips' },
+    { id:'when-to-add', title:'When to Add Assignments' }
+  ]}
+];
+var UG_ORDER = []; UG_TOPICS.forEach(function(t){ t.sections.forEach(function(s){ UG_ORDER.push(s); }); });
+
+var USER_GUIDE_CONTENT = {
+'planning': '\
+<h2>Planning</h2>\
+<p>Assignments in this planner serve two main purposes — completing a given homework task, or dedicating focused time to study for an upcoming exam or test.</p>\
+<h3>Getting Started</h3>\
+<p>Begin by choosing a date on the calendar to add an assignment to. You can pick any date from today up to the last day of the next twelve months. If you are unsure when to add an assignment, see the <a class="ug-link" data-goto="when-to-add">when to add assignments</a> guide.</p>\
+<p>Once you have chosen a date, click on it to enter that day, then press the green <strong>Add Assignment</strong> button (the first of the three buttons in the controls section).</p>\
+<h3>Adding an Assignment</h3>\
+<p>Each new assignment appears as an editable card with the following fields:</p>\
+<ul>\
+<li><strong>Assignment Name</strong> — a short title for the task (e.g. "Math Chapter 7").</li>\
+<li><strong>Difficulty</strong> — Easy, Medium, Hard, or Priority. To pick the right one, see <a class="ug-link" data-goto="assignment-difficulty">choosing assignment difficulty</a>.</li>\
+<li><strong>Subject</strong> — the area of study this assignment belongs to.</li>\
+<li><strong>Estimated Completion Time</strong> — a slider from 10 minutes to 5 hours. To set a realistic value, see <a class="ug-link" data-goto="time-estimations">accurate time estimations</a>.</li>\
+</ul>\
+<p>The planner uses these specifications to build accurate study sessions, placing breaks at the right intervals to prevent burnout. They also keep your studies organized for future planning. Use the <strong>Remove</strong> button at the bottom of an assignment to delete it.</p>\
+<p>You can add up to <strong>25 assignments per day</strong>. As more are added, the others collapse to save space — just click one to expand it.</p>\
+<h3>Generating the Plan</h3>\
+<p>Once your assignments are added for the day, press the orange <strong>Calculate</strong> button (the second of the three control buttons) to generate the study plan. On future dates this may appear as a <strong>Preview</strong> button instead. The plan includes every assignment along with a visual timeline bar.</p>\
+<h3>Customizing the Plan</h3>\
+<p>You can further tune the result with <a class="ug-link" data-goto="changing-planning-logic">changing planning logic</a>, <a class="ug-link" data-goto="daily-study-limits">daily study limits</a>, and <a class="ug-link" data-goto="assignment-ordering">assignment ordering</a>.</p>\
+<p>Once your plan matches your preferences and aligns with your schedule, planning is complete and you are ready to begin studying.</p>',
+
+'during-sessions': '\
+<h2>During Sessions</h2>\
+<p>After your assignments are added and the plan is calculated, a green <strong>Start Session</strong> button appears above the timeline bar in the center of the screen. If you do not see it, you are not on today\'s date — sessions can only start on the day they are planned for.</p>\
+<p>Pressing the button begins a countdown timer covering all work and breaks combined. This is when studying begins.</p>\
+<h3>Session Controls</h3>\
+<p>While a session is running, the controls section is replaced with new session-specific buttons:</p>\
+<ul>\
+<li><strong>Pause / Resume</strong> — stops and restarts both the timer and the visual timeline. Use it for sudden interruptions where you need to step away briefly.</li>\
+<li><strong>Next Assignment</strong> — moves on to the next assignment in the plan. Use this when you finish early; the planner recalculates the remaining work and breaks based on the elapsed time. If an assignment runs long, a pop-up at the end of it asks whether you are finished or need more time — extending recalculates the rest of the plan around the new total.</li>\
+<li><strong>Reset</strong> — stops the session and returns you to the planning phase.</li>\
+</ul>\
+<h3>Completed Assignments</h3>\
+<p>As each assignment finishes, it appears in the <strong>Completed Assignments</strong> box along with its elapsed time and its other configured settings.</p>',
+
+'routines': '\
+<h2>Routines</h2>\
+<p>At the top center of the calendar page is a <strong>Routines</strong> button. Routines let you add many recurring assignments with just a few clicks.</p>\
+<h3>Creating a Routine</h3>\
+<p>Press the button and add a new routine. In addition to name, subject, difficulty, and time, you get extra options:</p>\
+<ul>\
+<li><strong>Start date</strong> and <strong>end date</strong> dropdowns to define exactly how long the routine runs.</li>\
+<li>A selector for the exact <strong>days of the week</strong> the assignment should appear on.</li>\
+</ul>\
+<h3>Skipping Days</h3>\
+<p>After a routine is saved you can also exclude specific dates from it. Open the routines menu and click the orange <strong>Skip Days</strong> button next to the routine.</p>\
+<p>Routines work for anything from a single week of recurring tasks up to year-long study schedules.</p>',
+
+'changing-planning-logic': '\
+<h2>Changing Planning Logic</h2>\
+<p>Content coming soon.</p>',
+
+'daily-study-limits': '\
+<h2>Daily Study Limits</h2>\
+<p>Content coming soon.</p>',
+
+'assignment-ordering': '\
+<h2>Assignment Ordering</h2>\
+<p>Content coming soon.</p>',
+
+'assignment-difficulty': '\
+<h2>Choosing Assignment Difficulty</h2>\
+<p>Every assignment lets you pick a difficulty. Together with the estimated completion time, this drives how the planner sorts assignments and how the visual timeline is color-coded. Accurate difficulty values keep your sessions at the right work-to-break ratio.</p>\
+<h3>Difficulty Criteria</h3>\
+<ul>\
+<li><strong>Easy</strong> — light reading, reviewing big ideas, simple repetitive tasks, or objective step-by-step problems (e.g. math drills). Usually 10 to 30 minutes.</li>\
+<li><strong>Medium</strong> — applying known concepts, research that requires external sources, etc. Usually 30 minutes to an hour.</li>\
+<li><strong>Hard</strong> — deep analysis, learning new topics for the first time, comprehension-heavy work, long essays. Usually an hour or more, sometimes spanning multiple days.</li>\
+<li><strong>Priority</strong> — typically due in 24 hours or less, and a prominent part of a grade or test.</li>\
+</ul>',
+
+'time-estimations': '\
+<h2>Accurate Time Estimations</h2>\
+<p>Every assignment has a slider at the bottom for its estimated completion time, from 10 minutes to 5 hours. This is the single most important input to a good plan.</p>\
+<h3>How to Estimate Well</h3>\
+<ul>\
+<li><strong>Measure in smaller units.</strong> Judge time from one piece of the assignment rather than the whole. If one math problem takes 4 minutes and there are 10, the assignment takes about 40.</li>\
+<li><strong>Don\'t estimate by comparison.</strong> Pricing one assignment based on a different one usually drifts.</li>\
+<li><strong>Add friction and setup.</strong> Tack on 5–10 minutes for downloading files, opening software, and easing into focus.</li>\
+<li><strong>Buffer for hard content.</strong> Add roughly 20% extra for unfamiliar or complex material. Finishing early is better than running out of time.</li>\
+<li><strong>Round up, never down.</strong> Round the final estimate up to the nearest 15 minutes for a small safety net.</li>\
+</ul>\
+<h3>Important Note</h3>\
+<p>This planner can automatically recalculate the plan mid-session if you finish earlier or later than expected. Your estimates do not have to be perfect.</p>',
+
+'during-breaks': '\
+<h2>During Breaks</h2>\
+<p>After a stretch of work, the planner automatically starts a break. Breaks last anywhere from 5 to 17 minutes depending on the planning logic. Research consistently shows that well-placed breaks make studying faster and more efficient than long uninterrupted stretches, which fatigue the brain.</p>\
+<h3>Short Breaks (5–10 minutes)</h3>\
+<p>Stay indoors and finish a small, mindless chore like folding laundry or emptying the dishwasher — this gives the brain a functional rest from heavy thinking. Then drink a full glass of cold water to rehydrate, and finish with a light stretch to release tension in your neck and shoulders.</p>\
+<h3>Longer Breaks (20–30 minutes)</h3>\
+<p>Step outside into fresh air and natural sunlight to completely change your environment and clear your head. If you feel mentally drained, a quick 15-minute power nap restores cognitive performance without leaving you groggy. If you need energy instead of sleep, do a short burst of movement — jumping jacks or similar — to push fresh oxygen to your brain before getting back to work.</p>',
+
+'studying-tips': '\
+<h2>Studying Tips</h2>\
+<p>This planner organizes your assignments and protects your breaks, but most of the speed of efficient studying comes from <em>how</em> you study. To study faster and retain more, shift from passive review to active learning.</p>\
+<h3>1. Use Active Recall, Not Re-Reading</h3>\
+<p>Highlighting and re-reading create an illusion of competence. Force your brain to retrieve information from scratch instead — close the book and write down everything you remember, use flashcards, or answer practice questions. The mental effort physically strengthens the underlying neural pathways.</p>\
+<h3>2. Space Out Your Sessions</h3>\
+<p>Avoid cramming. Use spaced repetition by reviewing material at expanding intervals — for example 1 day, 3 days, 7 days, and 14 days after first learning it. Reviewing just as you are about to forget forces reconstruction, which makes memory durable.</p>\
+<h3>3. Use the Feynman Technique</h3>\
+<p>Test real understanding by explaining a concept in your own words, as if teaching a 10-year-old. Use simple language and clear analogies. The moment you hit jargon or get stuck, you have found a gap to go back and fix.</p>\
+<h3>4. Interleave Topics</h3>\
+<p>Instead of spending five hours on a single topic (blocked practice), mix related topics or different problem types within one session (interleaving). It feels harder, but it trains your brain to recognize which concept or formula applies — which is exactly what exams demand.</p>\
+<h3>5. Control Your Environment</h3>\
+<p>The brain does not multitask; it task-switches, and that burns mental energy. Leave your phone in another room or use a strict app blocker. Clear your desk of everything except what you need for the current session to keep cognitive load low.</p>',
+
+'when-to-add': '\
+<h2>When to Add Assignments</h2>\
+<p>Assignments here fall into two big categories: <strong>homework</strong> and <strong>test practice</strong>. Decide what to add and when based on the scope of the material and how much of your grade is on the line.</p>\
+<h3>High-Stakes, Cumulative Exams (Standardized Tests, Finals, Midterms)</h3>\
+<p>For exams that cover several months of material, add regular <strong>homework</strong> assignments continuously throughout the term, up until 4 weeks before the test, to master individual topics one at a time. Add <strong>test practice</strong> exactly 4 weeks before the exam to start simulating full length and pressure. Use the first two weeks of that final month to alternate between full practice sections and targeted homework review on weak spots. Schedule the final full-length mock exam exactly 1 week out to cement pacing, then leave the last few days for light review so your brain is rested.</p>\
+<h3>Unit Tests and Chapter Exams</h3>\
+<p>For standard classroom tests covering 3 to 5 chapters, add homework assignments continuously while the material is being taught, stopping exactly 4 days before the test. Add test practice exactly 3 days before by taking a mock chapter exam to diagnose what you forgot. Use the remaining 2 days for targeted homework drills on those specific mistakes — don\'t waste time on what you already know.</p>\
+<h3>Minor Assessments (Quizzes, Vocab Checks, Weekly Question Sets)</h3>\
+<p>For small assessments covering just a few days of material, add homework assignments during the 2 to 3 days leading up to the date to lock in the narrow details. Because the scope is so small, add test practice exactly 1 day before — spend about 15 minutes self-testing with blank flashcards or chapter review questions, with notes closed, so one full sleep cycle can lock the information in.</p>'
+};
+
+function _ugBuildMenu() {
+  var host = document.getElementById('ugMenuList'); if (!host) return;
+  var html = '';
+  UG_TOPICS.forEach(function(t){
+    html += '<div class="ug-topic">' + t.topic + '</div>';
+    html += '<div class="ug-topic-divider"></div>';
+    t.sections.forEach(function(s){
+      html += '<button class="ug-menu-btn" data-ugid="' + s.id + '" onclick="showUgSection(\'' + s.id + '\')">' + s.title + '</button>';
+    });
+  });
+  host.innerHTML = html;
+}
+function showUgSection(id) {
+  var c = document.getElementById('ugContent'); if (!c) return;
+  c.innerHTML = USER_GUIDE_CONTENT[id] || '<h2>Coming Soon</h2><p>Content for this section is not yet available.</p>';
+  // active state
+  var btns = document.querySelectorAll('#ugMenuList .ug-menu-btn');
+  for (var i=0;i<btns.length;i++) {
+    if (btns[i].getAttribute('data-ugid') === id) btns[i].classList.add('active');
+    else btns[i].classList.remove('active');
+  }
+  // prev/next
+  var idx = -1;
+  for (var j=0;j<UG_ORDER.length;j++){ if (UG_ORDER[j].id===id){ idx=j; break; } }
+  var nav = document.getElementById('ugNavBtns');
+  var prev = idx>0 ? UG_ORDER[idx-1] : null;
+  var next = idx>=0 && idx<UG_ORDER.length-1 ? UG_ORDER[idx+1] : null;
+  var html = '';
+  html += prev ? '<button class="ug-nav-btn" onclick="showUgSection(\'' + prev.id + '\')">← ' + prev.title + '</button>' : '<span></span>';
+  html += next ? '<button class="ug-nav-btn" onclick="showUgSection(\'' + next.id + '\')">' + next.title + ' →</button>' : '<span></span>';
+  nav.innerHTML = html;
+  // scroll to top of content
+  var sc = document.getElementById('ugContentScroll'); if (sc) sc.scrollTop = 0;
+  // mobile: auto-close menu
+  if (window.matchMedia && window.matchMedia('(max-width:640px)').matches) closeUgMenu();
+}
+function openUgMenu() {
+  var m = document.getElementById('ugSideMenu'); var b = document.getElementById('ugBackdrop');
+  if (m) m.style.transform = 'translateX(0)';
+  if (b) { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; }
+}
+function closeUgMenu() {
+  var m = document.getElementById('ugSideMenu'); var b = document.getElementById('ugBackdrop');
+  if (m) m.style.transform = 'translateX(-100%)';
+  if (b) { b.style.opacity = '0'; b.style.pointerEvents = 'none'; }
+}
+function openUserGuide() {
+  if (typeof _closeSettingsPanel === 'function') _closeSettingsPanel();
+  var x = document.getElementById('x'); if (x) x.style.display = 'none';
+  var p = document.getElementById('userGuidePage'); if (!p) return;
+  _ugBuildMenu();
+  showUgSection('planning');
+  closeUgMenu();
+  p.style.display = 'block';
+}
+function closeUserGuide() {
+  var p = document.getElementById('userGuidePage'); if (p) p.style.display = 'none';
+  closeUgMenu();
+}
+// Delegated handler for inline cross-links
+document.addEventListener('click', function(e){
+  var t = e.target;
+  if (t && t.classList && t.classList.contains('ug-link')) {
+    var goto = t.getAttribute('data-goto');
+    if (goto) { e.preventDefault(); showUgSection(goto); }
+  }
+});
+
 /* ── Settings Panel Logic ── */
 function _settingsGoHome() {
+
 var _xEl = document.getElementById('x'); if (_xEl) _xEl.style.display = 'none';
 localStorage.removeItem('studyPlanner_pageState');
 window._cameFromCalendar = false;
@@ -9837,5 +10090,31 @@ if (typeof _renderCalendar === 'function') _renderCalendar();
 };
 })(); // end IIFE
 </script>
+<!-- ===== USER GUIDE PAGE ===== -->
+<div id="userGuidePage" style="display:none;position:fixed;inset:0;z-index:100000;background:#f7f7fb;font-family:'Inter',sans-serif;color:#1e293b;overflow:hidden;">
+  <!-- Fixed header -->
+  <div id="ugHeader" style="position:absolute;top:0;left:0;right:0;height:60px;background:#ffffff;border-bottom:1px solid rgba(99,102,241,0.18);display:flex;align-items:center;justify-content:center;z-index:5;box-shadow:0 1px 6px rgba(0,0,0,0.04);">
+    <button id="ugBackBtn" onclick="closeUserGuide()" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);background:transparent;border:1.5px solid rgba(99,102,241,0.35);color:#6366f1;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;padding:7px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px;">← Back</button>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#1e293b;letter-spacing:0.3px;">User Guide</div>
+  </div>
+  <!-- Hamburger (under back button) -->
+  <button id="ugHamburger" onclick="openUgMenu()" aria-label="Open menu" style="position:absolute;top:74px;left:18px;z-index:6;width:42px;height:42px;border-radius:10px;border:1.5px solid rgba(99,102,241,0.3);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+    <span style="display:block;width:18px;height:2px;background:#6366f1;border-radius:2px;"></span>
+    <span style="display:block;width:18px;height:2px;background:#6366f1;border-radius:2px;"></span>
+    <span style="display:block;width:18px;height:2px;background:#6366f1;border-radius:2px;"></span>
+  </button>
+  <!-- Backdrop -->
+  <div id="ugBackdrop" onclick="closeUgMenu()" style="position:absolute;inset:0;background:rgba(15,23,42,0.35);opacity:0;pointer-events:none;transition:opacity 0.25s;z-index:8;"></div>
+  <!-- Side menu -->
+  <nav id="ugSideMenu" style="position:absolute;top:0;left:0;bottom:0;width:clamp(260px,32vw,360px);background:#ffffff;border-right:1px solid rgba(99,102,241,0.18);transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);z-index:9;overflow-y:auto;padding:18px 14px 30px;box-shadow:4px 0 18px rgba(0,0,0,0.08);">
+    <button onclick="closeUgMenu()" aria-label="Close menu" style="position:sticky;top:0;float:right;background:transparent;border:none;color:#6366f1;font-size:22px;font-weight:700;cursor:pointer;line-height:1;padding:2px 6px;">×</button>
+    <div id="ugMenuList" style="clear:both;"></div>
+  </nav>
+  <!-- Content area -->
+  <main id="ugContentScroll" style="position:absolute;top:60px;left:0;right:0;bottom:0;overflow-y:auto;padding:60px 24px 80px;">
+    <div id="ugContent" style="max-width:760px;margin:0 auto;line-height:1.65;font-size:16.5px;color:#1e293b;"></div>
+    <div id="ugNavBtns" style="max-width:760px;margin:40px auto 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;"></div>
+  </main>
+</div>
 </body>
 </html>
