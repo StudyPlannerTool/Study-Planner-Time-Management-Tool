@@ -2412,18 +2412,20 @@ let dayCumulative = 0;
 let _planItems = [];
 
 let _calcSectionWork = [];
+let workDayCumulative = 0;
 assignments.forEach((a,idx)=>{
 let remaining = a.minutes;
 let displayName = (a.name && a.name !== a.subject) ? `${a.name} (${a.subject})` : a.subject;
 while(remaining>0){
-let untilBreak = block - (dayCumulative % block) || block;
+let untilBreak = block - (workDayCumulative % block) || block;
 let chunk = Math.min(remaining, untilBreak);
 _planItems.push({type:'task', name:displayName, dur:chunk, diff:a.difficulty});
 _calcSectionWork.push({durationMinutes: chunk, difficulty: a.difficulty});
+workDayCumulative += chunk;
 dayCumulative += chunk;
 cumulativeForTimeline += chunk;
 remaining -= chunk;
-if(dayCumulative % block === 0 && (remaining>0 || idx<assignments.length-1)){
+if(workDayCumulative % block === 0 && (remaining>0 || idx<assignments.length-1)){
 const breakDur = calcBreakDuration(_calcSectionWork, schoolLevel.value);
 _planItems.push({type:'break', dur:breakDur});
 dayCumulative += breakDur;
@@ -2491,10 +2493,11 @@ let dayCumulative = 0;
 const colors = { priority:"#800080", hard:"#d9613d", medium:"#f0ad4e", easy:"#5cb85c", break:"#999" };
 
 let _rtSectionWork = [];
+let workDayCumulative = 0;
 assignments.forEach((a,idx)=>{
 let remaining = a.minutes;
 while(remaining>0){
-let untilBreak = block - (dayCumulative % block) || block;
+let untilBreak = block - (workDayCumulative % block) || block;
 let chunk = Math.min(remaining, untilBreak);
 
 const seg = document.createElement("div");
@@ -2505,10 +2508,11 @@ bar.appendChild(seg);
 segmentMap.push({ start: (cumulative / totalTime) * 100, end: ((cumulative + chunk) / totalTime) * 100, name: a.name || a.subject, subject: a.subject, isBreak: false, durationMinutes: chunk, difficulty: a.difficulty });
 cumulative += chunk;
 _rtSectionWork.push({durationMinutes: chunk, difficulty: a.difficulty});
+workDayCumulative += chunk;
 dayCumulative += chunk;
 remaining -= chunk;
 
-if(dayCumulative % block === 0 && (remaining>0 || idx<assignments.length-1)){
+if(workDayCumulative % block === 0 && (remaining>0 || idx<assignments.length-1)){
 const breakDurRT = calcBreakDuration(_rtSectionWork, document.getElementById("schoolLevel").value);
 const breakSeg = document.createElement("div");
 breakSeg.style.flex = breakDurRT;
@@ -5471,16 +5475,38 @@ calculatedStateSnapshot = null;
 const outdatedBanner = document.getElementById("outdatedBanner");
 const calcBtn = document.getElementById("calculateBtn");
 
+function _plannerCardsInOrder() {
+const raw = [...document.querySelectorAll("#assignmentsContainer .assignment")];
+if (!window.isManualOrder) return raw;
+return raw.slice().sort(function(a, b) {
+var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+var dy = ra.top - rb.top;
+if (Math.abs(dy) > 30) return dy;
+return ra.left - rb.left;
+});
+}
+
 function getAssignmentSnapshot() {
-const rows = [...document.querySelectorAll(".assignment")];
+const rows = _plannerCardsInOrder();
 const level = document.getElementById("schoolLevel").value;
-const limit = getDailyLimit(level);
-return JSON.stringify({ level, limit, rows: rows.map(r => ({
-name: r.querySelector(".assignmentName") ? r.querySelector(".assignmentName").value : "",
+const iso = window._activeDate || getTodayISO();
+const limit = getDailyLimit(level, iso);
+const rowData = rows.map(function(r) {
+return {
+name: ((r.querySelector(".assignmentName") || {}).value || "").trim(),
 subject: r.querySelector(".subject") ? r.querySelector(".subject").value : "",
 time: r.querySelector(".time") ? r.querySelector(".time").value : "",
 difficulty: r.querySelector(".difficulty") ? r.querySelector(".difficulty").value : ""
-}))});
+};
+});
+if (!window.isManualOrder) {
+rowData.sort(function(a, b) {
+var ka = (a.name || a.subject) + "\0" + a.subject + "\0" + a.difficulty + "\0" + a.time;
+var kb = (b.name || b.subject) + "\0" + b.subject + "\0" + b.difficulty + "\0" + b.time;
+return ka < kb ? -1 : ka > kb ? 1 : 0;
+});
+}
+return JSON.stringify({ level: level, limit: limit, rows: rowData });
 }
 
 function setPulse(on) {
@@ -5488,8 +5514,35 @@ if (on) calcBtn.classList.add("needs-calculate");
 else calcBtn.classList.remove("needs-calculate");
 }
 
+function _syncPlanSnapshotAfterSession() {
+hasCalculated = true;
+calculatedStateSnapshot = getAssignmentSnapshot();
+var _otSync = document.getElementById('_spToast_outdated');
+if (_otSync) window._hideToast(_otSync);
+setPulse(false);
+}
+
+function _releaseOutdatedSuppress() {
+_syncPlanSnapshotAfterSession();
+window._outdatedGraceUntil = Date.now() + 500;
+requestAnimationFrame(function() {
+requestAnimationFrame(function() {
+_syncPlanSnapshotAfterSession();
+setTimeout(function() { window._suppressOutdatedCheck = false; }, 50);
+});
+});
+}
+
 function markOutdated() {
 if (window._isCalculating) return;
+if (window._suppressOutdatedCheck) return;
+if (window._outdatedGraceUntil && Date.now() < window._outdatedGraceUntil) {
+_syncPlanSnapshotAfterSession();
+var _otGrace = document.getElementById('_spToast_outdated');
+if (_otGrace) window._hideToast(_otGrace);
+setPulse(false);
+return;
+}
 const _assignCount = document.querySelectorAll('#assignmentsContainer .assignment').length;
 const _hasOutput = output.innerHTML.trim().length > 0;
 const _hasTimeline = timelineContainer.style.display !== 'none';
@@ -5534,6 +5587,7 @@ if (count === 0) {
 setPulse(false);
 }
 
+if (window._suppressOutdatedCheck) return;
 markOutdated();
 });
 assignmentObserver.observe(document.getElementById("assignmentsContainer"), { childList: true, subtree: true });
@@ -5576,15 +5630,18 @@ const _msg = _isLast
 showCustomConfirm(_msg, function() { _doSkipCore(); });
 }
 function _doSkipCore() {
+window._suppressOutdatedCheck = true;
+var _otSkip = document.getElementById('_spToast_outdated'); if (_otSkip) window._hideToast(_otSkip);
+setPulse(false);
 const ph = document.getElementById("v_playhead_fixed");
-if (!ph) return;
+if (!ph) { _releaseOutdatedSuppress(); return; }
 
 
 const progressPercent = parseFloat(ph.style.width) || 0;
 const segIndex = segmentMap.findIndex(s => progressPercent >= s.start && progressPercent < s.end);
-if (segIndex === -1) return;
+if (segIndex === -1) { _releaseOutdatedSuppress(); return; }
 const seg = segmentMap[segIndex];
-if (seg.isBreak) return;
+if (seg.isBreak) { _releaseOutdatedSuppress(); return; }
 launchConfetti(document.getElementById("doneEarlyBtn"));
 const assignmentName = seg.name;
 const _prevSegTime = segmentMap.slice(0, segIndex).filter(s => !s.isBreak && s.name === assignmentName).reduce((sum, s) => sum + s.durationMinutes, 0);
@@ -5618,6 +5675,7 @@ renderStudyStats();
 launchFinalFireworks();
 addDoneMarker(assignmentName, _completedAssignData);
 _removeCompletedCardFromPlanner(assignmentName);
+_syncPlanSnapshotAfterSession();
 stopTimer();
 segmentMap = [];
 document.getElementById("currentAssignmentDisplay").textContent = "All assignments complete! 🎉";
@@ -5627,6 +5685,7 @@ document.getElementById("ResumeTimerBtn").style.display = "none";
 document.getElementById("doneEarlyBtn").style.display = "none";
 var _delLabel = document.getElementById("doneEarlyLabel"); if (_delLabel) _delLabel.style.display = "none";
 document.getElementById("resetTimerBtn").classList.add("pulse-end");
+_releaseOutdatedSuppress();
 return;
 }
 
@@ -5635,19 +5694,21 @@ let newSegs = [];
 let totalWork = 0;
 let totalBreaks = 0;
 let dayCum = 0;
+let workDayCum = 0;
 
 let _skipSectionWork = [];
 futureWork.forEach((a, idx) => {
 let remaining = a.durationMinutes;
 while (remaining > 0) {
-const untilBreak = block - (dayCum % block) || block;
+const untilBreak = block - (workDayCum % block) || block;
 const chunk = Math.min(remaining, untilBreak);
 newSegs.push({ name: a.name, durationMinutes: chunk, isBreak: false, difficulty: a.difficulty });
 _skipSectionWork.push({durationMinutes: chunk, difficulty: a.difficulty});
 totalWork += chunk;
+workDayCum += chunk;
 dayCum += chunk;
 remaining -= chunk;
-if (dayCum % block === 0 && (remaining > 0 || idx < futureWork.length - 1)) {
+if (workDayCum % block === 0 && (remaining > 0 || idx < futureWork.length - 1)) {
 const breakDurSkip = calcBreakDuration(_skipSectionWork, schoolLvl);
 newSegs.push({ name: 'Break', durationMinutes: breakDurSkip, isBreak: true });
 totalBreaks += breakDurSkip;
@@ -5698,6 +5759,7 @@ assignmentEndShownSet.clear();
 window._prevUpdateSegIndex = -1;
 addDoneMarker(assignmentName, _completedAssignData);
 _removeCompletedCardFromPlanner(assignmentName);
+_syncPlanSnapshotAfterSession();
 renderSegmentLabelTrack();
 commitStudiedTime();
 startTimer();
@@ -5705,6 +5767,7 @@ updateSessionEndTime();
 
 
 updateOutputAfterSkip(newSegs, totalWork, totalBreaks, "⏩ Assignment skipped!");
+_releaseOutdatedSuppress();
 
 }
 
@@ -5738,6 +5801,9 @@ document.getElementById("assignmentEndOverlay").style.display = "flex";
 }
 
 function handleMarkAsDone() {
+window._suppressOutdatedCheck = true;
+var _otDone = document.getElementById('_spToast_outdated'); if (_otDone) window._hideToast(_otDone);
+setPulse(false);
 launchConfetti(document.getElementById("markDoneBtn"));
 const schoolLvl = document.getElementById("schoolLevel").value;
 const dailyLimitVal = getDailyLimit(schoolLvl);
@@ -5752,6 +5818,7 @@ const _hmPrevSeg = segmentMap[window._popupPrevSegIndex];
 const _hmAssignData = { difficulty: _hmPrevSeg ? (_hmPrevSeg.difficulty || 'easy') : 'easy', durationMinutes: segmentMap.filter(s => !s.isBreak && s.name === window._completedAssignmentName).reduce((sum, s) => sum + s.durationMinutes, 0) };
 addDoneMarker(window._completedAssignmentName, _hmAssignData);
 _removeCompletedCardFromPlanner(window._completedAssignmentName);
+_syncPlanSnapshotAfterSession();
 document.getElementById("assignmentEndOverlay").style.display = "none";
 
 
@@ -5767,8 +5834,10 @@ document.getElementById("ResumeTimerBtn").style.display = "none";
 document.getElementById("doneEarlyBtn").style.display = "none";
 var _delLabel = document.getElementById("doneEarlyLabel"); if (_delLabel) _delLabel.style.display = "none";
 document.getElementById("resetTimerBtn").classList.add("pulse-end");
+_releaseOutdatedSuppress();
 return;
 }
+
 
 let runMin = 0;
 const newSegMap = remainingSegs.map(s => {
@@ -5804,12 +5873,14 @@ renderSegmentLabelTrack();
 commitStudiedTime();
 startTimer();
 updateSessionEndTime();
+_releaseOutdatedSuppress();
 }
 
 function handleNeedMoreTime() {
+window._suppressOutdatedCheck = true;
 const extraMins = parseInt(document.getElementById("extraTimeSelect").value);
 const schoolLvl = document.getElementById("schoolLevel").value;
-const block = attentionBlocks[schoolLvl];
+const block = getPlanningBlock(schoolLvl);
 const dailyLimitVal = getDailyLimit(schoolLvl);
 const colors = { priority:"#800080", hard:"#d9613d", medium:"#f0ad4e", easy:"#5cb85c", break:"#999" };
 
@@ -5837,6 +5908,7 @@ let newSegs = [];
 let totalWork = 0;
 let totalBreaks = 0;
 let dayCum = 0;
+let workDayCum = 0;
 if (nextIdx < segmentMap.length && segmentMap[nextIdx].isBreak) {
 const _pendingBreakDur = segmentMap[nextIdx].durationMinutes || 5;
 newSegs.push({ name: 'Break', durationMinutes: _pendingBreakDur, isBreak: true });
@@ -5847,14 +5919,15 @@ let _nmSectionWork = [];
 futureWork.forEach((a, idx) => {
 let remaining = a.durationMinutes;
 while (remaining > 0) {
-const untilBreak = block - (dayCum % block) || block;
+const untilBreak = block - (workDayCum % block) || block;
 const chunk = Math.min(remaining, untilBreak);
 newSegs.push({ name: a.name, durationMinutes: chunk, isBreak: false, difficulty: a.difficulty });
 _nmSectionWork.push({durationMinutes: chunk, difficulty: a.difficulty});
 totalWork += chunk;
+workDayCum += chunk;
 dayCum += chunk;
 remaining -= chunk;
-if (dayCum % block === 0 && (remaining > 0 || idx < futureWork.length - 1)) {
+if (workDayCum % block === 0 && (remaining > 0 || idx < futureWork.length - 1)) {
 const breakDurNM = calcBreakDuration(_nmSectionWork, schoolLvl);
 newSegs.push({ name: 'Break', durationMinutes: breakDurNM, isBreak: true });
 totalBreaks += breakDurNM;
@@ -5901,17 +5974,30 @@ document.getElementById("ResumeTimerBtn").style.display = "none";
 commitStudiedTime();
 startTimer();
 updateSessionEndTime();
+_releaseOutdatedSuppress();
+}
+
+function _cardMatchesSegmentName(card, segName) {
+const cardName = ((card.querySelector('.assignmentName') || {}).value || '').trim();
+const cardSubj = ((card.querySelector('.subject') || {}).value || '');
+const shortName = cardName || cardSubj;
+if (shortName === segName || cardSubj === segName) return true;
+if (cardName && cardName !== cardSubj) {
+if ((cardName + ' (' + cardSubj + ')') === segName) return true;
+}
+return false;
 }
 
 function _removeCompletedCardFromPlanner(name) {
 const cards = document.querySelectorAll('#assignmentsContainer .assignment');
-for (let ci = 0; ci < cards.length; ci++) {
+let removed = false;
+for (let ci = cards.length - 1; ci >= 0; ci--) {
 const card = cards[ci];
-const cardName = ((card.querySelector('.assignmentName')||{}).value||'').trim();
-const cardSubj = ((card.querySelector('.subject')||{}).value||'');
-if ((cardName || cardSubj) === name) { card.remove(); break; }
+if (!_cardMatchesSegmentName(card, name)) continue;
+card.remove();
+removed = true;
 }
-if (typeof saveToLocalStorage === 'function') saveToLocalStorage();
+if (removed && typeof saveToLocalStorage === 'function') saveToLocalStorage();
 }
 
 function _buildDoneCard(assignmentName, assignData, isDark) {
