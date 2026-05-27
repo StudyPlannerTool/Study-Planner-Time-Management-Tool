@@ -417,7 +417,13 @@ blocked.style.display = "block";
 <div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Smart cognitive load</div>
 <div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">Progressively changes break times based on the difficulty of assignments.</div></div>
 </div>
+<div id="planAccumOpt" onclick="setPlanningLogic('accum')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;cursor:pointer;border-radius:6px;margin-bottom:6px;transition:background 0.15s;">
+<div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;"><div id="planAccumDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div></div>
+<div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Accumulative flow</div>
+<div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">Earn 1 minute of break time for every 4 minutes of work. Cash out your break whenever you choose.</div></div>
+</div>
 <div id="planPomoOpt" onclick="setPlanningLogic('pomodoro')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 4px;cursor:pointer;border-radius:6px;margin-bottom:6px;transition:background 0.15s;">
+
 <div style="width:16px;height:16px;border-radius:50%;border:2px solid #6366f1;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;"><div id="planPomoDot" style="width:8px;height:8px;border-radius:50%;background:transparent;transition:background 0.15s;"></div></div>
 <div style="min-width:0;"><div class="planOptName" style="font-size:12px;font-weight:600;color:#1e293b;font-family:'Inter',sans-serif;">Pomodoro timer</div>
 <div style="font-size:10.5px;color:#94a3b8;margin-top:2px;line-height:1.4;font-family:'Inter',sans-serif;">The classic; 25 minute work sessions split in between 5 minute work breaks.</div></div>
@@ -1565,9 +1571,29 @@ Start Session
 <div id="timerInfoBox" style="display:none; background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.15); border-radius:16px; padding:18px 20px 14px; margin:16px 0 0; text-align:center;">
 <div id="countdownDisplay" style="font-size:30px; font-weight:700; color:#1e293b; text-align:center; margin-bottom:8px;"></div>
 <div id="currentAssignmentDisplay" style="font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:#475569; letter-spacing:0.1px; line-height:1.55;"></div>
+
+
 <div id="breakMessage" style="display:none; font-size:13px; font-weight:700; color:#059669; margin-top:8px; font-family:'Inter',sans-serif;">☕ Time to stretch! Drink some water.</div>
 </div>
+<div id="accumEarnedRow" style="display:none; justify-content: center;align-items:center;gap:10px;margin-top:6px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:#475569;">
+  <span >Break time earned: <span id="accumEarnedMins">0</span>m</span>
+  <button id="accumBeginBreakBtn" onclick="accumBeginBreak()" disabled
+    style="background:#e2e8f0;color:#94a3b8;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:not-allowed;transition:all 0.15s;">
+    Begin break
+  </button>
+</div>
 
+<!-- Accumulative-flow confirmation modal -->
+<div id="accumConfirmOverlay" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,0.55);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:14px;padding:22px 24px;max-width:340px;width:90%;box-shadow:0 18px 48px rgba(15,23,42,0.3);font-family:'Inter',sans-serif;">
+    <div style="font-size:15px;font-weight:700;color:#1e293b;margin-bottom:10px;">Begin your break?</div>
+    <div id="accumConfirmText" style="font-size:13px;color:#475569;line-height:1.5;margin-bottom:18px;"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="accumCancelBreak()" style="background:#f1f5f9;color:#475569;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;">Cancel</button>
+      <button onclick="accumConfirmBreak()" style="background:#6366f1;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;">Confirm</button>
+    </div>
+  </div>
+</div>
 <div id="playhead-triangle" style="
 position: absolute;
 display: none;
@@ -1716,6 +1742,8 @@ outputHTML: document.getElementById("output").innerHTML,
 doneListHTML: document.getElementById("doneAssignmentsList") ? document.getElementById("doneAssignmentsList").outerHTML : "",
 schoolLevel: document.getElementById("schoolLevel").value,
 cameFromCalendar: window._cameFromCalendar,
+accumEarnedMins: window.accumEarnedMins || 0,
+accumWorkRemainderSec: window.accumWorkRemainderSec || 0,
 inSession: true
 }));
 } catch(e) {}
@@ -1777,6 +1805,10 @@ const dl = document.getElementById("doneAssignmentsList"); if (dl) dl.remove();
 const tmp = document.createElement("div"); tmp.innerHTML = state.doneListHTML;
 if (tmp.firstChild) tc.parentNode.insertBefore(tmp.firstChild, tc.nextSibling);
 }
+window.accumEarnedMins = state.accumEarnedMins || 0;
+window.accumWorkRemainderSec = state.accumWorkRemainderSec || 0;
+window._accumLastTickMs = 0;
+if (typeof accumRefreshUI === 'function') accumRefreshUI();
 window._restoredFromReload = true;
 document.getElementById("c").style.transition = "none";
 document.getElementById("c").style.transform = "translateX(0%)";
@@ -2081,12 +2113,16 @@ function getPlanningBlock(schoolLevel){
 var mode = getPlanningLogic();
 if (mode === 'pomodoro') return 25;
 if (mode === 'r5217') return 52;
+if (mode === 'accum') return 1e9; // effectively no auto-breaks
+
 return attentionBlocks[schoolLevel];
 }
 function calcBreakDuration(sectionWorkSegs, schoolLevel) {
 var mode = getPlanningLogic();
 if (mode === 'pomodoro') return 5;
 if (mode === 'r5217') return 17;
+if (mode === 'accum') return 0;
+
 var totalWork = sectionWorkSegs.reduce(function(s, a) { return s + a.durationMinutes; }, 0);
 if (totalWork === 0) return 5;
 var hardTime = 0, medPriTime = 0, easyTime = 0;
@@ -2109,7 +2145,8 @@ if (schoolLevel === 'high' || schoolLevel === 'college') return 10;
 return 5;
 }
 function setPlanningLogic(mode){
-if (mode !== 'smart' && mode !== 'pomodoro' && mode !== 'r5217') mode = 'smart';
+if (mode !== 'smart' && mode !== 'pomodoro' && mode !== 'r5217' && mode !== 'accum') mode = 'smart';
+
 window.planningLogic = mode;
 localStorage.setItem('studyPlanner_planningLogic', mode);
 refreshPlanningLogicUI();
@@ -2119,7 +2156,8 @@ if (bannerEl && outEl && outEl.innerHTML.trim()) bannerEl.style.display = 'block
 }
 function refreshPlanningLogicUI(){
 var mode = getPlanningLogic();
-var map = { smart:'planSmartDot', pomodoro:'planPomoDot', r5217:'plan5217Dot' };
+var map = { smart:'planSmartDot', accum:'planAccumDot', pomodoro:'planPomoDot', r5217:'plan5217Dot' };
+
 Object.keys(map).forEach(function(k){
 var dot = document.getElementById(map[k]);
 if (dot) dot.style.background = (mode === k) ? '#6366f1' : 'transparent';
@@ -2128,6 +2166,190 @@ if (dot) dot.style.background = (mode === k) ? '#6366f1' : 'transparent';
 window.setPlanningLogic = setPlanningLogic;
 window.refreshPlanningLogicUI = refreshPlanningLogicUI;
 (function(){ var stored = localStorage.getItem('studyPlanner_planningLogic'); if (stored) window.planningLogic = stored; })();
+
+/* ============ ACCUMULATIVE FLOW ============ */
+/* Returns the segmentMap entry the playhead is currently inside. */
+function getCurrentSegmentAtElapsed() {
+  if (!segmentMap || !segmentMap.length || !TOTAL_STUDY_SECONDS) return null;
+  var elapsed = (typeof window._timerStartMs === 'number')
+    ? (Date.now() - window._timerStartMs) / 1000
+    : 0;
+  var pct = Math.min(100, (elapsed / TOTAL_STUDY_SECONDS) * 100);
+  for (var i = 0; i < segmentMap.length; i++) {
+    if (pct >= segmentMap[i].start && pct <= segmentMap[i].end) return segmentMap[i];
+  }
+  return segmentMap[segmentMap.length - 1];
+}
+
+/* Splits the current work segment at the playhead, inserts a `mins`-long
+   break, extends TOTAL_STUDY_SECONDS, and redraws the bar + output pills. */
+function insertAccumBreakAtPlayhead(mins) {
+  if (!segmentMap || !segmentMap.length) return;
+
+  var ph = document.getElementById("v_playhead_fixed");
+  var progressPercent = parseFloat(ph ? ph.style.width : "0") || 0;
+  var segIndex = segmentMap.findIndex(s => progressPercent >= s.start && progressPercent < s.end);
+  if (segIndex === -1) segIndex = segmentMap.length - 1;
+
+  var seg = segmentMap[segIndex];
+  var remainingPct = seg.end - progressPercent;
+  var totalPct = seg.end - seg.start;
+  var remainingMins = (totalPct > 0) ? (remainingPct / totalPct) * seg.durationMinutes : 0;
+  remainingMins = Math.max(0, Math.round(remainingMins));
+
+  var newSegs = [];
+  var totalWork = 0;
+  var totalBreaks = mins;
+
+  // 1. Add the new break at the start
+  newSegs.push({ name: 'Break', durationMinutes: mins, isBreak: true, difficulty: 'easy' });
+
+  // 2. Add the remainder of the current segment
+  if (!seg.isBreak && remainingMins > 0.1) {
+      newSegs.push({ name: seg.name, subject: seg.subject, isBreak: false, difficulty: seg.difficulty, durationMinutes: remainingMins });
+      totalWork += remainingMins;
+  } else if (seg.isBreak && remainingMins > 0.1) {
+      newSegs[0].durationMinutes += remainingMins;
+      totalBreaks += remainingMins;
+  }
+
+  // 3. Add subsequent segments
+  for (var i = segIndex + 1; i < segmentMap.length; i++) {
+      var s = segmentMap[i];
+      newSegs.push({ name: s.name, subject: s.subject, isBreak: s.isBreak, difficulty: s.difficulty, durationMinutes: s.durationMinutes });
+      if (s.isBreak) totalBreaks += s.durationMinutes;
+      else totalWork += s.durationMinutes;
+  }
+
+  var newTotalMinutes = totalWork + totalBreaks;
+  TOTAL_STUDY_SECONDS = newTotalMinutes * 60;
+
+  var newSegMap = [];
+  var runMin = 0;
+  newSegs.forEach(s => {
+      newSegMap.push({ ...s, start: (runMin / newTotalMinutes) * 100, end: ((runMin + s.durationMinutes) / newTotalMinutes) * 100 });
+      runMin += s.durationMinutes;
+  });
+
+  segmentMap = newSegMap;
+
+  // Redraw Timeline
+  var bar = document.getElementById("timelineBar");
+  if (ph && ph.parentElement) ph.parentElement.removeChild(ph);
+  if (bar) bar.innerHTML = "";
+  var colors = { priority:"#800080", hard:"#d9613d", medium:"#f0ad4e", easy:"#5cb85c", break:"#999" };
+  newSegMap.forEach(s => {
+      var div = document.createElement("div");
+      div.style.flex = s.durationMinutes;
+      div.style.background = s.isBreak ? colors.break : (colors[s.difficulty] || "#5cb85c");
+      div.dataset.segDiff = s.isBreak ? 'break' : (s.difficulty || 'easy');
+      if (bar) bar.appendChild(div);
+  });
+  
+  if (ph && bar) {
+      ph.style.width = "0%";
+      ph.style.display = "block";
+      bar.appendChild(ph);
+  }
+
+  // Reset blue text
+  var pctEl = document.getElementById("sessionProgressPct");
+  if (pctEl) pctEl.textContent = "0.0%";
+
+  // Update Output / Plan text
+  if (typeof updateOutputAfterSkip === 'function') {
+      updateOutputAfterSkip(newSegs, totalWork, totalBreaks, "☕ Break initiated!");
+  }
+
+  // Reset Timers & state
+  if (typeof commitStudiedTime === 'function') commitStudiedTime();
+  window._pausedPercent = 0;
+  window._sessionPaused = false;
+  if (typeof resumeTimer === 'function') resumeTimer();
+  if (typeof updateSessionEndTime === 'function') updateSessionEndTime();
+  if (typeof renderSegmentLabelTrack === 'function') renderSegmentLabelTrack();
+}
+window.getCurrentSegmentAtElapsed = getCurrentSegmentAtElapsed;
+window.insertAccumBreakAtPlayhead = insertAccumBreakAtPlayhead;
+
+window.accumEarnedMins = 0;
+window.accumWorkRemainderSec = 0;   // 0..239, carries leftover seconds
+window._accumLastTickMs = 0;
+
+function accumRefreshUI() {
+  var row = document.getElementById('accumEarnedRow');
+  var minsEl = document.getElementById('accumEarnedMins');
+  var btn = document.getElementById('accumBeginBreakBtn');
+  if (!row || !btn || !minsEl) return;
+  var isAccum = (getPlanningLogic() === 'accum');
+  var timerRunning = (typeof TOTAL_STUDY_SECONDS !== 'undefined' && TOTAL_STUDY_SECONDS > 0);
+  row.style.display = (isAccum && timerRunning) ? 'flex' : 'none';
+  minsEl.textContent = window.accumEarnedMins;
+  var _abPh = document.getElementById('v_playhead_fixed');
+  var _abPct = parseFloat(_abPh ? _abPh.style.width : '0') || 0;
+  var _abSeg = segmentMap && segmentMap.find(function(s) { return _abPct >= s.start && _abPct < s.end; });
+  var _inBreak = !!(_abSeg && _abSeg.isBreak);
+  if (window.accumEarnedMins > 0 && !_inBreak) {
+    btn.disabled = false;
+    btn.style.background = '#6366f1';
+    btn.style.color = '#fff';
+    btn.style.cursor = 'pointer';
+  } else {
+    btn.disabled = true;
+    btn.style.background = '#e2e8f0';
+    btn.style.color = '#94a3b8';
+    btn.style.cursor = 'not-allowed';
+  }
+}
+
+/* Call this every animation frame from the existing timer loop (see step 6). */
+function accumTick() {
+  if (getPlanningLogic() !== 'accum') return;
+  var now = Date.now();
+  if (!window._accumLastTickMs) { window._accumLastTickMs = now; return; }
+  var dt = (now - window._accumLastTickMs) / 1000;
+  window._accumLastTickMs = now;
+  // Only accrue while the playhead is in a work segment.
+  var seg = (typeof getCurrentSegmentAtElapsed === 'function')
+    ? getCurrentSegmentAtElapsed()
+    : null;
+  if (seg && seg.isBreak) return;
+  window.accumWorkRemainderSec += dt;
+  while (window.accumWorkRemainderSec >= 240) {
+    window.accumWorkRemainderSec -= 240;
+    window.accumEarnedMins += 1;
+  }
+  accumRefreshUI();
+}
+
+function accumBeginBreak() {
+  if (window.accumEarnedMins <= 0) return;
+  document.getElementById('accumConfirmText').textContent =
+    'Are you sure you want to begin your break? It will last ' +
+    window.accumEarnedMins + ' minute' + (window.accumEarnedMins === 1 ? '' : 's') + ' starting now.';
+  document.getElementById('accumConfirmOverlay').style.display = 'flex';
+}
+function accumCancelBreak() {
+  document.getElementById('accumConfirmOverlay').style.display = 'none';
+}
+function accumConfirmBreak() {
+  document.getElementById('accumConfirmOverlay').style.display = 'none';
+  var mins = window.accumEarnedMins;
+  if (mins <= 0) return;
+  // Reset earned (remainder carries over per spec — do NOT reset accumWorkRemainderSec).
+  window.accumEarnedMins = 0;
+  // Insert a break segment of `mins` at the current playhead and re-render.
+  if (typeof insertAccumBreakAtPlayhead === 'function') {
+    insertAccumBreakAtPlayhead(mins);
+  }
+  accumRefreshUI();
+}
+window.accumBeginBreak = accumBeginBreak;
+window.accumCancelBreak = accumCancelBreak;
+window.accumConfirmBreak = accumConfirmBreak;
+window.accumRefreshUI = accumRefreshUI;
+window.accumTick = accumTick;
+
 
 
 
@@ -2441,6 +2663,9 @@ TOTAL_STUDY_SECONDS = (totalWork + totalBreaks) * 60;
 const _dc={priority:'#7c3aed',hard:'#dc2626',medium:'#b45309',easy:'#059669'};
 const _db={priority:'rgba(124,58,237,0.08)',hard:'rgba(220,38,38,0.07)',medium:'rgba(180,83,9,0.07)',easy:'rgba(5,150,105,0.07)'};
 var _planStartMs = Date.now(); window._lastPlanStartMs = _planStartMs; window._lastPlanItems = _planItems;
+window.accumEarnedMins = 0; window.accumWorkRemainderSec = 0; window._accumLastTickMs = 0;
+setTimeout(function(){ if (typeof accumRefreshUI === 'function') accumRefreshUI(); }, 0);
+
 var _cumPlanMin = 0;
 const _planHTML = _planItems.map(it=>{
 var _pSt=new Date(_planStartMs+_cumPlanMin*60000); _cumPlanMin+=it.dur; var _pEt=new Date(_planStartMs+_cumPlanMin*60000);
@@ -2451,7 +2676,16 @@ return `<div style="display:flex;justify-content:space-between;align-items:cente
 }).join('');
 
 
-output.innerHTML = `<div style="font-size:13.5px;line-height:1.65;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(99,102,241,0.12);"><span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;">📚 Work: ${minutesToText(totalWork)}</span><span style="background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#059669;">☕ Breaks: ${minutesToText(totalBreaks)}</span><span style="background:rgba(139,92,246,0.09);border:1px solid rgba(139,92,246,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#7c3aed;">⏱ ${minutesToText(totalWork+totalBreaks)}</span></div>${_planHTML}</div>`;
+{
+  var _accumMode = (getPlanningLogic() === 'accum');
+  var _possibleBreaks = _accumMode ? Math.floor(totalWork / 4) : totalBreaks;
+  var _breakLabel = _accumMode ? 'Possible breaks' : 'Breaks';
+  var _totalPillMins = _accumMode ? (totalWork + _possibleBreaks) : (totalWork + totalBreaks);
+  window._accumPossibleBreaks = _possibleBreaks;
+  window._accumTotalWork = totalWork;
+  output.innerHTML = `<div style="font-size:13.5px;line-height:1.65;"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(99,102,241,0.12);"><span style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;">📚 Work: ${minutesToText(totalWork)}</span><span style="background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#059669;">☕ ${_breakLabel}: ${minutesToText(_possibleBreaks)}</span><span style="background:rgba(139,92,246,0.09);border:1px solid rgba(139,92,246,0.18);border-radius:50px;padding:4px 13px;font-weight:700;font-size:12.5px;color:#7c3aed;">⏱ ${minutesToText(_totalPillMins)}</span></div>${_planHTML}</div>`;
+}
+
 
 
 segmentMap = [];
@@ -2703,6 +2937,7 @@ const currentAssignmentDisplay = document.getElementById("currentAssignmentDispl
 if (startBtn) startBtn.onclick = startTimer;
 
 startBtn.addEventListener("click", function() {
+  
 window._sessionStudiedSeconds = 0;
 window._sessionPaused = false;
 startBtn.classList.remove('pulse-start');
@@ -4954,6 +5189,8 @@ window._resumeOffset = offset;
 window._timerActualStart = Date.now();
 if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
 window._titleUpdateInterval = setInterval(function() {
+if (typeof accumTick === 'function') accumTick();
+
 if (!window._timerActualStart) return;
 const _elT = Math.floor((Date.now() - window._timerActualStart) / 1000);
 const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
@@ -5042,6 +5279,8 @@ playhead.style.display = "block";
 window._timerActualStart = Date.now();
 if (window._titleUpdateInterval) clearInterval(window._titleUpdateInterval);
 window._titleUpdateInterval = setInterval(function() {
+if (typeof accumTick === 'function') accumTick();
+
 if (!window._timerActualStart) return;
 const _elT = Math.floor((Date.now() - window._timerActualStart) / 1000);
 const _remT = Math.max(0, TOTAL_STUDY_SECONDS - _elT);
@@ -5423,7 +5662,7 @@ const _bm = document.getElementById("breakMessage");
 if (_bm) _bm.style.display = seg.isBreak ? "block" : "none";
 const _pbBtn = document.getElementById("PauseTimerBtn");
 const _rbBtn = document.getElementById("ResumeTimerBtn");
-if (_pbBtn && _rbBtn) { if (seg.isBreak) { _pbBtn.style.display = "none"; _rbBtn.style.display = "none"; } else if (!window._sessionPaused) { _pbBtn.style.display = "block"; _rbBtn.style.display = "none"; } else { _pbBtn.style.display = "none"; _rbBtn.style.display = "block"; } }
+if (_pbBtn && _rbBtn) { if (seg.isBreak && !window._sessionPaused) { _pbBtn.style.display = "none"; _rbBtn.style.display = "none"; } else if (seg.isBreak && window._sessionPaused) { _pbBtn.style.display = "none"; _rbBtn.style.display = "block"; } else if (!window._sessionPaused) { _pbBtn.style.display = "block"; _rbBtn.style.display = "none"; } else { _pbBtn.style.display = "none"; _rbBtn.style.display = "block"; } }
 const remainingPct = seg.end - progressPercent;
 const totalPct = seg.end - seg.start;
 const remainingMins = Math.ceil((remainingPct / totalPct) * seg.durationMinutes);
@@ -6728,10 +6967,10 @@ on: 'click', post: 0 },
 text: 'Next, calculate your study plan!',
 on: 'click', post: 0 },
 
-{ el: function () { 
-  var btn = document.getElementById('startTimerBtn'); 
-  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-  return btn; 
+{ el: function () {
+  var btn = document.getElementById('startTimerBtn');
+  if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  return btn;
 }, text: "Now, a plan ordering all your assignments and splitting them optimally between breaks has been created! Click this button to begin studying!",
 on: 'click', post: 0 },
 { el: function () { return document.getElementById('PauseTimerBtn'); },
