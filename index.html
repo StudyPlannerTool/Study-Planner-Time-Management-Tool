@@ -5587,7 +5587,9 @@ if (segmentMap && segmentMap.length) {
             }
             var _rmW = _rmSegs.filter(function(s){return !s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
             var _rmB = _rmSegs.filter(function(s){return s.isBreak;}).reduce(function(a,s){return a+s.durationMinutes;},0);
-            updateOutputAfterSkip(_rmSegs, _rmW, _rmB, '\u25b6 Session resumed');
+            if (getPlanningLogic() !== 'accum') {
+              updateOutputAfterSkip(_rmSegs, _rmW, _rmB, '\u25b6 Session resumed');
+            }
         }
         resumeTimer();
         updateSessionEndTime();
