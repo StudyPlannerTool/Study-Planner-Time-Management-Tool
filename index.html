@@ -2262,10 +2262,12 @@ function insertAccumBreakAtPlayhead(mins) {
   }
 
   // Reset Timers & state
+  var _wasSessionPaused = window._sessionPaused;
   if (typeof commitStudiedTime === 'function') commitStudiedTime();
   window._pausedPercent = 0;
   window._sessionPaused = false;
-  if (typeof resumeTimer === 'function') resumeTimer();
+  window._accumLastTickMs = 0;
+  if (_wasSessionPaused && typeof resumeTimer === 'function') resumeTimer();
   if (typeof updateSessionEndTime === 'function') updateSessionEndTime();
   if (typeof renderSegmentLabelTrack === 'function') renderSegmentLabelTrack();
 }
@@ -2390,6 +2392,12 @@ function expandAssignment(div) { div.classList.remove('collapsed'); }
 function collapseAllAssignments() { document.querySelectorAll('#assignmentsContainer .assignment').forEach(collapseAssignment); }
 
 document.getElementById("addAssignmentBtn").onclick = () => {
+if (!window._addingPreset && document.getElementById("addAssignmentBtn")._mwMode && typeof window._activeDate !== 'undefined' && window._activeDate < getTodayISO()) {
+if (!window._plannerOpenTime || (Date.now() - window._plannerOpenTime) > 700) {
+if (typeof window._openMoveWorkModal === 'function') window._openMoveWorkModal(window._activeDate);
+}
+return;
+}
 const currentCount = container.querySelectorAll(".assignment").length;
 if (currentCount >= 25) {
 window._showToast('⚠️ Max assignments reached (25 limit).', true, 'maxAssign', 10000);
@@ -3094,7 +3102,7 @@ var dailySecs = s.dailySecs || {};
 var _dsActiveKeys = Object.keys(dailySecs).filter(function(k){ return (dailySecs[k]||0) > 0; });
 var _dsActiveSum = _dsActiveKeys.reduce(function(a,k){ return a+(dailySecs[k]||0); }, 0);
 var activeDays = Math.max(history.length, _dsActiveKeys.length);
-var avgSec = _dsActiveKeys.length > 0 ? Math.round(_dsActiveSum / _dsActiveKeys.length) : (activeDays > 0 ? Math.round(totalStudySec / activeDays) : 0);
+var avgSec = activeDays > 0 ? Math.round(totalStudySec / activeDays) : 0;
 var planningPerDay = s.planningPerDay || {};
 var sessionStarts = s.sessionStarts || [];
 // most common hours
@@ -3432,8 +3440,9 @@ try {
 };
 
 window.addPresetTask = function(subj, timeVal, diffVal) {
-
+window._addingPreset = true;
 document.getElementById("addAssignmentBtn").click();
+window._addingPreset = false;
 const lastRow = window._lastAddedCard;
 if (lastRow) {
 const subjSel = lastRow.querySelector(".subject");
@@ -3664,7 +3673,7 @@ updateAssignmentSummary(lastRow);
 
 
 document.getElementById("calculateBtn").addEventListener("click", saveToLocalStorage);
-document.getElementById("addAssignmentBtn").addEventListener("click", saveToLocalStorage);
+document.getElementById("addAssignmentBtn").addEventListener("click", function(){ if(!window._addingPreset) saveToLocalStorage(); });
 document.getElementById("schoolLevel").addEventListener("change", saveToLocalStorage);
 document.getElementById("schoolLevel").addEventListener("change", function() {
 const raw = [...container.querySelectorAll(".assignment")];
@@ -4498,7 +4507,8 @@ document.body.style.backgroundImage = cfg.bgImg;
 window._themeParticleColors = cfg.particles;
 var _ms = document.getElementById('_customThemeStyle') || document.createElement('style');
 _ms.id = '_customThemeStyle';
-_ms.textContent = cfg.css;
+var _ugP='#userGuidePage .content-inner{color:inherit!important;background:inherit!important;}#userGuidePage .accordion-header{background:transparent!important;color:inherit!important;border-color:transparent!important;}#userGuidePage .accordion-content{background:transparent!important;}';
+_ms.textContent = cfg.css + _ugP;
 document.head.appendChild(_ms);
 document.querySelectorAll('.assignment').forEach(updateAssignmentSummary);
 if (typeof window._forceCalendarRerender === 'function') window._forceCalendarRerender();
@@ -6607,7 +6617,7 @@ pasteBtn.style.boxShadow = '';
 window._pasteAssignmentCard = function() {
 var str = localStorage.getItem('sp_clipboard');
 if (!str || !str.startsWith('SP_ASSIGN\u2016')) {
-_showCopyToast('Nothing to paste \u2014 copy an assignment first.', true);
+_showCopyToast('Nothing to paste \u2014 copy \uD83D\uDCCB an assignment first.', true);
 return;
 }
 var cDiv = document.getElementById('c'); if (!cDiv) return;
@@ -8093,10 +8103,7 @@ var TIPS = {
         addAssignmentBtn: 'Click to add/edit an assignment to your study plan.',
         calculateBtn: 'Click after adding all necessary assignments to generate your plan.',
         startTimerBtn: 'Begin studying by clicking this button.',
-        PauseTimerBtn: 'Momentarily stops the timer countdown and session progress.',
-        ResumeTimerBtn: 'Re-enables the timer countdown and session progress.',
-        doneEarlyBtn: 'Finished early? Click here to skip to the next assignment \u2014 or end the session if it\u2019s your last.',
-        pasteAssignmentBtn: 'Paste a previously copied assignment.'
+        doneEarlyBtn: 'Finished early? Click here to skip to the next assignment \u2014 or end the session if it\u2019s your last.'
     };
 function positionTip(btn) {
 var r = btn.getBoundingClientRect();
@@ -8129,20 +8136,7 @@ Object.keys(TIPS).forEach(function(id) {
             setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
         });
     });
-    // Copy button tooltips (dynamically created, use event delegation)
-    document.getElementById('assignmentsContainer').addEventListener('mouseover', function(e) {
-        var btn = e.target.closest('.copyAssignBtn');
-        if (!btn || window.tutorialActive) return;
-        if (tipText) tipText.textContent = 'Copy this assignment to paste on another day.';
-        tip.style.display = 'block';
-        requestAnimationFrame(function() { positionTip(btn); tip.style.opacity = '1'; });
-    });
-    document.getElementById('assignmentsContainer').addEventListener('mouseout', function(e) {
-        var btn = e.target.closest('.copyAssignBtn');
-        if (!btn) return;
-        tip.style.opacity = '0';
-        setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
-    });
+
     })();
 </script>
 <script>
@@ -8256,22 +8250,6 @@ body.assignmentsdark #settingsSubTitle { color:#a78bfa !important; }
   #userGuidePage { font-size:15.5px; }
   #ugContentScroll { padding:60px 18px 80px; }
 }
-body.assignmentsdark #userGuidePage { background:#0f172a; color:#e2e8f0; }
-body.assignmentsdark #ugHeader { background:#111a2e; border-bottom-color:rgba(99,102,241,0.25); }
-body.assignmentsdark #ugHeader div { color:#e2e8f0 !important; }
-body.assignmentsdark #ugBackBtn,
-body.assignmentsdark #ugHamburger { background:#1a2236; border-color:rgba(139,92,246,0.4); color:#a78bfa; }
-body.assignmentsdark #ugHamburger span { background:#a78bfa; }
-body.assignmentsdark #ugSideMenu { background:#1a2236; border-right-color:rgba(99,102,241,0.25); }
-body.assignmentsdark .ug-menu-btn { color:#e2e8f0; }
-body.assignmentsdark .ug-menu-btn:hover,
-body.assignmentsdark .ug-menu-btn.active { background:rgba(99,102,241,0.2); color:#c4b5fd; }
-body.assignmentsdark #userGuidePage h2 { color:#f1f5f9; }
-body.assignmentsdark #userGuidePage h3 { color:#c4b5fd; }
-body.assignmentsdark #userGuidePage strong { color:#ddd6fe; }
-body.assignmentsdark .ug-link { color:#93c5fd; }
-body.assignmentsdark .ug-nav-btn { background:#1a2236; border-color:rgba(139,92,246,0.4); color:#c4b5fd; }
-
 /* Colorblind timeline patterns */
 body.colorblind-mode #timelineBar > div[data-seg-diff="priority"] { background:repeating-linear-gradient(45deg,#800080,#800080 4px,#b060b0 4px,#b060b0 8px) !important; }
 body.colorblind-mode #timelineBar > div[data-seg-diff="hard"] { background:radial-gradient(circle,#6b2f00 2px,#d9613d 2px) !important; background-size:8px 8px !important; }
@@ -9299,6 +9277,90 @@ function _hidePastDayMsg() {
 var ex = document.getElementById('_calPastDayMsg'); if (!ex) return;
 ex.style.opacity='0'; setTimeout(function(){ if(ex.parentNode)ex.remove(); },260);
 }
+window._openMoveWorkModal = function(pastIso) {
+var tasks = _loadDayTasks(pastIso);
+if (!tasks.length) { showCustomAlert('No assignments to move on this day.'); return; }
+var dk = document.body.classList.contains('assignmentsdark');
+var ex2 = document.getElementById('_moveWorkModal'); if (ex2) ex2.remove();
+var overlay = document.createElement('div');
+overlay.id = '_moveWorkModal';
+overlay.style.cssText = 'position:fixed;inset:0;z-index:500000;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;animation:routineOverlayIn 0.22s ease forwards;';
+var d2 = new Date(pastIso+'T00:00:00');
+var dateLabel = d2.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+var mb=dk?'#1a2236':'white',tc=dk?'#e2e8f0':'#1e293b',sc=dk?'#94a3b8':'#64748b',bc=dk?'rgba(99,102,241,0.22)':'rgba(99,102,241,0.15)';
+overlay.innerHTML='<div style="background:'+mb+';border-radius:20px;padding:28px 24px;max-width:420px;width:100%;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,0.45);border:1px solid '+bc+';font-family:\'Inter\',sans-serif;animation:routinePanelIn 0.32s cubic-bezier(0.16,1,0.3,1) forwards;">'+
+'<h3 style="font-family:\'Syne\',sans-serif;font-size:18px;font-weight:800;color:'+tc+';margin:0 0 6px;">\uD83D\uDCC5 Move Work</h3>'+
+'<p style="font-size:13px;color:'+sc+';margin:0 0 18px;line-height:1.5;">Move all '+tasks.length+' assignment(s) from <strong style="color:'+tc+';">'+dateLabel+'</strong>.</p>'+
+'<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">'+
+'<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(99,102,241,0.22);background:rgba(99,102,241,0.05);box-sizing:border-box;">'+
+'<input type="radio" name="_mwOpt" value="earliest" checked style="margin-top:3px;accent-color:#6366f1;flex-shrink:0;">'+
+'<span style="font-size:13px;font-weight:600;color:'+tc+';">Move to earliest available day<br><span style="font-size:11px;font-weight:400;color:'+sc+';">Shifts to the soonest day with available capacity.</span></span></label>'+
+'<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(99,102,241,0.22);background:rgba(99,102,241,0.05);box-sizing:border-box;">'+
+'<input type="radio" name="_mwOpt" value="custom" style="margin-top:3px;accent-color:#6366f1;flex-shrink:0;">'+
+'<span style="font-size:13px;font-weight:600;color:'+tc+';">Custom date<br><span style="font-size:11px;font-weight:400;color:'+sc+';">Pick a specific day to move the work to.</span></span></label>'+
+'</div>'+
+'<div id="_mwDatePickerWrap" style="display:none;margin-bottom:16px;padding:14px;border-radius:12px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);"><div id="_mwDatePickerUI"></div><input id="_mwDateVal" type="text" style="display:none;"></div>'+
+'<div style="display:flex;gap:8px;">'+
+'<button id="_mwCancel" style="flex:1;background:transparent;border:1.5px solid rgba(99,102,241,0.3);border-radius:10px;padding:11px;color:#6366f1;font-family:\'Inter\',sans-serif;font-weight:600;font-size:14px;cursor:pointer;">Cancel</button>'+
+'<button id="_mwConfirm" style="flex:2;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:10px;padding:11px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 3px 12px rgba(99,102,241,0.3);">Confirm</button>'+
+'</div></div>';
+document.body.appendChild(overlay);
+overlay.querySelectorAll('input[name="_mwOpt"]').forEach(function(r){
+r.addEventListener('change',function(){
+var w=document.getElementById('_mwDatePickerWrap');if(!w)return;
+if(r.value==='custom'){w.style.display='block';if(typeof _initRoutineDatePicker==='function')_initRoutineDatePicker('_mwDateVal','_mwDatePickerUI');}
+else{w.style.display='none';}
+});
+});
+document.getElementById('_mwCancel').addEventListener('click',function(){overlay.remove();});
+overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove();});
+document.getElementById('_mwConfirm').addEventListener('click',function(){
+var opt=overlay.querySelector('input[name="_mwOpt"]:checked');if(!opt)return;
+if(opt.value==='custom'){
+var chosen=(document.getElementById('_mwDateVal')||{}).value||'';
+if(!chosen||chosen<=getTodayISO()){showCustomAlert('Please pick a future date.');return;}
+_movePastDayTasksToDate(pastIso,chosen);
+}else{_movePastDayTasksToEarliest(pastIso);}
+overlay.remove();
+});
+};
+window._movePastDayTasksToDate = function(fromIso, toIso) {
+var tasks=_loadDayTasks(fromIso);if(!tasks.length)return;
+var existing=_loadDayTasks(toIso);
+_saveDayTasks(toIso,existing.concat(tasks));
+_saveDayTasks(fromIso,[]);
+_updateCalDayDot(fromIso);_updateCalDayDot(toIso);
+var d3=new Date(toIso+'T00:00:00');
+window._showToast('Moved '+tasks.length+' assignment(s) to '+d3.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' \u2713',false,null,4000);
+doReset();_loadDayIntoPlanner(fromIso);
+};
+window._movePastDayTasksToEarliest = function(fromIso) {
+var tasks=_loadDayTasks(fromIso);if(!tasks.length)return;
+var _calMaxD2=new Date();var _calMaxLimit2=new Date(_calMaxD2.getFullYear(),_calMaxD2.getMonth()+13,0);var _calMaxISO2=_dateToISO(_calMaxLimit2);
+var level=document.getElementById('schoolLevel').value;
+var _pending=tasks.slice();var _daysUsed=[];
+var _curD2=new Date(getTodayISO()+'T00:00:00');
+while(_pending.length>0){
+var _dIso2=_dateToISO(_curD2);
+if(_dIso2>_calMaxISO2){showCustomAlert('Cannot move work. End of calendar reached.');return;}
+var _dTasks2=_loadDayTasks(_dIso2);var _dTotal2=_dTasks2.reduce(function(s,t){return s+(parseInt(t.time)||0);},0);var _dLimit2=getDailyLimit(level,_dIso2);
+if(_dTotal2<_dLimit2){
+var _dSpace2=_dLimit2-_dTotal2,_added2=[],_stillPending2=[],_dUsed2=0;
+for(var _pi2=0;_pi2<_pending.length;_pi2++){
+var _pt2=_pending[_pi2],_ptt2=parseInt(_pt2.time)||0;
+if(_dUsed2+_ptt2<=_dSpace2){_added2.push(_pt2);_dUsed2+=_ptt2;}
+else if(_dUsed2<_dSpace2){var _pk2=_dSpace2-_dUsed2,_pr2=_ptt2-_pk2;_added2.push(Object.assign({},_pt2,{time:_pk2}));_stillPending2.push(Object.assign({},_pt2,{time:_pr2}));_dUsed2=_dSpace2;}
+else{_stillPending2.push(_pt2);}
+}
+if(_added2.length){_saveDayTasks(_dIso2,_dTasks2.concat(_added2));_updateCalDayDot(_dIso2);_daysUsed.push(_dIso2);}
+_pending=_stillPending2;
+}
+_curD2.setDate(_curD2.getDate()+1);
+}
+_saveDayTasks(fromIso,[]);_updateCalDayDot(fromIso);
+window._showToast('Moved '+tasks.length+' assignment(s) across '+_daysUsed.length+' day(s) \u2713',false,null,4000);
+doReset();_loadDayIntoPlanner(fromIso);
+};
 
 
 
@@ -9577,6 +9639,7 @@ localStorage.setItem('sp_day_' + iso, legacy);
 _loadDayIntoPlanner(iso);
 _updatePlannerMode(iso);
 
+window._plannerOpenTime = Date.now();
 // Animate: planner slides up from bottom (covers calendar)
 var cDiv = document.getElementById('c');
 var gDiv = document.getElementById('g');
@@ -9773,9 +9836,23 @@ if (timerCtrls && (!isT || isPastDay)) timerCtrls.style.display = 'none';
 }
 var _addBtnPast = document.getElementById('addAssignmentBtn');
 if (_addBtnPast) {
-_addBtnPast.disabled = isPastDay;
-_addBtnPast.style.opacity = isPastDay ? '0.4' : '';
-_addBtnPast.style.cursor = isPastDay ? 'not-allowed' : '';
+if (isPastDay) {
+_addBtnPast.disabled = false;
+_addBtnPast.style.opacity = '';
+_addBtnPast.style.cursor = 'pointer';
+_addBtnPast.textContent = 'Move Work';
+_addBtnPast.style.background = '#9333ea';
+_addBtnPast.style.boxShadow = '0 3px 0 #6b21a8';
+_addBtnPast._mwMode = true;
+} else {
+_addBtnPast.disabled = false;
+_addBtnPast.style.opacity = '';
+_addBtnPast.style.cursor = '';
+_addBtnPast.textContent = 'Add Assignment';
+_addBtnPast.style.background = '#16a34a';
+_addBtnPast.style.boxShadow = '0 3px 0 #14532d';
+_addBtnPast._mwMode = false;
+}
 }
 var _lbPast = document.getElementById('limitExceedBox');
 if (_lbPast && isPastDay) _lbPast.style.display = 'none';
@@ -10104,10 +10181,16 @@ window._currentEditRoutineId = null;
 window._openRoutinePanel = function() {
 var existing = document.getElementById('spRoutinePanel');
 if (existing) {
+var _rpDkNow = document.body.classList.contains('assignmentsdark');
+var _rpBg = _rpDkNow ? '#1e2d3d' : 'white', _rpClr = _rpDkNow ? '#e2e8f0' : '#1e293b';
+var _rpInner = existing.firstElementChild;
+if (_rpInner) _rpInner.style.background = _rpDkNow ? '#1a2236' : 'white';
+['spRName','spRSubject','spRDiff'].forEach(function(id){ var el=document.getElementById(id); if(el){el.style.background=_rpBg;el.style.color=_rpClr;} });
+['spRStartDate','spREndDate'].forEach(function(id){ var el=document.getElementById(id); if(el && typeof el._updateTrigger==='function') el._updateTrigger(); });
+existing.querySelectorAll('#spRDays button').forEach(function(b){ b.style.color=_rpDkNow?'#94a3b8':'#475569'; });
 existing.style.display = 'flex';
 existing.style.animation = 'routineOverlayIn 0.22s ease forwards';
-var _eInner = existing.firstElementChild;
-if (_eInner) { _eInner.style.animation = 'none'; void _eInner.offsetWidth; _eInner.style.animation = 'routinePanelIn 0.32s cubic-bezier(0.16,1,0.3,1) forwards'; }
+if (_rpInner) { _rpInner.style.animation = 'none'; void _rpInner.offsetWidth; _rpInner.style.animation = 'routinePanelIn 0.32s cubic-bezier(0.16,1,0.3,1) forwards'; }
 _renderRoutineList(); return;
 }
 
