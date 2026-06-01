@@ -1036,13 +1036,14 @@ transition: all 0.25s ease;
 color: #ef4444;
 background: transparent;
 border: 1.5px solid rgba(239,68,68,0.35);
-border-radius: 10px;
+border-radius: 8px;
 font-family: 'Inter', sans-serif;
 font-weight: 600;
-font-size: 12px;
-padding: 7px 14px;
+font-size: 13px;
+padding: 4px 8px;
 cursor: pointer;
 letter-spacing: 0.2px;
+line-height: 1;
 }
 .removeBtn:hover {
 background: rgba(239,68,68,0.06);
@@ -1470,6 +1471,7 @@ background: rgba(139,92,246,0.65);
 /* Day-label chips used in output plan */
 .day-label-chip { display:inline-block; background:rgba(99,102,241,0.1); color:#6366f1; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.3px; padding:3px 10px; border-radius:50px; margin-bottom:8px; }
 body.assignmentsdark .day-label-chip { background:rgba(99,102,241,0.22); color:#a78bfa; }
+.copyAssignBtn { background:transparent;border:1.5px solid rgba(99,102,241,0.22);border-radius:8px;padding:4px 8px;color:#6366f1;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;line-height:1; }
 .copyAssignBtn:hover { background:rgba(99,102,241,0.08)!important; border-color:rgba(99,102,241,0.5)!important; }
 body.assignmentsdark .copyAssignBtn { border-color:rgba(99,102,241,0.35)!important; color:#a78bfa!important; }
 body.assignmentsdark .copyAssignBtn:hover { background:rgba(99,102,241,0.18)!important; }
@@ -2245,7 +2247,7 @@ function insertAccumBreakAtPlayhead(mins) {
       div.dataset.segDiff = s.isBreak ? 'break' : (s.difficulty || 'easy');
       if (bar) bar.appendChild(div);
   });
-  
+ 
   if (ph && bar) {
       ph.style.width = "0%";
       ph.style.display = "block";
@@ -2364,6 +2366,7 @@ return `${m} min`;
 }
 
 function updateAssignmentSummary(div) {
+if (div && div._updatePill) { div._updatePill(); return; }
 const nameInput = div.querySelector('.assignmentName');
 const subjectSel = div.querySelector('.subject');
 const timeSl = div.querySelector('.time');
@@ -2389,124 +2392,245 @@ if (summDiff) { summDiff.textContent = diffEmoji; summDiff.style.background = di
 
 function collapseAssignment(div) { div.classList.add('collapsed'); }
 function expandAssignment(div) { div.classList.remove('collapsed'); }
-function collapseAllAssignments() { document.querySelectorAll('#assignmentsContainer .assignment').forEach(collapseAssignment); }
+function collapseAllAssignments() { /* pills open a wizard instead of expanding */ }
+
+// ── Assignment Pill Creator ──────────────────────────────────
+window._createAssignmentPill = function(name, subject, time, difficulty, routineId) {
+  var currentCount = container.querySelectorAll('.assignment').length;
+  if (currentCount >= 25) {
+    window._showToast('\u26a0\ufe0f Max assignments reached (25 limit).', true, 'maxAssign', 10000);
+    return null;
+  }
+  var lvl = document.getElementById('schoolLevel').value;
+  var div = document.createElement('div');
+  div.className = 'assignment collapsed';
+  div.style.cssText = 'position:relative;cursor:pointer;';
+  if (routineId) div.dataset.routineId = routineId;
+
+  var nameInput = document.createElement('input');
+  nameInput.type = 'text'; nameInput.className = 'assignmentName';
+  nameInput.style.display = 'none'; nameInput.value = name || '';
+
+  var subjSelect = document.createElement('select');
+  subjSelect.className = 'subject'; subjSelect.style.display = 'none';
+  (subjects[lvl] || subjects.high).forEach(function(s) {
+    var o = document.createElement('option'); o.value = s; o.textContent = s;
+    if (s === subject) o.selected = true;
+    subjSelect.appendChild(o);
+  });
+
+  var diffSelect = document.createElement('select');
+  diffSelect.className = 'difficulty'; diffSelect.style.display = 'none';
+  ['easy','medium','hard','priority'].forEach(function(d) {
+    var o = document.createElement('option'); o.value = d; o.textContent = d;
+    if (d === (difficulty || 'easy')) o.selected = true;
+    diffSelect.appendChild(o);
+  });
+
+  var timeInput = document.createElement('input');
+  timeInput.type = 'range'; timeInput.className = 'time';
+  timeInput.min = 10; timeInput.max = 300; timeInput.step = 5;
+  timeInput.value = parseInt(time) || 30; timeInput.style.display = 'none';
+
+  div.appendChild(nameInput);
+  div.appendChild(subjSelect);
+  div.appendChild(diffSelect);
+  div.appendChild(timeInput);
+
+   var pillRow = document.createElement('div');
+  pillRow.className = 'assign-summary';
+  pillRow.style.cssText = 'display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden;pointer-events:none;flex:1;';
+
+  var removeBtn = document.createElement('button');
+  removeBtn.className = 'removeBtn';
+  removeBtn.innerHTML = '\uD83D\uDDD1';
+  removeBtn.title = 'Remove';
+  removeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (window.tutorialActive) return;
+    div.remove(); saveToLocalStorage();
+  });
+
+  var copyBtn = document.createElement('button');
+  copyBtn.className = 'copyAssignBtn';
+  copyBtn.innerHTML = '\uD83D\uDCCB';
+  copyBtn.title = 'Copy assignment';
+  copyBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (window._copyAssignmentCard) window._copyAssignmentCard(div);
+  });
+
+  var cardRow = document.createElement('div');
+  cardRow.className = 'assign-card-row';
+  cardRow.style.cssText = 'display:flex;align-items:center;gap:6px;width:100%;min-width:0;';
+  cardRow.appendChild(pillRow);
+  cardRow.appendChild(copyBtn);
+  cardRow.appendChild(removeBtn);
+  div.appendChild(cardRow);
+
+  function updatePill() {
+    var n = nameInput.value.trim() || subjSelect.value || 'Assignment';
+    var t = timeValToText(timeInput.value);
+    var d = diffSelect.value || 'easy';
+    var isDk = document.body.classList.contains('assignmentsdark');
+    var diffEmoji = {easy:'\uD83D\uDFE2',medium:'\uD83D\uDFE1',hard:'\uD83D\uDD34',priority:'\uD83D\uDFE3'}[d] || '\uD83D\uDFE2';
+    var diffColorD = {easy:'#6ee7b7',medium:'#fcd34d',hard:'#fca5a5',priority:'#d8b4fe'}[d];
+    var diffColorL = {easy:'#166534',medium:'#713f12',hard:'#7f1d1d',priority:'#4a044e'}[d];
+    var diffBgD = {easy:'rgba(92,184,92,0.2)',medium:'rgba(240,173,78,0.2)',hard:'rgba(217,97,61,0.2)',priority:'rgba(128,0,128,0.22)'}[d];
+    var diffBgL = {easy:'rgba(92,184,92,0.13)',medium:'rgba(240,173,78,0.15)',hard:'rgba(217,97,61,0.13)',priority:'rgba(128,0,128,0.13)'}[d];
+    pillRow.innerHTML =
+      '<span class="assign-summary-subject" style="display:block;font-weight:700;font-family:\'Syne\',sans-serif;font-size:14px;color:'+(isDk?'#e2e8f0':'#1e293b')+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;min-width:0;">'+n+'</span>'+
+      '<span class="assign-summary-time" style="font-size:11px;color:#6366f1;font-weight:600;background:rgba(99,102,241,0.09);padding:2px 8px;border-radius:50px;white-space:nowrap;flex-shrink:0;">'+t+'</span>'+
+      '<span class="assign-summary-diff" style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:50px;white-space:nowrap;flex-shrink:0;background:'+(isDk?diffBgD:diffBgL)+';color:'+(isDk?diffColorD:diffColorL)+';">'+diffEmoji+' '+d.charAt(0).toUpperCase()+d.slice(1)+'</span>';
+  }
+
+  div._updatePill = updatePill;
+  updatePill();
+
+  div.addEventListener('click', function(e) {
+    if (window.tutorialActive) return;
+    if (e.target.closest && (e.target.closest('.removeBtn') || e.target.closest('.copyAssignBtn'))) return;
+    window._openAssignmentWizard(div);
+  });
+
+  div.style.animation = 'slideIn 0.5s ease-out forwards';
+  getShortestColumn().appendChild(div);
+  window._lastAddedCard = div;
+  div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  saveToLocalStorage();
+  return div;
+};
+
+// ── Assignment Creation / Edit Wizard ────────────────────────
+window._openAssignmentWizard = function(existingCard) {
+  if (document.getElementById('_awOverlay')) return;
+  var isDk = document.body.classList.contains('assignmentsdark');
+  var lvl = document.getElementById('schoolLevel').value;
+  var isEditing = !!existingCard;
+  var initName = isEditing ? existingCard.querySelector('.assignmentName').value : '';
+  var initSubj = isEditing ? existingCard.querySelector('.subject').value : (subjects[lvl]||subjects.high)[0];
+  var initDiff = isEditing ? existingCard.querySelector('.difficulty').value : 'easy';
+  var initTime = isEditing ? parseInt(existingCard.querySelector('.time').value)||30 : 30;
+  var step = 1; var STEPS = 4;
+  var mbg = isDk?'#1a2236':'white', tc = isDk?'#e2e8f0':'#1e293b', sc = isDk?'#94a3b8':'#64748b';
+  var ibc = isDk?'rgba(99,102,241,0.35)':'rgba(99,102,241,0.22)', ibg = isDk?'#1e2d3d':'rgba(248,247,255,0.9)';
+  var bc = isDk?'rgba(99,102,241,0.22)':'rgba(99,102,241,0.12)';
+  var subjOpts = (subjects[lvl]||subjects.high).map(function(s){
+    return '<option value="'+s+'"'+(s===initSubj?' selected':'')+'>'+s+'</option>';
+  }).join('');
+  var ov = document.createElement('div');
+  ov.id = '_awOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:90000;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:\'Inter\',sans-serif;animation:customModalBgIn 0.22s ease forwards;';
+  ov.innerHTML =
+    '<div id="_awCard" style="background:'+mbg+';border-radius:24px;padding:30px 24px 22px;width:100%;max-width:420px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,0.45);border:1px solid '+bc+';position:relative;overflow:hidden;animation:customModalBoxIn 0.3s cubic-bezier(0.16,1,0.3,1) forwards;">'+
+    '<button id="_awClose" style="position:absolute;top:14px;right:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#94a3b8;padding:2px;line-height:1;z-index:2;">\u2715</button>'+
+    '<div style="overflow:hidden;"><div id="_awSlide" style="display:flex;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);will-change:transform;">'+
+    '<div style="min-width:100%;box-sizing:border-box;">'+
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:'+tc+';margin:0 0 6px;line-height:1.2;">Choose a name</h3>'+
+    '<p style="font-size:13px;color:'+sc+';margin:0 0 16px;line-height:1.6;">Give your assignment a short, clear title.</p>'+
+    '<input id="_awName" type="text" placeholder="e.g. Chapter 7 Review" autocomplete="off" style="width:100%;padding:11px 14px;font-size:15px;font-weight:500;border:1.5px solid '+ibc+';border-radius:12px;box-sizing:border-box;background:'+ibg+';color:'+tc+';font-family:\'Inter\',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;" /></div>'+
+    '<div style="min-width:100%;box-sizing:border-box;">'+
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:'+tc+';margin:0 0 6px;line-height:1.2;">Choose the subject</h3>'+
+    '<p style="font-size:13px;color:'+sc+';margin:0 0 16px;line-height:1.6;">Pick the area of study this assignment belongs to.</p>'+
+    '<select id="_awSubj" style="appearance:none;-webkit-appearance:none;width:100%;padding:11px 14px;font-size:14px;font-weight:500;border:1.5px solid '+ibc+';border-radius:12px;box-sizing:border-box;background:'+ibg+';color:'+tc+';font-family:\'Inter\',sans-serif;outline:none;cursor:pointer;">'+subjOpts+'</select></div>'+
+    '<div style="min-width:100%;box-sizing:border-box;">'+
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:'+tc+';margin:0 0 6px;line-height:1.2;">Choose a difficulty</h3>'+
+    '<p style="font-size:13px;color:'+sc+';margin:0 0 16px;line-height:1.6;">How challenging is this assignment for you?</p>'+
+    '<select id="_awDiff" style="appearance:none;-webkit-appearance:none;width:100%;padding:11px 14px;font-size:14px;font-weight:500;border:1.5px solid '+ibc+';border-radius:12px;box-sizing:border-box;background:'+ibg+';color:'+tc+';font-family:\'Inter\',sans-serif;outline:none;cursor:pointer;">'+
+    '<option value="easy"'+(initDiff==='easy'?' selected':'')+'>🟢 Easy</option>'+
+    '<option value="medium"'+(initDiff==='medium'?' selected':'')+'>🟡 Medium</option>'+
+    '<option value="hard"'+(initDiff==='hard'?' selected':'')+'>🔴 Hard</option>'+
+    '<option value="priority"'+(initDiff==='priority'?' selected':'')+'>🟣 Priority</option>'+
+    '</select>'+
+    '<a id="_awDiffLink" href="#" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:#3b82f6;text-decoration:underline;cursor:pointer;">How to choose the right difficulty</a></div>'+
+    '<div style="min-width:100%;box-sizing:border-box;">'+
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:'+tc+';margin:0 0 6px;line-height:1.2;">Estimated completion time</h3>'+
+    '<p style="font-size:13px;color:'+sc+';margin:0 0 16px;line-height:1.6;">How long will this assignment take?</p>'+
+    '<div style="text-align:center;margin-bottom:12px;"><span id="_awTimeLabel" style="font-family:\'Syne\',sans-serif;font-size:26px;font-weight:800;color:#6366f1;">'+timeValToText(initTime)+'</span></div>'+
+    '<div style="display:flex;align-items:center;gap:10px;">'+
+    '<button id="_awTimeMinus" type="button" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">\u2212</button>'+
+    '<input id="_awTime" type="range" min="10" max="300" step="5" value="'+initTime+'" style="flex:1;height:6px;accent-color:#6366f1;cursor:pointer;" />'+
+    '<button id="_awTimePlus" type="button" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>'+
+    '</div>'+
+    '<a id="_awTimeLink" href="#" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:#3b82f6;text-decoration:underline;cursor:pointer;">Accurate time estimations</a></div>'+
+    '</div></div>'+
+    '<div id="_awNav" style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px;"></div></div>';
+  document.body.appendChild(ov);
+  if (typeof makeCustomSelects === 'function') makeCustomSelects(document.getElementById('_awCard'));
+  var nameEl = document.getElementById('_awName');
+  if (nameEl) nameEl.value = initName;
+  function renderNav() {
+    var nav = document.getElementById('_awNav'); if (!nav) return;
+    var isDkN = document.body.classList.contains('assignmentsdark');
+    var arr = 'background:transparent;border:1.5px solid rgba(99,102,241,0.35);border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;color:#6366f1;font-size:18px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif;transition:background 0.15s;';
+    var stp = 'font-family:\'Inter\',sans-serif;font-size:13px;font-weight:700;color:'+(isDkN?'#475569':'#94a3b8')+';min-width:40px;text-align:center;';
+    var h = '';
+    if (step > 1) h += '<button id="_awBack" style="'+arr+'">←</button>';
+    h += '<span style="'+stp+'">'+step+'/'+STEPS+'</span>';
+        if (step < STEPS) h += '<button id="_awNext" style="'+arr+'">→</button>';
+    if (step === STEPS || isEditing) h += '<button id="_awSubmit" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:50px;padding:10px 26px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.4);">'+(isEditing?'Update':'Add')+'</button>';
+    nav.innerHTML = h;
+    var bb = document.getElementById('_awBack'), nb = document.getElementById('_awNext'), sb = document.getElementById('_awSubmit');
+    if (bb) bb.addEventListener('click', function(){ goStep(step-1); });
+    if (nb) nb.addEventListener('click', function(){ goStep(step+1); });
+    if (sb) sb.addEventListener('click', submitWizard);
+  }
+  function goStep(n) {
+    step = Math.max(1, Math.min(STEPS, n));
+    var sl = document.getElementById('_awSlide');
+    if (sl) sl.style.transform = 'translateX(-'+((step-1)*100)+'%)';
+    renderNav();
+  }
+  function submitWizard() {
+    var nv = (document.getElementById('_awName')||{}).value||'';
+    var sv = (document.getElementById('_awSubj')||{}).value||(subjects[lvl]||subjects.high)[0];
+    var dv = (document.getElementById('_awDiff')||{}).value||'easy';
+    var tv = parseInt((document.getElementById('_awTime')||{}).value)||30;
+    if (isEditing && existingCard) {
+      existingCard.querySelector('.assignmentName').value = nv;
+      existingCard.querySelector('.subject').value = sv;
+      existingCard.querySelector('.difficulty').value = dv;
+      existingCard.querySelector('.time').value = tv;
+      if (existingCard._updatePill) existingCard._updatePill();
+      saveToLocalStorage();
+    } else { window._createAssignmentPill(nv, sv, tv, dv); }
+    if (window.tutorialActive && typeof window._tutAdvance === 'function') window._tutAdvance();
+    closeWizard();
+  }
+  function closeWizard() {
+    var card = document.getElementById('_awCard'), ovEl = document.getElementById('_awOverlay');
+    if (!ovEl) return;
+    if (card) card.style.animation = 'customModalBoxOut 0.25s cubic-bezier(0.4,0,0.6,1) forwards';
+    ovEl.style.animation = 'customModalBgOut 0.25s ease forwards';
+    setTimeout(function(){ if(ovEl.parentNode) ovEl.remove(); }, 280);
+  }
+  document.getElementById('_awClose').addEventListener('click', closeWizard);
+  ov.addEventListener('click', function(e){ if(e.target===ov) closeWizard(); });
+  var ts = document.getElementById('_awTime'), tl = document.getElementById('_awTimeLabel');
+  if (ts && tl) { ts.addEventListener('input', function(){ tl.textContent = timeValToText(this.value); }); expandSliderHitArea(ts); }
+  var tm = document.getElementById('_awTimeMinus'), tp = document.getElementById('_awTimePlus');
+  if (tm) tm.addEventListener('click', function(){ if(ts){ ts.value=Math.max(10,parseInt(ts.value)-5); if(tl)tl.textContent=timeValToText(ts.value); } });
+  if (tp) tp.addEventListener('click', function(){ if(ts){ ts.value=Math.min(300,parseInt(ts.value)+5); if(tl)tl.textContent=timeValToText(ts.value); } });
+  var dl = document.getElementById('_awDiffLink');
+  if (dl) dl.addEventListener('click', function(e){ e.preventDefault(); var o2=document.getElementById('_awOverlay'); if(o2)o2.style.zIndex='50000'; window._ugReturnContext={type:'aw',overlay:o2}; if(typeof openUserGuide==='function')openUserGuide(); if(typeof showUgSection==='function')showUgSection('assignment-difficulty'); });
+  var tll = document.getElementById('_awTimeLink');
+  if (tll) tll.addEventListener('click', function(e){ e.preventDefault(); var o3=document.getElementById('_awOverlay'); if(o3)o3.style.zIndex='50000'; window._ugReturnContext={type:'aw',overlay:o3}; if(typeof openUserGuide==='function')openUserGuide(); if(typeof showUgSection==='function')showUgSection('time-estimations'); });
+  if (nameEl) { nameEl.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();goStep(2);} }); setTimeout(function(){ nameEl.focus(); }, 100); }
+  renderNav();
+  window._lastAssignmentWizard = { close: closeWizard };
+};
 
 document.getElementById("addAssignmentBtn").onclick = () => {
-if (!window._addingPreset && document.getElementById("addAssignmentBtn")._mwMode && typeof window._activeDate !== 'undefined' && window._activeDate < getTodayISO()) {
-if (!window._plannerOpenTime || (Date.now() - window._plannerOpenTime) > 700) {
-if (typeof window._openMoveWorkModal === 'function') window._openMoveWorkModal(window._activeDate);
-}
-return;
-}
-const currentCount = container.querySelectorAll(".assignment").length;
-if (currentCount >= 25) {
-window._showToast('⚠️ Max assignments reached (25 limit).', true, 'maxAssign', 10000);
-return;
-}
-
-const div = document.createElement("div");
-div.className = "assignment";
-div.style.position = "relative";
-div.innerHTML = `
-<div class="assignment-header" style="min-width: 0; width: 100%; overflow: hidden; padding-right: 40px; box-sizing: border-box;">
-<div class="assign-summary">
-<span class="assign-summary-subject" style="display: block; font-weight:700; font-family:'Syne',sans-serif; font-size:14px; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex-shrink:1; min-width:0;"></span>
-<span class="assign-summary-time" style="font-size:11px; color:#6366f1; font-weight:600; background:rgba(99,102,241,0.09); padding:2px 8px; border-radius:50px; white-space:nowrap; flex-shrink:0;"></span>
-<span class="assign-summary-diff" style="font-size:11px; font-weight:600; padding:2px 8px; border-radius:50px; white-space:nowrap; flex-shrink:0;"></span>
-</div>
-</div>
-<button class="copyAssignBtn" type="button" style="position:absolute;top:10px;right:10px;background:transparent;border:1.5px solid rgba(99,102,241,0.22);border-radius:8px;padding:4px 8px;color:#6366f1;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;z-index:5;line-height:1;">📋</button>
-<div class="assignment-body">
-<label>Assignment Name</label>
-<input type="text" class="assignmentName" placeholder="e.g. Chapter 7 Review"
-style="width: 100%; padding: 9px 13px; font-size: 0.95rem; border: 1.5px solid rgba(99,102,241,0.22);
-border-radius: 10px; box-sizing: border-box; background-color: rgba(248,247,255,0.9); color: #1e293b; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s, box-shadow 0.2s;">
-<div style="display: flex; gap: 10px; align-items: flex-end;">
-<div style="flex: 1;">
-<label>Difficulty</label>
-<select class="difficulty" style="background-color: rgba(248,247,255,0.9); color: #1e293b; border-radius: 10px; border: 1.5px solid rgba(99,102,241,0.22); font-family: 'Inter', sans-serif; font-weight: 500; padding: 7px 10px; width: 100%;">
-<option value="easy">🟢 Easy</option>
-<option value="medium">🟡 Medium</option>
-<option value="hard">🔴 Hard</option>
-<option value="priority">🟣 Priority</option>
-</select>
-</div>
-<div style="flex: 1;">
-<label>Subject</label>
-<select class="subject" style="background-color: rgba(248,247,255,0.9); color: #1e293b; border-radius: 10px; border: 1.5px solid rgba(99,102,241,0.22); font-family: 'Inter', sans-serif; font-weight: 500; padding: 7px 10px; width: 100%;">${subjects[schoolLevel.value].map(s=>`<option>${s}</option>`).join("")}</select>
-</div>
-</div>
-<label>Estimated Completion Time</label>
-<div style="display: flex; flex-direction: column; align-items: center; margin-top: 4px;">
-<span class="time-label" style="font-weight: 700; font-family: 'Syne', sans-serif; color: #6366f1; font-size: 15px;">10 min</span>
-<div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-<button class="slider-minus" type="button" style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:18px;line-height:1;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.15s,border-color 0.15s;">−</button>
-<input type="range" min="10" max="300" step="5" value="10" class="time" style="width:200px;accent-color:#6366f1;height:8px;border-radius:5px;cursor:pointer;">
-<button class="slider-plus" type="button" style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:18px;line-height:1;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background 0.15s,border-color 0.15s;">+</button>
-</div>
-</div>
-<button class="removeBtn">🗑 Remove</button>
-</div>
-`;
-
-div.querySelector(".removeBtn").onclick = (e) => { e.stopPropagation(); if (window.tutorialActive) return; div.remove(); saveToLocalStorage(); };
-div.querySelector(".copyAssignBtn").onclick = (e) => { e.stopPropagation(); if (typeof window._copyAssignmentCard === 'function') window._copyAssignmentCard(div); };
-
-collapseAllAssignments();
-getShortestColumn().appendChild(div);
-const slider = div.querySelector('.time');
-const timeLabel = div.querySelector('.time-label');
-if (slider && timeLabel) {
-            expandSliderHitArea(slider);
-slider.addEventListener('input', () => {
-                timeLabel.textContent = timeValToText(slider.value);
-                updateAssignmentSummary(div);
-                });
-
-}
-
-
-const sliderMinusBtn = div.querySelector('.slider-minus');
-const sliderPlusBtn = div.querySelector('.slider-plus');
-if (sliderMinusBtn && sliderPlusBtn) {
-sliderMinusBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const newVal = Math.max(10, parseInt(slider.value) - 5);
-                slider.value = newVal;
-                timeLabel.textContent = timeValToText(newVal);
-                updateAssignmentSummary(div);
-                saveToLocalStorage();
-                });
-
-sliderPlusBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const newVal = Math.min(parseInt(slider.max) || 300, parseInt(slider.value) + 5);
-                slider.value = newVal;
-                timeLabel.textContent = timeValToText(newVal);
-                updateAssignmentSummary(div);
-                saveToLocalStorage();
-                });
-
-
-}
-makeCustomSelects(div);
-
-div.querySelector('.assignment-body').addEventListener('change', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
-div.querySelector('.assignment-body').addEventListener('input', () => { updateAssignmentSummary(div); saveToLocalStorage(); });
-
-
-div.addEventListener('click', (e) => {
-if (window.tutorialActive) return;
-if (e.target.closest('input, select, button, .custom-select-wrapper')) return;
-const wasCollapsed = div.classList.contains('collapsed');
-collapseAllAssignments();
-if (wasCollapsed) expandAssignment(div);
-});
-
-updateAssignmentSummary(div);
-div.addEventListener('animationend', () => { div.style.overflow = 'visible'; }, { once: true });
-window._lastAddedCard = div;
-        div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (!window._addingPreset && document.getElementById("addAssignmentBtn")._mwMode && typeof window._activeDate !== 'undefined' && window._activeDate < getTodayISO()) {
+    if (!window._plannerOpenTime || (Date.now() - window._plannerOpenTime) > 700) {
+      if (typeof window._openMoveWorkModal === 'function') window._openMoveWorkModal(window._activeDate);
+    }
+    return;
+  }
+  var _cnt = container.querySelectorAll('.assignment').length;
+  if (_cnt >= 25) { window._showToast('\u26a0\ufe0f Max assignments reached (25 limit).', true, 'maxAssign', 10000); return; }
+  if (window._addingPreset) return;
+  window._openAssignmentWizard(null);
 };
 
 
@@ -2945,7 +3069,7 @@ const currentAssignmentDisplay = document.getElementById("currentAssignmentDispl
 if (startBtn) startBtn.onclick = startTimer;
 
 startBtn.addEventListener("click", function() {
-  
+ 
 window._sessionStudiedSeconds = 0;
 window._sessionPaused = false;
 startBtn.classList.remove('pulse-start');
@@ -3440,23 +3564,7 @@ try {
 };
 
 window.addPresetTask = function(subj, timeVal, diffVal) {
-window._addingPreset = true;
-document.getElementById("addAssignmentBtn").click();
-window._addingPreset = false;
-const lastRow = window._lastAddedCard;
-if (lastRow) {
-const subjSel = lastRow.querySelector(".subject");
-const diffSel = lastRow.querySelector(".difficulty");
-const timeSlider = lastRow.querySelector(".time");
-const timeLabel = lastRow.querySelector(".time-label");
-subjSel.value = subj;
-timeSlider.value = timeVal;
-diffSel.value = diffVal;
-if (timeLabel) timeLabel.textContent = timeValToText(timeVal);
-syncCustomSelect(subjSel);
-syncCustomSelect(diffSel);
-updateAssignmentSummary(lastRow);
-}
+  return window._createAssignmentPill('', subj, timeVal, diffVal);
 };
 
 
@@ -6632,14 +6740,7 @@ return;
 }
 
 var p = str.split('\u2016'); if (p.length < 5) return;
-document.getElementById('addAssignmentBtn').click();
-var last = window._lastAddedCard; if (!last) return;
-var nameEl = last.querySelector('.assignmentName'); if (nameEl) nameEl.value = p[1];
-var subjEl = last.querySelector('.subject'); if (subjEl) { subjEl.value = p[2]; if (typeof syncCustomSelect === 'function') syncCustomSelect(subjEl); }
-var timeEl = last.querySelector('.time'); if (timeEl) timeEl.value = parseInt(p[3]) || 30;
-var diffEl = last.querySelector('.difficulty'); if (diffEl) { diffEl.value = p[4]; if (typeof syncCustomSelect === 'function') syncCustomSelect(diffEl); }
-var tl = last.querySelector('.time-label'); if (tl) tl.textContent = typeof timeValToText === 'function' ? timeValToText(parseInt(p[3]) || 30) : ((parseInt(p[3]) || 30) + ' min');
-updateAssignmentSummary(last); saveToLocalStorage();
+window._createAssignmentPill(p[1], p[2], parseInt(p[3]) || 30, p[4]);
 _showCopyToast('Assignment pasted successfully!', false);
 };
 document.addEventListener('keydown', function(e) {
@@ -6969,12 +7070,33 @@ on: 'click', post: 700 },
 { el: function () { return document.getElementById('addAssignmentBtn'); },
 text: 'Start by clicking this button to add your first assignment.',
 on: 'click', post: 0 },
-{ el: function () { return window._lastAddedCard || null; },
-text: 'Adjust your assignment. Try sliding the time estimator to 1 hour (60 min).',
-on: 'slider', post: 0 },
-{ el: function () { return document.getElementById('addAssignmentBtn'); },
-text: 'You can also add multiple assignments.',
+{ el: function () { return document.getElementById('_awName') || null; },
+text: 'Step 1/4: Give your assignment a name (e.g. \u201cMath Homework\u201d), then click the \u2192 arrow.',
+on: 'next', post: 0 },
+{ el: function () { return document.getElementById('_awNext') || null; },
+text: 'Click the \u2192 arrow to move to the next step.',
+on: 'click', post: 300 },
+{ el: function () { return document.getElementById('_awSubj') || null; },
+text: 'Step 2/4: Choose the subject this assignment belongs to, then click the \u2192 arrow.',
+on: 'next', post: 0 },
+{ el: function () { return document.getElementById('_awNext') || null; },
+text: 'Click the \u2192 arrow to continue.',
+on: 'click', post: 300 },
+{ el: function () { return document.getElementById('_awDiff') || null; },
+text: 'Step 3/4: Set the difficulty level that best matches this assignment, then click the \u2192 arrow.',
+on: 'next', post: 0 },
+{ el: function () { return document.getElementById('_awNext') || null; },
+text: 'Click the \u2192 arrow to continue.',
+on: 'click', post: 300 },
+{ el: function () { return document.getElementById('_awTimeLabel') || null; },
+text: 'Step 4/4: Adjust the time \u2014 try 1 hour (60 min). Then click Add!',
+on: 'next', post: 0 },
+{ el: function () { return document.getElementById('_awSubmit') || null; },
+text: 'Click \u201cAdd\u201d to create your assignment!',
 on: 'click', post: 0 },
+{ el: function () { return document.getElementById('addAssignmentBtn'); },
+text: 'You can also add multiple assignments. Click Next \u2192 to continue!',
+on: 'next', post: 0 },
 { el: function () { return document.getElementById('calculateBtn'); },
 text: 'Next, calculate your study plan!',
 on: 'click', post: 0 },
@@ -8125,16 +8247,22 @@ arr.style.cssText = arrowBelow
 Object.keys(TIPS).forEach(function(id) {
         var btn = document.getElementById(id);
         if (!btn) return;
+        var _tipDelay = null;
         btn.addEventListener('mouseenter', function() {
             if (window.tutorialActive) return;
-            if (tipText) tipText.textContent = TIPS[id];
-            tip.style.display = 'block';
-            requestAnimationFrame(function() { positionTip(btn); tip.style.opacity = '1'; });
+            clearTimeout(_tipDelay);
+            _tipDelay = setTimeout(function() {
+                if (tipText) tipText.textContent = TIPS[id];
+                tip.style.display = 'block';
+                requestAnimationFrame(function() { positionTip(btn); tip.style.opacity = '1'; });
+            }, 250);
         });
         btn.addEventListener('mouseleave', function() {
+            clearTimeout(_tipDelay);
             tip.style.opacity = '0';
             setTimeout(function() { if (parseFloat(tip.style.opacity) === 0) tip.style.display = 'none'; }, 150);
         });
+        btn.addEventListener('touchstart', function() { clearTimeout(_tipDelay); tip.style.opacity = '0'; tip.style.display = 'none'; }, { passive: true });
     });
 
     })();
@@ -8531,8 +8659,20 @@ function openUserGuide() {
   p.style.display = 'block';
 }
 function closeUserGuide() {
-  var p = document.getElementById('userGuidePage'); if (p) p.style.display = 'none';
+  var p = document.getElementById('userGuidePage');
+  if (p) p.style.display = 'none';
   closeUgMenu();
+  if (window._ugReturnContext) {
+    var ctx = window._ugReturnContext;
+    window._ugReturnContext = null;
+    if (ctx.overlay) {
+      ctx.overlay.style.zIndex = ctx.type === 'rrw' ? '400000' : '90000';
+    }
+    if (ctx.type === 'rrw') {
+      var _rpRestore = document.getElementById('spRoutinePanel');
+      if (_rpRestore) _rpRestore.style.zIndex = '300000';
+    }
+  }
 }
 // Delegated handler for inline cross-links
 document.addEventListener('click', function(e){
@@ -10186,6 +10326,7 @@ var _rpBg = _rpDkNow ? '#1e2d3d' : 'white', _rpClr = _rpDkNow ? '#e2e8f0' : '#1e
 var _rpInner = existing.firstElementChild;
 if (_rpInner) _rpInner.style.background = _rpDkNow ? '#1a2236' : 'white';
 ['spRName','spRSubject','spRDiff'].forEach(function(id){ var el=document.getElementById(id); if(el){el.style.background=_rpBg;el.style.color=_rpClr;} });
+var _rpTitle = existing.querySelector('h3'); if (_rpTitle) _rpTitle.style.color = _rpDkNow ? '#e2e8f0' : '#1e293b';
 ['spRStartDate','spREndDate'].forEach(function(id){ var el=document.getElementById(id); if(el && typeof el._updateTrigger==='function') el._updateTrigger(); });
 existing.querySelectorAll('#spRDays button').forEach(function(b){ b.style.color=_rpDkNow?'#94a3b8':'#475569'; });
 existing.style.display = 'flex';
@@ -10206,8 +10347,8 @@ panel.innerHTML =
 '<button onclick="_closeRoutinePanel()" style="background:transparent;border:none;font-size:20px;cursor:pointer;color:#94a3b8;padding:4px;">✕</button>' +
 '</div>' +
 '<div id="spRoutineList" style="margin-bottom:16px;"></div>' +
-'<button id="spAddRoutineBtn" onclick="_showRoutineForm()" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;box-shadow:0 4px 14px rgba(99,102,241,0.35);">+ Add Routine</button>' +
-'<div id="spRoutineForm" style="display:none;margin-top:16px;background:' + (_rpDk ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.05)') + ';border-radius:14px;padding:18px;">' +
+'<button id="spAddRoutineBtn" onclick="_openRoutineWizard(null)" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:12px;padding:12px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;width:100%;box-shadow:0 4px 14px rgba(99,102,241,0.35);">+ Add Routine</button>' +
+'<div id="spRoutineFormLegacy" style="display:none!important;margin-top:16px;background:' + (_rpDk ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.05)') + ';border-radius:14px;padding:18px;">' +
 '<div style="margin-bottom:10px;"><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Name</label>' +
 '<input id="spRName" type="text" placeholder="e.g. Math HW" style="width:100%;padding:9px 12px;border:1.5px solid rgba(99,102,241,0.2);border-radius:10px;font-family:\'Inter\',sans-serif;box-sizing:border-box;background:' + (_rpDk ? '#1e2d3d' : 'white') + ';color:' + (_rpDk ? '#e2e8f0' : '#1e293b') + ';"></div>' +
 '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:10px;">' +
@@ -10259,6 +10400,7 @@ _renderRoutineList();
 };
 
 window._showRoutineForm = function() {
+  window._openRoutineWizard(null); return;
 if (_getRoutines().length >= 25) { showCustomAlert('Max 25 routines reached.'); return; }
 document.getElementById('spRoutineForm').style.display = 'block';
 document.getElementById('spAddRoutineBtn').style.display = 'none';
@@ -10358,32 +10500,217 @@ if (_rPanel) _rPanel.style.zIndex = '300000';
 });
 };
 
-window._editRoutine = function(id) {
-var routines = _getRoutines();
-var r = routines.find(function(x) { return x.id === id; });
-if (!r) return;
-window._currentEditRoutineId = id;
-document.getElementById('spRoutineForm').style.display = 'block';
-document.getElementById('spAddRoutineBtn').style.display = 'none';
-var _erMin = getTodayISO(); var _erMaxDE = new Date(); _erMaxDE.setMonth(_erMaxDE.getMonth() + 13); var _erMaxStrE = _dateToISO(_erMaxDE);
-var _erSdI = document.getElementById('spRStartDate'); if (_erSdI) { _erSdI.min = _erMin; _erSdI.max = _erMaxStrE; }
-var _erEdI = document.getElementById('spREndDate'); if (_erEdI) { _erEdI.min = _erMin; _erEdI.max = _erMaxStrE; }
-var _rn = document.getElementById('spRName'); if (_rn) _rn.value = r.name || '';
-var _rsd = document.getElementById('spRStartDate'); if (_rsd) { _rsd.value = r.startDate || ''; if (_rsd._updateTrigger) _rsd._updateTrigger(); }
-var _red = document.getElementById('spREndDate'); if (_red) { _red.value = r.endDate || ''; if (_red._updateTrigger) _red._updateTrigger(); }
-var _rt = document.getElementById('spRTime'); if (_rt) { _rt.value = r.time || 30; }
-var _rv = document.getElementById('spRTimeVal'); if (_rv) _rv.textContent = _fmtRoutineTime(r.time || 30);
-var _spRDiff = document.getElementById('spRDiff'); if (_spRDiff) { _spRDiff.value = r.difficulty || 'easy'; if (typeof syncCustomSelect === 'function') syncCustomSelect(_spRDiff); }
-var _spRSubj = document.getElementById('spRSubject'); if (_spRSubj) { _spRSubj.value = r.subject || ''; if (typeof syncCustomSelect === 'function') syncCustomSelect(_spRSubj); }
-document.querySelectorAll('#spRDays button').forEach(function(b) {
-var on = r.days && r.days.includes(parseInt(b.dataset.dow));
-b.dataset.sel = on ? '1' : '0';
-b.style.background = on ? 'rgba(99,102,241,0.1)' : 'transparent';
-b.style.borderColor = on ? '#6366f1' : 'rgba(99,102,241,0.22)';
-b.style.color = on ? '#6366f1' : '#475569';
-});
-var _saveBtn = document.querySelector('#spRoutineForm button[onclick="_saveRoutine()"]');
-if (_saveBtn) _saveBtn.textContent = 'Update Routine';
+window._editRoutine = function(id) { window._openRoutineWizard(id); };
+
+window._rrwTogDay = function(btn) {
+  var on = btn.dataset.sel === '1';
+  btn.dataset.sel = on ? '0' : '1';
+  btn.style.background = on ? 'transparent' : 'rgba(99,102,241,0.12)';
+  btn.style.borderColor = on ? 'rgba(99,102,241,0.22)' : '#6366f1';
+  btn.style.color = on ? '#64748b' : '#6366f1';
+};
+
+window._openRoutineWizard = function(editId) {
+  if (_getRoutines().length >= 25 && !editId) { showCustomAlert('Max 25 routines reached.'); return; }
+  if (document.getElementById('_rrwOverlay')) return;
+  var ex = _getRoutines().find(function(x){ return x.id === editId; });
+  var lvl = document.getElementById('schoolLevel').value;
+  var isDk = document.body.classList.contains('assignmentsdark');
+  var mbg = isDk ? '#1a2236' : 'white';
+  var tc = isDk ? '#e2e8f0' : '#1e293b';
+  var sc = isDk ? '#94a3b8' : '#64748b';
+  var ibc = isDk ? 'rgba(99,102,241,0.35)' : 'rgba(99,102,241,0.22)';
+  var ibg = isDk ? '#1e2d3d' : 'rgba(248,247,255,0.9)';
+  var bdc = isDk ? 'rgba(99,102,241,0.22)' : 'rgba(99,102,241,0.12)';
+  var initTime = ex ? (ex.time || 30) : 30;
+  var DOW_L = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var STEPS = 6;
+  var step = 1;
+
+  var subjOpts = (subjects[lvl] || subjects.high).map(function(s) {
+    return '<option value="' + s + '"' + (ex && s === ex.subject ? ' selected' : '') + '>' + s + '</option>';
+  }).join('');
+
+  var daysHTML = DOW_L.map(function(d, i) {
+    var on = ex && ex.days && ex.days.includes(i);
+    return '<button type="button" data-dow="' + i + '" data-sel="' + (on ? '1' : '0') + '" onclick="_rrwTogDay(this)" style="padding:7px 13px;border-radius:50px;border:1.5px solid ' + (on ? '#6366f1' : 'rgba(99,102,241,0.22)') + ';background:' + (on ? 'rgba(99,102,241,0.12)' : 'transparent') + ';color:' + (on ? '#6366f1' : '#64748b') + ';font-family:\'Inter\',sans-serif;font-weight:600;font-size:12px;cursor:pointer;transition:all 0.15s;">' + d + '</button>';
+  }).join('');
+
+  var ov = document.createElement('div');
+  ov.id = '_rrwOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:400000;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;font-family:\'Inter\',sans-serif;animation:routineOverlayIn 0.22s ease forwards;';
+
+  ov.innerHTML =
+    '<div id="_rrwCard" style="background:' + mbg + ';border-radius:24px;padding:30px 24px 22px;width:100%;max-width:440px;box-sizing:border-box;box-shadow:0 24px 80px rgba(0,0,0,0.45);border:1px solid ' + bdc + ';position:relative;overflow:hidden;animation:routinePanelIn 0.32s cubic-bezier(0.16,1,0.3,1) forwards;">' +
+    '<button id="_rrwClose" style="position:absolute;top:14px;right:14px;background:transparent;border:none;font-size:22px;cursor:pointer;color:#94a3b8;padding:2px;line-height:1;z-index:2;">\u2715</button>' +
+    '<div style="overflow:hidden;"><div id="_rrwSlide" style="display:flex;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);will-change:transform;">' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Choose a name</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">Give this recurring assignment a short, clear title.</p>' +
+    '<input id="_rrwName" type="text" placeholder="e.g. Math HW" autocomplete="off" value="' + (ex ? (ex.name || '') : '') + '" style="width:100%;padding:11px 14px;font-size:15px;font-weight:500;border:1.5px solid ' + ibc + ';border-radius:12px;box-sizing:border-box;background:' + ibg + ';color:' + tc + ';font-family:\'Inter\',sans-serif;outline:none;" /></div>' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Choose the subject</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">Pick the area of study this assignment relates to.</p>' +
+    '<select id="_rrwSubj" style="appearance:none;-webkit-appearance:none;width:100%;padding:11px 14px;font-size:14px;font-weight:500;border:1.5px solid ' + ibc + ';border-radius:12px;box-sizing:border-box;background:' + ibg + ';color:' + tc + ';font-family:\'Inter\',sans-serif;outline:none;cursor:pointer;">' + subjOpts + '</select></div>' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Choose a difficulty</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">How challenging is this assignment for you?</p>' +
+    '<select id="_rrwDiff" style="appearance:none;-webkit-appearance:none;width:100%;padding:11px 14px;font-size:14px;font-weight:500;border:1.5px solid ' + ibc + ';border-radius:12px;box-sizing:border-box;background:' + ibg + ';color:' + tc + ';font-family:\'Inter\',sans-serif;outline:none;cursor:pointer;">' +
+    '<option value="easy"' + ((!ex || ex.difficulty === 'easy') ? ' selected' : '') + '>\uD83D\uDFE2 Easy</option>' +
+    '<option value="medium"' + (ex && ex.difficulty === 'medium' ? ' selected' : '') + '>\uD83D\uDFE1 Medium</option>' +
+    '<option value="hard"' + (ex && ex.difficulty === 'hard' ? ' selected' : '') + '>\uD83D\uDD34 Hard</option>' +
+    '<option value="priority"' + (ex && ex.difficulty === 'priority' ? ' selected' : '') + '>\uD83D\uDFE3 Priority</option>' +
+    '</select>' +
+    '<a id="_rrwDiffLink" href="#" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:#3b82f6;text-decoration:underline;cursor:pointer;">How to choose the right difficulty</a></div>' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Time per day</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">How much time will this assignment take each day it appears?</p>' +
+    '<div style="text-align:center;margin-bottom:12px;"><span id="_rrwTimeLabel" style="font-family:\'Syne\',sans-serif;font-size:26px;font-weight:800;color:#6366f1;">' + _fmtRoutineTime(initTime) + '</span></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;">' +
+    '<button id="_rrwTimeMinus" type="button" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">\u2212</button>' +
+    '<input id="_rrwTime" type="range" min="10" max="300" step="5" value="' + initTime + '" style="flex:1;height:6px;accent-color:#6366f1;cursor:pointer;" />' +
+    '<button id="_rrwTimePlus" type="button" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(99,102,241,0.4);background:transparent;color:#6366f1;font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</button>' +
+    '</div>' +
+    '<a id="_rrwTimeLink" href="#" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:#3b82f6;text-decoration:underline;cursor:pointer;">Accurate time estimations</a></div>' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Choose start &amp; end dates</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">Set an optional date range. Leave blank for no limit.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:12px;">' +
+    '<div><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">Start Date (optional)</label><div id="_rrwStartPicker"></div><input id="_rrwStartDate" type="text" style="display:none;" value="' + (ex && ex.startDate ? ex.startDate : '') + '" /></div>' +
+    '<div><label style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;">End Date (optional)</label><div id="_rrwEndPicker"></div><input id="_rrwEndDate" type="text" style="display:none;" value="' + (ex && ex.endDate ? ex.endDate : '') + '" /></div>' +
+    '</div>' +
+    '<a id="_rrwWhenLink" href="#" style="display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:#3b82f6;text-decoration:underline;cursor:pointer;">When to add assignments</a></div>' +
+
+    '<div style="min-width:100%;box-sizing:border-box;">' +
+    '<h3 style="font-family:\'Syne\',sans-serif;font-size:19px;font-weight:800;color:' + tc + ';margin:0 0 6px;">Choose repeat days</h3>' +
+    '<p style="font-size:13px;color:' + sc + ';margin:0 0 16px;line-height:1.6;">Select which days of the week this assignment will appear on.</p>' +
+    '<div id="_rrwDays" style="display:flex;gap:6px;flex-wrap:wrap;">' + daysHTML + '</div></div>' +
+
+    '</div></div>' +
+    '<div id="_rrwNav" style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:22px;"></div></div>';
+
+  document.body.appendChild(ov);
+  if (typeof makeCustomSelects === 'function') makeCustomSelects(document.getElementById('_rrwCard'));
+
+  if (typeof _initRoutineDatePicker === 'function') {
+    _initRoutineDatePicker('_rrwStartDate', '_rrwStartPicker');
+    _initRoutineDatePicker('_rrwEndDate', '_rrwEndPicker');
+  }
+
+  function renderNav() {
+    var nav = document.getElementById('_rrwNav');
+    if (!nav) return;
+    var isDkN = document.body.classList.contains('assignmentsdark');
+    var arrStyle = 'background:transparent;border:1.5px solid rgba(99,102,241,0.35);border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;color:#6366f1;font-size:18px;font-weight:700;cursor:pointer;font-family:\'Inter\',sans-serif;transition:background 0.15s;';
+    var stepStyle = 'font-family:\'Inter\',sans-serif;font-size:13px;font-weight:700;color:' + (isDkN ? '#475569' : '#94a3b8') + ';min-width:40px;text-align:center;';
+    var h = '';
+    if (step > 1) h += '<button id="_rrwBack" style="' + arrStyle + '">←</button>';
+    h += '<span style="' + stepStyle + '">' + step + '/' + STEPS + '</span>';
+       if (step < STEPS) h += '<button id="_rrwNext" style="' + arrStyle + '">→</button>';
+    if (step === STEPS || editId) h += '<button id="_rrwSubmit" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:50px;padding:10px 26px;color:white;font-family:\'Inter\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(99,102,241,0.4);">' + (editId ? 'Update' : 'Save') + '</button>';
+    nav.innerHTML = h;
+    var bb = document.getElementById('_rrwBack');
+    var nb = document.getElementById('_rrwNext');
+    var sb = document.getElementById('_rrwSubmit');
+    if (bb) bb.addEventListener('click', function() { goStep(step - 1); });
+    if (nb) nb.addEventListener('click', function() { goStep(step + 1); });
+    if (sb) sb.addEventListener('click', submitWizard);
+  }
+
+  function goStep(n) {
+    step = Math.max(1, Math.min(STEPS, n));
+    var sl = document.getElementById('_rrwSlide');
+    if (sl) sl.style.transform = 'translateX(-' + ((step - 1) * 100) + '%)';
+    renderNav();
+  }
+
+  function submitWizard() {
+    var name = (document.getElementById('_rrwName') || {}).value || '';
+    var subject = (document.getElementById('_rrwSubj') || {}).value || '';
+    var diff = (document.getElementById('_rrwDiff') || {}).value || 'easy';
+    var time = parseInt((document.getElementById('_rrwTime') || {}).value) || 30;
+    var startDate = (document.getElementById('_rrwStartDate') || {}).value || '';
+    var endDate = (document.getElementById('_rrwEndDate') || {}).value || '';
+    var days = Array.from(document.querySelectorAll('#_rrwDays button[data-sel="1"]')).map(function(b) { return parseInt(b.dataset.dow); });
+    var _rPanel = document.getElementById('spRoutinePanel');
+    if (_rPanel) _rPanel.style.zIndex = '150000';
+    if (!days.length) {
+      showCustomAlert('Select at least one day.', function() { if (_rPanel) _rPanel.style.zIndex = '400000'; });
+      return;
+    }
+    if (_rPanel) _rPanel.style.zIndex = '300000';
+    var routines = _getRoutines();
+    if (editId) {
+      var idx = routines.findIndex(function(r) { return r.id === editId; });
+      if (idx !== -1) {
+        routines[idx] = Object.assign(routines[idx], { name: name, subject: subject, difficulty: diff, time: time, days: days, startDate: startDate, endDate: endDate });
+      }
+      _saveRoutines(routines);
+    } else {
+      routines.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), name: name, subject: subject, difficulty: diff, time: time, days: days, startDate: startDate, endDate: endDate, exceptions: [] });
+      _saveRoutines(routines);
+    }
+    closeWizard();
+    if (typeof _renderRoutineList === 'function') _renderRoutineList();
+    _calRenderedMonths.clear();
+    var _calC = document.getElementById('calendarScrollContainer');
+    if (_calC) _calC.innerHTML = '';
+    if (typeof window._renderCalendar === 'function') window._renderCalendar();
+  }
+
+  function closeWizard() {
+    var card = document.getElementById('_rrwCard');
+    var ovEl = document.getElementById('_rrwOverlay');
+    if (!ovEl) return;
+    if (card) card.style.animation = 'routinePanelOut 0.22s cubic-bezier(0.4,0,0.6,1) forwards';
+    ovEl.style.animation = 'routineOverlayOut 0.22s ease forwards';
+    setTimeout(function() { if (ovEl.parentNode) ovEl.remove(); }, 250);
+  }
+
+  window._closeRoutineWizard = closeWizard;
+  document.getElementById('_rrwClose').addEventListener('click', closeWizard);
+  ov.addEventListener('click', function(e) { if (e.target === ov) closeWizard(); });
+
+  var ts2 = document.getElementById('_rrwTime');
+  var tl2 = document.getElementById('_rrwTimeLabel');
+  if (ts2 && tl2) {
+    ts2.addEventListener('input', function() { tl2.textContent = _fmtRoutineTime(parseInt(this.value)); });
+    expandSliderHitArea(ts2);
+  }
+  var tm2 = document.getElementById('_rrwTimeMinus');
+  var tp2 = document.getElementById('_rrwTimePlus');
+  if (tm2) tm2.addEventListener('click', function() { if (ts2) { ts2.value = Math.max(10, parseInt(ts2.value) - 5); if (tl2) tl2.textContent = _fmtRoutineTime(parseInt(ts2.value)); } });
+  if (tp2) tp2.addEventListener('click', function() { if (ts2) { ts2.value = Math.min(300, parseInt(ts2.value) + 5); if (tl2) tl2.textContent = _fmtRoutineTime(parseInt(ts2.value)); } });
+
+    function _openUGFromRRW(section) {
+    var o4 = document.getElementById('_rrwOverlay');
+    if (o4) o4.style.zIndex = '50000';
+    var _rrwRoutinePanel = document.getElementById('spRoutinePanel');
+    if (_rrwRoutinePanel) _rrwRoutinePanel.style.zIndex = '40000';
+    window._ugReturnContext = { type: 'rrw', overlay: o4 };
+    if (typeof openUserGuide === 'function') openUserGuide();
+    if (typeof showUgSection === 'function') showUgSection(section);
+  }
+
+  var dl2 = document.getElementById('_rrwDiffLink');
+  if (dl2) dl2.addEventListener('click', function(e) { e.preventDefault(); _openUGFromRRW('assignment-difficulty'); });
+  var tll2 = document.getElementById('_rrwTimeLink');
+  if (tll2) tll2.addEventListener('click', function(e) { e.preventDefault(); _openUGFromRRW('time-estimations'); });
+  var wl2 = document.getElementById('_rrwWhenLink');
+  if (wl2) wl2.addEventListener('click', function(e) { e.preventDefault(); _openUGFromRRW('when-to-add'); });
+
+  var nin = document.getElementById('_rrwName');
+  if (nin) {
+    nin.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); goStep(2); } });
+    setTimeout(function() { nin.focus(); }, 100);
+  }
+
+  renderNav();
 };
 window._toggleException = function(routineId, iso) {
 var _rts = _getRoutines();
